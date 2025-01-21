@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class CustomTabBarController: UITabBarController {
     
@@ -32,12 +33,12 @@ class CustomTabBarController: UITabBarController {
         let mainViewController = MainViewController()
         mainViewController.tabBarItem = UITabBarItem(title: "메인", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
         
-        let memoryViewController = MemoryViewController()
-        memoryViewController.tabBarItem = UITabBarItem(title: "기록", image: UIImage(systemName: "book"), selectedImage: UIImage(systemName: "book.fill"))
+        let storageViewController = UIHostingController(rootView: HangdamStorageView())
+        storageViewController.tabBarItem = UITabBarItem(title: "기록", image: UIImage(systemName: "book"), selectedImage: UIImage(systemName: "book.fill"))
         
         let settingsViewController = SettingsViewController()
         settingsViewController.tabBarItem = UITabBarItem(title: "설정", image: UIImage(systemName: "gear"), selectedImage: UIImage(systemName: "gear.fill"))
         
-        viewControllers = [memoryViewController, mainViewController, settingsViewController ]
+        viewControllers = [storageViewController, mainViewController, settingsViewController ]
     }
 }

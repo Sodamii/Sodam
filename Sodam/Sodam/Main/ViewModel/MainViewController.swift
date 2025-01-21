@@ -14,10 +14,10 @@ class MainViewController: UIViewController {
     override func loadView() {
         self.view = mainView
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
     }
     
 }

@@ -14,8 +14,8 @@ class MainView: UIView {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "star.fill")
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .systemYellow
-        imageView.backgroundColor = .whiteColor
+        imageView.tintColor = .tabBackground
+        imageView.backgroundColor = .imageBackground
         
         // 원형 스타일
         imageView.layer.cornerRadius = 150
@@ -27,9 +27,9 @@ class MainView: UIView {
     private let createbutton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("행복 작성하기", for: .normal)
-        button.setTitleColor(.whiteColor, for: .normal)
+        button.setTitleColor(.imageBackground, for: .normal)
         button.titleLabel?.font = UIFont(name: CustomFont.MapoGoldenPier.rawValue, size: 20)
-        button.backgroundColor = .happyColor
+        button.backgroundColor = .buttonBackground
         button.layer.cornerRadius = 15
         
         return button
@@ -45,22 +45,23 @@ class MainView: UIView {
     }
     
     private func setupUI() {
-        backgroundColor = .backgroundColor
+        backgroundColor = .viewBackground
         [
             circularImageView,
             createbutton
         ].forEach { addSubview($0) }
         
         circularImageView.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide.snp.top).offset(130)
+            $0.top.equalTo(safeAreaLayoutGuide.snp.top).offset(UIScreen.main.bounds.height * 0.15) // 화면 높이의 30%로 높이를 맞춤
             $0.centerX.equalToSuperview()
             $0.width.height.equalTo(300)
         }
         
         createbutton.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(30)
+            $0.centerX.equalToSuperview()
             $0.height.equalTo(60)
-            $0.top.equalTo(circularImageView.snp.bottom).offset(170)
+            $0.width.equalToSuperview().multipliedBy(0.85)
         }
     }
 }

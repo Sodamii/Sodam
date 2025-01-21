@@ -29,15 +29,15 @@ class CustomTabBarController: UITabBarController {
     }
     
     private func configureViewController() {
-        let mainVC = MainViewController()
-        mainVC.tabBarItem = UITabBarItem(title: "메인", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
+        let mainViewController = MainViewController()
+        mainViewController.tabBarItem = UITabBarItem(title: "메인", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
         
-        let memoryVC = MemoryViewController()
-        memoryVC.tabBarItem = UITabBarItem(title: "기록", image: UIImage(systemName: "book"), selectedImage: UIImage(systemName: "book.fill"))
+        let memoryViewController = MemoryViewController()
+        memoryViewController.tabBarItem = UITabBarItem(title: "기록", image: UIImage(systemName: "book"), selectedImage: UIImage(systemName: "book.fill"))
         
-        let settingsVC = SettingsViewController()
-        settingsVC.tabBarItem = UITabBarItem(title: "설정", image: UIImage(systemName: "gear"), selectedImage: UIImage(systemName: "gear.fill"))
+        let settingsViewController = SettingsViewController()
+        settingsViewController.tabBarItem = UITabBarItem(title: "설정", image: UIImage(systemName: "gear"), selectedImage: UIImage(systemName: "gear.fill"))
         
-        viewControllers = [memoryVC, mainVC, settingsVC ]
+        viewControllers = [memoryViewController, mainViewController, settingsViewController ]
     }
 }

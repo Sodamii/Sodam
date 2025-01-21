@@ -28,7 +28,7 @@ class MainView: UIView {
         let label = UILabel()
         label.text = "행담이에게 행복한 기억을 먹여주세욤 >< 뿌뿌~~"
         label.textAlignment = .center
-        label.font = UIFont(name: CustomFont.MapoGoldenPier.rawValue, size: 14)
+        label.font = .mapoGoldenPier(14)
         label.numberOfLines = 0
         label.textColor = .darkGray
         
@@ -39,7 +39,7 @@ class MainView: UIView {
         let button = UIButton(type: .system)
         button.setTitle("행복 작성하기", for: .normal)
         button.setTitleColor(.imageBackground, for: .normal)
-        button.titleLabel?.font = UIFont(name: CustomFont.MapoGoldenPier.rawValue, size: 20)
+        button.titleLabel?.font = .mapoGoldenPier(20)
         button.backgroundColor = .buttonBackground
         button.layer.cornerRadius = 15
         

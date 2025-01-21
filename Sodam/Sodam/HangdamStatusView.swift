@@ -9,6 +9,8 @@ import SwiftUI
 
 struct HangdamStatusView: View {
     
+    let size: CGSize
+    
     @Binding var mockHangdam: MockHangdam
     
     var body: some View {
@@ -30,10 +32,12 @@ struct HangdamStatusView: View {
             .foregroundStyle(Color(uiColor: .white))
         }
         .padding(16)
+        .frame(height: size.height / 4)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.tabBackground)
     }
 }
 
 #Preview {
-    HangdamStatusView(mockHangdam: .constant(.mockHangdam))
+    HangdamStatusView(size: CGSize(width: 402, height: 716), mockHangdam: .constant(.mockHangdam))
 }

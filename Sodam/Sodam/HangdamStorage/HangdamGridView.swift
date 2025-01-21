@@ -11,8 +11,10 @@ struct HangdamGridView: View {
     
     @Binding var mockHangdam: MockHangdam
     
+    let columns = Array(repeating: GridItem(spacing: 16), count: 2)
+    
     var body: some View {
-        LazyVGrid(columns: [GridItem(), GridItem()]) {
+        LazyVGrid(columns: columns, spacing: 16) {
             HangdamGrid(mockHangdam: $mockHangdam)
             HangdamGrid(mockHangdam: $mockHangdam)
             HangdamGrid(mockHangdam: $mockHangdam)

@@ -23,9 +23,9 @@ class CustomTabBarController: UITabBarController {
         let customTabBar = CustomTabBar()
         setValue(customTabBar, forKey: "tabBar")
         
-        tabBar.tintColor = .primaryColor                       // 선택된 탭의 색
-        tabBar.unselectedItemTintColor = .whiteColor         // 선택되지 않은 탭의 색
-        tabBar.backgroundColor = .secondaryColor2
+        tabBar.tintColor = .textAccent                       // 선택된 탭의 색
+        tabBar.unselectedItemTintColor = .imageBackground         // 선택되지 않은 탭의 색
+        tabBar.backgroundColor = .tabBackground
     }
     
     private func configureViewController() {

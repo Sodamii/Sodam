@@ -8,9 +8,9 @@
 import UIKit
 import SnapKit
 
-class MainView: UIView {
+final class MainView: UIView {
     // 이미지 뷰
-    private let circularImageView: UIImageView = {
+    public let circularImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "star.fill")
         imageView.contentMode = .scaleAspectFit
@@ -18,9 +18,7 @@ class MainView: UIView {
         imageView.backgroundColor = .imageBackground
         
         // 원형 스타일
-        imageView.layer.cornerRadius = 150
         imageView.layer.masksToBounds = true
-        
         return imageView
     }()
     // 라벨 뷰
@@ -31,7 +29,6 @@ class MainView: UIView {
         label.font = .mapoGoldenPier(14)
         label.numberOfLines = 0
         label.textColor = .darkGray
-        
         return label
     }()
     // 버튼 뷰
@@ -42,7 +39,6 @@ class MainView: UIView {
         button.titleLabel?.font = .mapoGoldenPier(20)
         button.backgroundColor = .buttonBackground
         button.layer.cornerRadius = 15
-        
         return button
     }()
     
@@ -67,11 +63,12 @@ class MainView: UIView {
         circularImageView.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide.snp.top).offset(UIScreen.main.bounds.height * 0.15) // 화면 높이의 15%로 높이를 맞춤
             $0.centerX.equalToSuperview()
-            $0.width.height.equalTo(300)
+            $0.width.equalToSuperview().multipliedBy(0.7)
+            $0.height.equalTo(circularImageView.snp.width)
         }
         
         messageLabel.snp.makeConstraints {
-            $0.top.equalTo(circularImageView.snp.bottom).offset(30)
+            $0.top.equalTo(circularImageView.snp.bottom).offset(40)
             $0.centerX.equalToSuperview()
             $0.width.equalToSuperview().multipliedBy(0.85)
         }
@@ -82,5 +79,15 @@ class MainView: UIView {
             $0.height.equalTo(60)
             $0.width.equalToSuperview().multipliedBy(0.85)
         }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        circularImageView.layer.cornerRadius = circularImageView.frame.width / 2
+    }
+    
+    // 메세지라벨
+    public func updateMessage(_ message: String) {
+        messageLabel.text = message
     }
 }

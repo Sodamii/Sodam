@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HangdamStatusView: View {
     
-    let mockHangdam = MockHangdam.mockHangdam
+    @Binding var mockHangdam: MockHangdam
     
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
@@ -35,5 +35,5 @@ struct HangdamStatusView: View {
 }
 
 #Preview {
-    HangdamStatusView()
+    HangdamStatusView(mockHangdam: .constant(.mockHangdam))
 }

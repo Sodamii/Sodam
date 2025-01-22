@@ -32,7 +32,7 @@ final class MainView: UIView {
         return label
     }()
     // 버튼 뷰
-    private let createbutton: UIButton = {
+    public let createbutton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("행복 작성하기", for: .normal)
         button.setTitleColor(.imageBackground, for: .normal)

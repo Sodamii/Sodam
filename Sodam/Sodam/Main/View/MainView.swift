@@ -12,9 +12,8 @@ final class MainView: UIView {
     // 이미지 뷰
     public let circularImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "star.fill")
+        imageView.image = UIImage.babyHangdam
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .tabBackground
         imageView.backgroundColor = .imageBackground
         
         // 원형 스타일

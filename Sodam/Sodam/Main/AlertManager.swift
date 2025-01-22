@@ -15,14 +15,14 @@ final class AlertManager {
         completion: @escaping (String?) -> Void
     ) {
         let alartController = UIAlertController(
-            title: "행담이의 이름을 지어주세요.",
+            title: "이름 짓기",
             message: nil,
             preferredStyle: .alert
         )
         
         // 알럿 안에 텍스트 필드
         alartController.addTextField { TextField in
-            TextField.placeholder = "행담이 이름"
+            TextField.placeholder = "행담이 이름을 적어주세요"
         }
         
         // 확인 버튼
@@ -34,6 +34,7 @@ final class AlertManager {
         
         // 취소 버튼
         let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        cancelAction.setValue(UIColor.lightGray, forKey: "titleTextColor")
         
         // 버튼 추가
         alartController.addAction(confirmAction)

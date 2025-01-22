@@ -33,6 +33,6 @@ enum MainMessages: String, CaseIterable {
     
     // 랜덤으로 메세지 반환하기 (firstMessage는 제외하기)
     static func getRandomMessage() -> String {
-        return Self.allCases.filter { $0.rawValue != firstMessage }.randomElement()?.rawValue ?? "오늘의 소확행 기록하기."
+        return Self.allCases.randomElement()?.rawValue ?? "오늘의 소확행 기록하기."
     }
 }

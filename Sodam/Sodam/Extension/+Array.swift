@@ -2,7 +2,7 @@
 //  +Array.swift
 //  Sodam
 //
-//  Created by t2023-m0019 on 1/22/25.
+//  Created by 박시연 on 1/22/25.
 //
 
 import Foundation

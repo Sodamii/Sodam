@@ -62,7 +62,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     
     // 섹션 헤더 높이 설정
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 40 // 섹션 간 간격
+        return 20 // 섹션 간 간격
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -113,13 +113,6 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     @objc func didToggleSwitch(_ sender: UISwitch) {
         isSwitchOn = sender.isOn
         print("isSwitchOn \(isSwitchOn)")
-        // isSwitchOn이 true 인 경우 셀 2개
-        if isSwitchOn {
-            cellType[.appSetting] = [.notification, .setTime]
-        } else {
-            cellType[.appSetting] = [.notification]
-        }
-
         settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
 }

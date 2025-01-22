@@ -23,9 +23,19 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureFirstMessage()  // 초기 메세지 설정
-        addGesture()             // 이미지 탭 제스처
-        configureButtonAction()  // 작성 버튼 액션 설정
+        configureFirstMessage()    // 초기 메세지 설정
+        addGesture()               // 이미지 탭 제스처
+        configureButtonAction()    // 작성 버튼 액션 설정
+        updateNameLabelIfNeeded()  // 앱 로드 시에 이름 라벨 업데이트
+    }
+    
+    private func updateNameLabelIfNeeded() {
+        if let savedName = UserDefaults.standard.string(forKey: "HangdamName") {
+            mainView.updateNameLabel(savedName) // 저장된 이름으로 라벨 업데이트
+            print("저장된 이름: \(savedName)")
+        } else {
+            print("저장된 이름이 없습니다.")
+        }
     }
     
     private func configureFirstMessage() {
@@ -78,6 +88,7 @@ final class MainViewController: UIViewController {
                 if let name = name, !name.isEmpty {
                     print("지어진 이름: \(name)")
                     UserDefaults.standard.set(name, forKey: "HangdamName")       // 이름 저장
+                    self?.mainView.updateNameLabel(name)
                     self?.modalWriteViewController(with: name)                   // 작성화면으로 이동
                 } else {
                     print("이름이 입력되지 않았습니다.")
@@ -87,6 +98,7 @@ final class MainViewController: UIViewController {
             // 이미 저장된 이름이 있는 경우에 바로 작성화면으로 이동
             if let savedName = UserDefaults.standard.string(forKey: "HangdamName") {
                 print("저장된 이름으로 작성화면 이동함: \(savedName)")
+                mainView.updateNameLabel(savedName)
                 modalWriteViewController(with: savedName)
             }
         }

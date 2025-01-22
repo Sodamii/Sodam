@@ -39,8 +39,13 @@ final class MainViewController: UIViewController {
     }
     
     private func configureFirstMessage() {
-        // 앱 초기 실행 시 첫번째 문구 설정
-        mainView.updateMessage(MainMessages.firstMessage)
+        if UserDefaults.standard.string(forKey: "HangdamName") != nil {
+            mainView.updateMessage(MainMessages.getRandomMessage())
+            print("이름이 저장된 후 앱 로드되어 랜덤 메세지를 표시")
+        } else {
+            mainView.updateMessage(MainMessages.firstMessage)
+            print("이름이 저장되지 않은 경우 첫번째 메세지 표시")
+        }
     }
     
     // 작성 버튼 클릭 시 액션 설정
@@ -58,10 +63,10 @@ final class MainViewController: UIViewController {
     // 작성화면 모달 띄우는 메서드
     private func modalWriteViewController(with name: String) {
         let writeViewController = WriteViewController()
-        writeViewController.hangdamName = name                                 // 지어진 이름 작성화면으로 전달
-        writeViewController.delegate = self                                    // Delegate 연결
-        writeViewController.modalTransitionStyle = .coverVertical              // 모달 스타일 설정
-        present(writeViewController, animated: true)                           // 모달 표시
+        writeViewController.hangdamName = name                                  // 지어진 이름 작성화면으로 전달
+        writeViewController.delegate = self                                     // Delegate 연결
+        writeViewController.modalTransitionStyle = .coverVertical               // 모달 스타일 설정
+        present(writeViewController, animated: true)                            // 모달 표시
     }
     
     // 이미지 탭 액션
@@ -69,8 +74,14 @@ final class MainViewController: UIViewController {
         // 연속 클릭 방지
         mainView.circularImageView.isUserInteractionEnabled = false             // 클릭 비활성화
         
-        // 랜덤 메세지 업데이트
-        mainView.updateMessage(MainMessages.getRandomMessage())
+        // 저정된 이름 유무에 따라서 메세지 업데이트
+        if let savedName = UserDefaults.standard.string(forKey: "HangdamName"), !savedName.isEmpty {
+            print("저장된 이름 있음: \(savedName)")
+            mainView.updateMessage(MainMessages.getRandomMessage())             // 이름 있으면 메세지 표시
+        } else {
+            print("저장된 이름 없음. 첫번째 메세지 유지")
+            mainView.updateMessage(MainMessages.firstMessage)                   // 이름 없으면 첫번째 메세지 유지
+        }
         
         // 2초 후 다시 활성화
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -83,13 +94,24 @@ final class MainViewController: UIViewController {
         if isCreateButtonFirstTap {
             // 이름이 없는 경우 알림창 표시하기
             AlertManager.showAlert(on: self) { [weak self] name in
-                guard self != nil else { return }
+                guard let self = self else { return }
                 
                 if let name = name, !name.isEmpty {
-                    print("지어진 이름: \(name)")
+                    print("입력 된 이름: \(name)")
+                    
+                    // 이름 저장
                     UserDefaults.standard.set(name, forKey: "HangdamName")       // 이름 저장
-                    self?.mainView.updateNameLabel(name)
-                    self?.modalWriteViewController(with: name)                   // 작성화면으로 이동
+                    UserDefaults.standard.synchronize()                          // 동기화 강제
+                    
+                    // 이름 라벨 업데이트
+                    self.mainView.updateNameLabel(name)
+                    
+                    // 메인 화면 메세지를 랜덤 메세지로 업데이트
+                    self.mainView.updateMessage(MainMessages.getRandomMessage())
+                    print("이름을 지은 후 랜덤 메세지 표시 됨")
+                    
+                    // 작성 화면으로 이동
+                    self.modalWriteViewController(with: name)
                 } else {
                     print("이름이 입력되지 않았습니다.")
                 }
@@ -108,6 +130,6 @@ final class MainViewController: UIViewController {
 // 작성화면 모달이 닫힐 때 처리
 extension MainViewController: WriteViewControllerDelegate {
     func writeViewControllerDiddismiss() {
-        print("모달이 닫혔습니다.")
+        print("WriteViewController 모달이 닫혔습니다.")
     }
 }

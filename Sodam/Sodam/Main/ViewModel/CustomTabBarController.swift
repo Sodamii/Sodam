@@ -14,6 +14,7 @@ final class CustomTabBarController: UITabBarController {
         super.viewDidLoad()
         setupTabBar()
         configureViewController()
+        setupTabBarAppearance()
         
         selectedIndex = 1                 // 초기 화면을 mainVC로 설정 배열에서 mainVC 인덱스 넣으면 됨
         
@@ -25,7 +26,7 @@ final class CustomTabBarController: UITabBarController {
         setValue(customTabBar, forKey: "tabBar")
         
         tabBar.tintColor = .textAccent                       // 선택된 탭의 색
-        tabBar.unselectedItemTintColor = .imageBackground         // 선택되지 않은 탭의 색
+        tabBar.unselectedItemTintColor = .imageBackground    // 선택되지 않은 탭의 색
         tabBar.backgroundColor = .tabBackground
     }
     
@@ -40,5 +41,15 @@ final class CustomTabBarController: UITabBarController {
         settingsViewController.tabBarItem = UITabBarItem(title: "설정", image: UIImage(systemName: "gear"), selectedImage: UIImage(systemName: "gear.fill"))
         
         viewControllers = [storageViewController, mainViewController, settingsViewController ]
+    }
+    
+    private func setupTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .tabBackground
+        
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
     }
 }

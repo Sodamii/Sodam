@@ -32,6 +32,10 @@ final class UserDefaultsManager {
         userDefaults.set(isOn, forKey: Keys.isToggleNotification)
     }
     
+    func saveContent(_ content: String) {
+        userDefaults.set(content, forKey: Keys.content)
+    }
+    
     // MARK: - UserDefaults에 저장된 값 얻어오기
     
     func getNotificationTime() -> Date? {
@@ -40,5 +44,9 @@ final class UserDefaultsManager {
     
     func getIsToggleNotification() -> Bool {
         userDefaults.bool(forKey: Keys.isToggleNotification)
+    }
+    
+    func getContent() -> String? {
+        userDefaults.string(forKey: Keys.content)
     }
 }

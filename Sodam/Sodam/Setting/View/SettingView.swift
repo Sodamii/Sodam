@@ -10,7 +10,7 @@ import SnapKit
 
 final class SettingView: UIView {
     let tableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
         return tableView
     }()
     

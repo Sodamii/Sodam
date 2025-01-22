@@ -12,7 +12,7 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
     let baseView = UIView()
     private let setTitle: UILabel = {
         let label = UILabel()
-        label.font = .mapoGoldenPier(14)
+        label.font = .mapoGoldenPier(16)
         label.textColor = .darkGray
         return label
     }()
@@ -31,7 +31,8 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
         timePicker.preferredDatePickerStyle = .automatic
         timePicker.datePickerMode = .time
         timePicker.locale = Locale(identifier: "ko")
-        timePicker.minuteInterval = 1
+        timePicker.minuteInterval = 30
+        timePicker.tintColor = .buttonBackground
         return timePicker
     }()
     
@@ -85,8 +86,9 @@ private extension SettingTableViewCell {
         }
         
         setTitle.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview().inset(15)
             $0.leading.equalToSuperview().offset(20)
-            $0.centerY.equalTo(baseView.snp.centerY)
+            //$0.centerY.equalTo(baseView.snp.centerY)
         }
         
         horizonStackView.snp.makeConstraints {

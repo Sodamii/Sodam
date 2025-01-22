@@ -20,10 +20,19 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
     let horizonStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.distribution = .fillProportionally
-        stackView.alignment = .center
+        stackView.distribution = .equalSpacing
+        stackView.alignment = .trailing
         stackView.spacing = 0
         return stackView
+    }()
+    
+    let timePicker: UIDatePicker = {
+        let timePicker = UIDatePicker()
+        timePicker.preferredDatePickerStyle = .automatic
+        timePicker.datePickerMode = .time
+        timePicker.locale = Locale(identifier: "ko")
+        timePicker.minuteInterval = 1
+        return timePicker
     }()
     
     let switchButton: UISwitch = {
@@ -67,7 +76,7 @@ private extension SettingTableViewCell {
         baseView.backgroundColor = .imageBackground
         contentView.addSubview(baseView)
         baseView.addSubViews([setTitle, horizonStackView])
-        horizonStackView.addArrangedSubViews([switchButton, arrowImage])
+        horizonStackView.addArrangedSubViews([timePicker,switchButton, arrowImage])
     }
     
     func setupConstraint() {

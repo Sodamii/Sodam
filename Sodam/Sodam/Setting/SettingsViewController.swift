@@ -80,8 +80,10 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         // 셀 구성
         switch sectionType {
         case .appSetting:
+            cell.timePicker.isHidden = true
             cell.switchButton.isHidden = false
             cell.arrowImage.isHidden = true
+            
             if indexPath.row == 0 {
                 // 첫 번째 셀: 알림 설정
                 cell.configure(title: Setting.SetCell.notification.rawValue, switchAction: #selector(didToggleSwitch(_:)))
@@ -89,12 +91,15 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
             } else if indexPath.row == 1 && isSwitchOn {
                 // 두 번째 셀: 시간 설정 (스위치가 켜졌을 때만 표시)
                 cell.configure(title: Setting.SetCell.setTime.rawValue, switchAction: nil)
+                cell.timePicker.isHidden = false
                 cell.switchButton.isHidden = true
             }
             
         case .develop:
+            cell.timePicker.isHidden = true
             cell.switchButton.isHidden = true
             cell.arrowImage.isHidden = false
+
             // 두 번째 섹션의 셀 (항상 두 개 표시)
             if indexPath.row == 0 {
                 cell.configure(title: Setting.SetCell.appReview.rawValue, switchAction: nil)

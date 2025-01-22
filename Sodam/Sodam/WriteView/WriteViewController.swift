@@ -7,16 +7,21 @@
 
 import UIKit
 import SnapKit
-import AVFoundation
-import PhotosUI
 
 final class WriteViewController: UIViewController {
     
-    private let writeViewModel: WriteViewModel = {
-        let writeModel = WriteModel()
-        return WriteViewModel(writeModel: writeModel)
-    }()
+    private let writeViewModel: WriteViewModel
     
+    init(writeViewModel: WriteViewModel) {
+        self.writeViewModel = writeViewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        let writeModel = WriteModel()
+        self.writeViewModel = WriteViewModel(writeModel: writeModel)
+        super.init(coder: coder)
+    }
     // MARK: - UI 컴포넌트 선언
     
     // 화면 상단 날짜 레이블
@@ -33,22 +38,28 @@ final class WriteViewController: UIViewController {
     // 글 작성 텍스트뷰
     private let textView: UITextView = {
         let textView: UITextView = UITextView()
-        textView.font = .sejongGeulggot(16)
+        textView.font = .sejongGeulggot(18)
         textView.textColor = .darkGray
         textView.backgroundColor = .viewBackground
         textView.layer.borderWidth = 1
         return textView
     }()
     
-    // 이미지뷰를 담을 스택뷰
-    private let imageStackView: UIStackView = {
-        let stackView: UIStackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.spacing = 8
-        stackView.alignment = .leading
-        stackView.layer.borderWidth = 1
-        return stackView
+    // 이미지뷰를 담을 컬렉션뷰
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 80, height: 80)
+        layout.minimumInteritemSpacing = 8
+        layout.scrollDirection = .horizontal
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .viewBackground
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: "ImageCollectionViewCell")
+        collectionView.layer.borderWidth = 1
+        return collectionView
     }()
     
     // 카메라 버튼
@@ -107,7 +118,7 @@ final class WriteViewController: UIViewController {
             photoButton,
             submitButton,
             cancelButton,
-            imageStackView
+            collectionView
         ].forEach { view.addSubview($0) }
         
         dateLabel.snp.makeConstraints { make in
@@ -128,14 +139,14 @@ final class WriteViewController: UIViewController {
             make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
         }
         
-        imageStackView.snp.makeConstraints { make in
+        collectionView.snp.makeConstraints { make in
             make.top.equalTo(textView.snp.bottom).offset(20)
             make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
             make.height.equalTo(view.safeAreaLayoutGuide.snp.width).multipliedBy(0.2)
         }
         
         cameraButton.snp.makeConstraints { make in
-            make.top.equalTo(imageStackView.snp.bottom).offset(20)
+            make.top.equalTo(collectionView.snp.bottom).offset(20)
             make.width.height.equalTo(view.safeAreaLayoutGuide.snp.width).multipliedBy(0.1)
             make.leading.equalTo(textView.snp.leading)
         }
@@ -155,69 +166,57 @@ final class WriteViewController: UIViewController {
     
     private func bindViewModel() {
         
-        // input 설정
-        writeViewModel.input = WriteViewModel.Input(
-            textUpdated: { [weak self] text in
-                self?.writeViewModel.updateText(text)
-            },
-            cameraAccessReequested: { [weak self] isAuthorized in
-                guard let self = self else { return }
-                guard isAuthorized else {
-                    self.showAlertGoToSetting()
-                    return
-                }
-                DispatchQueue.main.async {
-                    let pickerController: UIImagePickerController = UIImagePickerController()
-                    pickerController.sourceType = .camera
-                    pickerController.allowsEditing = false
-                    pickerController.mediaTypes = ["public.image"]
-                    pickerController.delegate = self
-                    self.present(pickerController, animated: true)
-                }
-            },
-            addImageTapped: { [weak self] viewController in
-                self?.writeViewModel.addImage(from: viewController)
-            }
-        )
-        
-        // output을 뷰에 바인딩
         writeViewModel.output.postUpdated = { [weak self] post in
-            self?.textView.text = post.text
-            if let image = post.image {
-                let imageView = self?.createImageView(image)
-                self?.imageStackView.addArrangedSubview(imageView!)
+            self?.updateUI(with: post)
+        }
+        
+        writeViewModel.output.cameraAccessGranted = { [weak self] isGranted in
+            if isGranted {
+                self?.showCamera()
+            } else {
+                self?.showAlertGoToSetting()
             }
         }
+        
+        writeViewModel.output.showImagePicker = { [weak self] picker in
+            guard let self = self else { return }
+            self.present(picker, animated: true)
+        }
+    }
+    
+    // MARK: - 버튼 액션 메서드
+    private func updateUI(with post: Post) {
+        textView.text = post.text // UI 업데이트 예시
+        collectionView.reloadData()
+    }
+    
+    private func showCamera() {
+        let cameraPicker = UIImagePickerController()
+        cameraPicker.sourceType = .camera
+        cameraPicker.delegate = self
+        present(cameraPicker, animated: true)
     }
     
     // 카메라 버튼 탭할 떄 호출되는 메서드
     @objc private func openCamera() {
-        // 카메라 사용 권한 요청
-        writeViewModel.requestCameraAccess { [weak self] isAuthorized in
-            self?.writeViewModel.input.cameraAccessReequested?(isAuthorized)
-        }
+        writeViewModel.input.cameraAccessRequested()
     }
     
     // 이미지 버튼 탭할 때 호출되는 메서드
     @objc private func addImage() {
-        writeViewModel.input.addImageTapped?(self)
+        writeViewModel.input.imagePickerRequested()
     }
     
     // 작성완료 버튼 탭할 때 호출되는 메서드
     @objc private func submitText() {
-        writeViewModel.input.textUpdated?(textView.text)
+        // Todo: 작성 완료 로직
     }
     
     // 취소 버튼 탭할 때 호출되는 메서드
     @objc private func cancelText() {
         // Todo: 글 작성 취소 로직
     }
-    
-    // 이미지뷰에 있는 휴지통 버튼 탭할 때 호출되는 메서드
-    @objc private func deleteImage() {
-        // Todo: 이미지 삭제 로직
-    }
-    
+
     // 카메라 권한이 없는 경우 설정 화면으로 이동하는 Alert 표시
     private func showAlertGoToSetting() {
         let alertControlelr  = UIAlertController(
@@ -252,69 +251,33 @@ final class WriteViewController: UIViewController {
             self.present(alertControlelr, animated: true)
         }
     }
-    
-    private func createImageView(_ image: UIImage) -> UIView {
-        let containerView = UIView()
-        containerView.snp.makeConstraints { make in
-            make.width.height.equalTo(80)
-        }
-        
-        // 이미지 뷰
-        let imageView = UIImageView(image: image)
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 8
-        containerView.addSubview(imageView)
-        imageView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-        // 휴지통 버튼
-        let deleteButton = UIButton()
-        deleteButton.setImage(UIImage(systemName: "trash"), for: .normal)
-        deleteButton.tintColor = .darkGray
-        deleteButton.addTarget(self, action: #selector(deleteImage), for: .touchUpInside)
-        containerView.addSubview(deleteButton)
-        deleteButton.snp.makeConstraints { make in
-            make.top.trailing.equalToSuperview().inset(4)
-            make.width.height.equalTo(24)
-        }
-        
-        return containerView
-    }
 }
 
 extension WriteViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-    func imagePickerController(
-        _ picker: UIImagePickerController,
-        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]
-    ) {
-        // 찍은 이미지 가져오기
-        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
-            // 이미지가 유효하지 않은 경우 이미지 선택창 닫기
-            picker.dismiss(animated: true)
-            return
-        }
-        
-        writeViewModel.updateImage(image)
-        picker.dismiss(animated: true)
-    }
+
 }
 
-//extension WriteViewController: PHPickerViewControllerDelegate {
-//    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-//        guard let provider = results.first?.itemProvider, provider.canLoadObject(ofClass: UIImage.self) else {
-//            return
-//        }
-//        
-//        provider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
-//            if let image = image as? UIImage {
-//                DispatchQueue.main.async {
-//                    self?.writeViewModel.updateImage(image)
-//                }
-//            }
-//        }
-//        
-//        picker.dismiss(animated: true)
-//    }
-//}
+extension WriteViewController: UICollectionViewDelegate {
+    
+}
+
+extension WriteViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return writeViewModel.images.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCell.identifier, for: indexPath) as? ImageCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        let image = writeViewModel.images[indexPath.item]
+        cell.configure(with: image)
+        
+        // 삭제 클로저 설정
+        cell.onDelete = { [weak self] in
+            self?.writeViewModel.removeImage(at: indexPath.item)
+            collectionView.reloadData()
+        }
+        return cell
+    }
+}

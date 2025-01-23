@@ -63,9 +63,11 @@ final class MainViewController: UIViewController {
         mainView.circularImageView.isUserInteractionEnabled = true
     }
     
+    private let writeViewModel: WriteViewModel = .init(writeModel: WriteModel())
+    
     // 작성화면 모달 띄우는 메서드
     private func modalWriteViewController(with name: String) {
-        let writeViewController = WriteViewController()
+        let writeViewController = WriteViewController(writeViewModel: writeViewModel)
         writeViewController.hangdamName = name                                  // 지어진 이름 작성화면으로 전달
         writeViewController.delegate = self                                     // Delegate 연결
         writeViewController.modalTransitionStyle = .coverVertical               // 모달 스타일 설정

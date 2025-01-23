@@ -15,7 +15,7 @@ extension UIFont {
     }
     
     static func gyeonggiBatang(type: FontType, size: CGFloat) -> UIFont {
-        let fontName = "\(CustomFont.GyeonggiTitle)\(type.rawValue)" // L, M 중 사용가능
+        let fontName = "\(CustomFont.GyeonggiBatang)\(type.rawValue)" // rOTF, bOTF 중 사용가능
         print(fontName)
         return UIFont(name: fontName, size: size) ?? UIFont()
     }

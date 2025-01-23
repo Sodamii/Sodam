@@ -11,7 +11,7 @@ enum CustomFont: String {
     case MapoGoldenPier
     case SejongGeulggot
     case MaruBuriot
-    case GyeonggiTitle
+    case GyeonggiBatang
     case GowunBatang
     case NanumSquareNeo
     case JGaegujaengyi
@@ -28,4 +28,6 @@ enum FontType: String {
     case neoBold = "cBd"
     case jGaeguM = "Medium"
     case jGaeguL = "Light"
+    case rOTF = "ROTF"
+    case bOTF = "BOTF"
 }

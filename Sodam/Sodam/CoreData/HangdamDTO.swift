@@ -36,7 +36,3 @@ extension HangdamEntity {
         )
     }
 }
-
-extension HangdamDTO {
-    
-}

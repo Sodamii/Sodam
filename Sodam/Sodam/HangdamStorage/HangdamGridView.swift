@@ -41,7 +41,7 @@ fileprivate struct HangdamGrid: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(mockHangdam.name)
                 
-                Text(mockHangdam.startDate?.toString ?? "")
+                Text(mockHangdam.startDate?.toFormattedString ?? "")
             }
             .font(.mapoGoldenPier(15))
             .foregroundStyle(Color(uiColor: .darkGray))

@@ -26,7 +26,7 @@ struct HangdamStatusView: View {
                     .font(.mapoGoldenPier(24))
                 Text("Lv.\(mockHangdam.level) 애기 행담이")
                     .font(.mapoGoldenPier(18))
-                Text("\(mockHangdam.startDate?.toString ?? "") ~")
+                Text("\(mockHangdam.startDate?.toFormattedString ?? "") ~")
                     .font(.mapoGoldenPier(17))
             }
             .foregroundStyle(Color(uiColor: .white))

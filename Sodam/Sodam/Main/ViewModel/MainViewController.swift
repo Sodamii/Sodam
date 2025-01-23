@@ -22,13 +22,6 @@ final class MainViewController: UIViewController {
         super.viewDidLoad()
         configureFirstMessage()
         addGesture()
-        
-        for family in UIFont.familyNames {
-            print("Font Family: \(family)")
-            for fontName in UIFont.fontNames(forFamilyName: family) {
-                print(" - \(fontName)")
-            }
-        }
     }
     
     private func configureFirstMessage() {

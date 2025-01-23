@@ -14,7 +14,7 @@ struct HangdamStatusView: View {
     @Binding var mockHangdam: MockHangdam
     
     var body: some View {
-        HStack(alignment: .center, spacing: 16) {
+        HStack(alignment: .center, spacing: 20) {
             Image(.babyHangdam)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -24,11 +24,11 @@ struct HangdamStatusView: View {
             
             VStack(alignment: .leading, spacing: 10) {
                 Text(mockHangdam.name)
-                    .font(.mapoGoldenPier(24))
+                    .font(.maruburiot(type: .bold, size: 25))
                 Text("Lv.\(mockHangdam.level) 애기 행담이")
-                    .font(.mapoGoldenPier(18))
+                    .font(.maruburiot(type: .semiBold, size: 18))
                 Text("\(mockHangdam.startDate?.toString ?? "") ~")
-                    .font(.mapoGoldenPier(17))
+                    .font(.maruburiot(type: .regular, size: 16))
             }
             .foregroundStyle(Color(uiColor: .white))
         }

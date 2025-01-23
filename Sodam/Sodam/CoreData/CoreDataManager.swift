@@ -7,16 +7,25 @@
 
 import CoreData
 
+/// HangdamRepository에서 필요한 메소드들
 protocol HangdamManagingProtocol {
     var context: NSManagedObjectContext { get }
     
     func fetchHangdams() -> [HangdamEntity]
     func createHangdam() -> HangdamEntity
-    func updateHangdam(with id: NSManagedObjectID, _ dto: HangdamDTO)
+    func updateHangdam(with id: NSManagedObjectID, updateCase: HangdamUpdateCase)
 }
 
+/// HappinessRepository에서 필요한 메소드들
 protocol HappinessManagingProtocol {
+    var context: NSManagedObjectContext { get }
     
+    func createHappiness(_ dto: HappinessDTO, to hangdamID: NSManagedObjectID)
+    func getHappinesses(of hangdamID: NSManagedObjectID) -> [HappinessEntity]?
+    func deleteHappiness(with id: NSManagedObjectID)
+    
+    func checkHappinessCount(with hangdamID: NSManagedObjectID) -> Int?
+    func updateHangdam(with id: NSManagedObjectID, updateCase: HangdamUpdateCase)
 }
 
 final class CoreDataManager: HangdamManagingProtocol, HappinessManagingProtocol {
@@ -76,15 +85,24 @@ final class CoreDataManager: HangdamManagingProtocol, HappinessManagingProtocol 
     private func deleteHangdam(with id: NSManagedObjectID) {
         guard let entity = searchHangdam(with: id) else { return }
         context.delete(entity)
-        print("[CoreData] 삭제 완료")
+        print("[CoreData] 행담이 삭제 완료")
         saveContext()
     }
     
-    /// 행담이 수정
-    func updateHangdam(with id: NSManagedObjectID, _ dto: HangdamDTO) {
+    /// 행담이 수정 : update case에 따라 특정 attribute 수정
+    func updateHangdam(with id: NSManagedObjectID, updateCase: HangdamUpdateCase) {
         guard let entity = searchHangdam(with: id) else { return }
-        /// 현재 행담이 정보 업데이트는 이름 짓기 밖에 없으므로 이름 update만 구현
-        entity.name = dto.name
+        
+        switch updateCase {
+        case .name(let name):
+            entity.name = name
+        case .startDate(let date):
+            entity.startDate = date
+        case .endDate(let date):
+            entity.endDate = date
+        }
+
+        print("[CoreData] 행담이 정보 업데이트 완료")
         saveContext()
     }
     
@@ -98,6 +116,75 @@ final class CoreDataManager: HangdamManagingProtocol, HappinessManagingProtocol 
             print(error.localizedDescription)
             return nil
         }
+    }
+    
+    /// 행복한 기억 생성 : 행담이 id 받아 행담이에 추가
+    func createHappiness(_ dto: HappinessDTO, to hangdamID: NSManagedObjectID) {
+        guard let data = try? NSKeyedArchiver.archivedData(withRootObject: dto.imagePaths, requiringSecureCoding: true)
+        else {
+            print(DataError.convertImagePathsFailed.localizedDescription)
+            return
+        }
+        
+        let entity = HappinessEntity(context: context)
+        entity.content = dto.content
+        entity.date = dto.date
+        entity.imagePaths = data
+        
+        /// 행담이에 추가
+        appendHappiness(entity, to: hangdamID)
+        
+        print("[CoreData] 행복 생성 완료")
+        saveContext()
+    }
+    
+    /// 행복한 기억을 행담이에 추가하는 메소드 - 내부 호출
+    private func appendHappiness(_ entity: HappinessEntity, to hangamID: NSManagedObjectID) {
+        guard let hangdam = searchHangdam(with: hangamID)
+        else {
+            print(DataError.searchEntityFailed.localizedDescription)
+            return
+        }
+        
+        hangdam.addToHappinesses(entity)
+    }
+    
+    /// 행담이가 갖고 있는 행복한 기억들 호출
+    func getHappinesses(of hangdamID: NSManagedObjectID) -> [HappinessEntity]? {
+        guard let hangdam = searchHangdam(with: hangdamID)
+        else {
+            print(DataError.searchEntityFailed.localizedDescription)
+            return nil
+        }
+        
+        return hangdam.happinesses?.array as? [HappinessEntity]
+    }
+    
+    /// 행복한 기억 단일 삭제
+    func deleteHappiness(with id: NSManagedObjectID) {
+        guard let entity = searchHappiness(with: id) else { return }
+        context.delete(entity)
+        print("[CoreData] 행복 삭제 완료")
+        saveContext()
+    }
+    
+    /// 행복한 기억 검색 - 내부 호출
+    private func searchHappiness(with id: NSManagedObjectID) -> HappinessEntity? {
+        do {
+            let happiness = try context.existingObject(with: id) as? HappinessEntity
+            return happiness
+        } catch let error {
+            print(DataError.searchEntityFailed.localizedDescription)
+            print(error.localizedDescription)
+            return nil
+        }
+    }
+    
+    /// 행담이가 가진 현재 기억 개수 체크 - startDate, endDate 업데이트 기준으로 사용
+    // MARK: level up event 처리를 할 거라면, 이 값에 대한 observing 필요
+    func checkHappinessCount(with hangdamID: NSManagedObjectID) -> Int? {
+        guard let hangdam = searchHangdam(with: hangdamID) else { return nil }
+        return hangdam.happinesses?.count
     }
 }
 

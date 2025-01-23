@@ -8,7 +8,7 @@
 import Foundation
 
 struct HangdamDTO {
-    let id: String?
+    let id: String              // 행담이는 DTO가 먼저 생성될 일이 없고, Entity에서 변환될 일만 있기 때문에 상수
     var name: String?
     var happinessCount: Int
     var startDate: String?
@@ -31,8 +31,8 @@ extension HangdamEntity {
             id: self.objectID.uriRepresentation().absoluteString,
             name: self.name,
             happinessCount: self.happinesses?.count ?? 0,
-            startDate: self.startDate?.toString,
-            endDate: self.endDate?.toString
+            startDate: self.startDate?.toFormattedString,
+            endDate: self.endDate?.toFormattedString
         )
     }
 }

@@ -7,6 +7,13 @@
 
 import Foundation
 
+protocol HangdamRepositoryProtocol {
+    func getCurrentHangdam() -> HangdamDTO
+    func getSavedHangdams() -> [HangdamDTO]
+    func createNewHangdam() -> HangdamDTO
+    func nameHangdam(id: String, name: String)
+}
+
 final class HangdamRepository {
     private let coreDataManager: HangdamManagingProtocol
     
@@ -38,16 +45,10 @@ final class HangdamRepository {
         return coreDataManager.createHangdam().toDTO
     }
     
-    /// 행담이 업데이트 : 현재로서는 행담이 이름 처음 지을 때만 사용
-    func updateHangdam(_ hangdam: HangdamDTO) {
-        guard let id = hangdam.id,
-              let url = URL(string: id),
-              let convertedID = coreDataManager.context.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url)
-        else {
-            print(DataError.convertIDFailed.localizedDescription)
-            return
-        }
+    /// 행담이 이름 짓기
+    func nameHangdam(id: String, name: String) {
+        guard let id = IDConverter.toNSManagedObjectID(from: id, in: coreDataManager.context) else { return }
         
-        coreDataManager.updateHangdam(with: convertedID, hangdam)
+        coreDataManager.updateHangdam(with: id, updateCase: .name(name))
     }
 }

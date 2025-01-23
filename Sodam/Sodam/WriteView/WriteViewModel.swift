@@ -75,12 +75,6 @@ final class WriteViewModel: NSObject {
                 self?.showImagePicker()
             }
         )
-        
-//        self.output = Output(
-//            postUpdated: { _ in },
-//            cameraAccessGranted: { _ in },
-//            showImagePicker: { _ in }
-//        )
     }
     
     // 카메라 권한 요청

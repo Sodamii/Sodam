@@ -22,6 +22,10 @@ final class WriteViewController: UIViewController {
         self.writeViewModel = WriteViewModel(writeModel: writeModel)
         super.init(coder: coder)
     }
+    
+    // 제약 조건 변수 선언
+    private var containerBottomConstraint: Constraint?
+    
     // MARK: - UI 컴포넌트 선언
     
     // 화면 상단 날짜 레이블
@@ -31,7 +35,6 @@ final class WriteViewController: UIViewController {
         label.font = .mapoGoldenPier(20)
         label.textColor = .black
         label.textAlignment = .center
-        label.layer.borderWidth = 1
         return label
     }()
     
@@ -41,7 +44,6 @@ final class WriteViewController: UIViewController {
         textView.font = .sejongGeulggot(18)
         textView.textColor = .darkGray
         textView.backgroundColor = .viewBackground
-        textView.layer.borderWidth = 1
         return textView
     }()
     
@@ -58,7 +60,6 @@ final class WriteViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: "ImageCollectionViewCell")
-        collectionView.layer.borderWidth = 1
         return collectionView
     }()
     
@@ -68,7 +69,6 @@ final class WriteViewController: UIViewController {
         button.setImage(UIImage(systemName: "camera"), for: .normal)
         button.tintColor = .gray
         button.addTarget(self, action: #selector(openCamera), for: .touchUpInside)
-        button.layer.borderWidth = 1
         return button
     }()
     
@@ -78,7 +78,6 @@ final class WriteViewController: UIViewController {
         button.setImage(UIImage(systemName: "photo.on.rectangle"), for: .normal)
         button.tintColor = .gray
         button.addTarget(self, action: #selector(addImage), for: .touchUpInside)
-        button.layer.borderWidth = 1
         return button
     }()
     
@@ -88,7 +87,6 @@ final class WriteViewController: UIViewController {
         button.setImage(UIImage(systemName: "checkmark"), for: .normal)
         button.tintColor = .gray
         button.addTarget(self, action: #selector(submitText), for: .touchUpInside)
-        button.layer.borderWidth = 1
         return button
     }()
     
@@ -98,7 +96,6 @@ final class WriteViewController: UIViewController {
         button.setImage(UIImage(systemName: "xmark"), for: .normal)
         button.tintColor = .gray
         button.addTarget(self, action: #selector(cancelText), for: .touchUpInside)
-        button.layer.borderWidth = 1
         return button
     }()
     
@@ -107,18 +104,36 @@ final class WriteViewController: UIViewController {
         
         setupUI()
         bindViewModel()
+        setupKeyboardNotification()
     }
     
     private func setupUI() {
         view.backgroundColor = .viewBackground
+        
+        dateLabel.layer.borderWidth = 1
+        textView.layer.borderWidth = 1
+        collectionView.layer.borderWidth = 1
+        cameraButton.layer.borderWidth = 1
+        photoButton.layer.borderWidth = 1
+        cancelButton.layer.borderWidth = 1
+        submitButton.layer.borderWidth = 1
+        
+        
+        let containerView: UIView = UIView()
         [
-            dateLabel,
-            textView,
+            collectionView,
             cameraButton,
             photoButton,
             submitButton,
+        ].forEach { containerView.addSubview($0) }
+        
+        containerView.layer.borderWidth = 1
+        
+        [
+            dateLabel,
+            textView,
             cancelButton,
-            collectionView
+            containerView
         ].forEach { view.addSubview($0) }
         
         dateLabel.snp.makeConstraints { make in
@@ -139,30 +154,81 @@ final class WriteViewController: UIViewController {
             make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
         }
         
-        collectionView.snp.makeConstraints { make in
-            make.top.equalTo(textView.snp.bottom).offset(20)
+        containerView.snp.makeConstraints { make in
             make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
-            make.height.equalTo(view.safeAreaLayoutGuide.snp.width).multipliedBy(0.2)
+            make.height.equalTo(view.safeAreaLayoutGuide.snp.height).multipliedBy(0.2)
+            containerBottomConstraint = make.bottom.equalTo(view.safeAreaLayoutGuide).inset(60).constraint
+        }
+        
+        collectionView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.height.equalTo(view.safeAreaLayoutGuide.snp.width).multipliedBy(0.25)
         }
         
         cameraButton.snp.makeConstraints { make in
-            make.top.equalTo(collectionView.snp.bottom).offset(20)
-            make.width.height.equalTo(view.safeAreaLayoutGuide.snp.width).multipliedBy(0.1)
+            make.top.equalTo(collectionView.snp.bottom).offset(10)
+            make.bottom.equalTo(containerView.snp.bottom)
+            make.width.equalTo(cameraButton.snp.height)
             make.leading.equalTo(textView.snp.leading)
         }
         
         photoButton.snp.makeConstraints { make in
             make.top.equalTo(cameraButton.snp.top)
-            make.width.height.equalTo(view.safeAreaLayoutGuide.snp.width).multipliedBy(0.1)
+            make.centerY.equalTo(cameraButton)
+            make.width.equalTo(photoButton.snp.height)
             make.leading.equalTo(cameraButton.snp.trailing).offset(8)
         }
         
         submitButton.snp.makeConstraints { make in
             make.top.equalTo(cameraButton.snp.top)
-            make.width.height.equalTo(view.safeAreaLayoutGuide.snp.width).multipliedBy(0.1)
+            make.centerY.equalTo(cameraButton)
+            make.width.equalTo(submitButton.snp.height)
             make.trailing.equalTo(textView.snp.trailing)
         }
     }
+    
+    // 키보드 감지
+    private func setupKeyboardNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    // 키보드 나타날 때 호출되는 메서드
+    @objc private func keyboardWillShow(_ notification: Notification) {
+        guard let userInfo = notification.userInfo, // 키보드가 나타날 때 프레임 및 애니메이션 시간 정보 저장
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect, // 키보드 크기와 위치 저장
+              let animationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { // userInfo 중 애니메이션 지속 시간 저장
+            return
+        }
+        
+        // 화면 높이 기준으로 비율 계산 (view.bounds.height 사용)
+        let screenHeight = view.bounds.height
+        let keyboardHeightRatio = keyboardFrame.height / screenHeight
+
+        // 동적으로 계산된 inset 적용
+        let inset = view.safeAreaLayoutGuide.layoutFrame.height * keyboardHeightRatio
+        containerBottomConstraint?.update(inset: inset)
+        
+        // 업데이트 된 레이아웃 반영
+        UIView.animate(withDuration: animationDuration) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    // 키보드 사라질 때 호출되는 메서드
+    @objc private func keyboardWillHide(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let animationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else {
+            return
+        }
+        
+        containerBottomConstraint?.update(inset: 60)
+        UIView.animate(withDuration: animationDuration) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
     
     private func bindViewModel() {
         

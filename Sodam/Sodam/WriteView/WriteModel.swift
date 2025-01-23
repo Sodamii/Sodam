@@ -7,10 +7,10 @@
 
 import UIKit
 
-// 작성된 텍스트와 사진 저장
+// 작성된 텍스트와 사진을 저장하는 구조체
 struct Post {
-    var text: String
-    var images: [UIImage]
+    var content: String // 작성된 텍스트
+    var images: [UIImage] // 첨부된 이미지 배열
 }
 
 final class WriteModel {
@@ -21,21 +21,27 @@ final class WriteModel {
         }
     }
     
-    // 클로저 정의
+    // 데이터 변경 시 호출될 클로저
     var onPostUpdated: ((Post) -> Void)?
     
-    init(initialPost: Post = Post(text: "", images: [])) {
+    init(initialPost: Post = Post(content: "", images: [])) {
+        // 초기 Post 데이터 설정
         post = initialPost
     }
     
+    // MARK: - 데이터 업데이트 메서드
+    
+    // 텍스트 업데이트 메서드
     func updateText(_ text: String) {
-        post.text = text
+        post.content = text
     }
     
+    // 이미지 추가 메서드
     func addImage(_ image: UIImage) {
         post.images.append(image)
     }
     
+    // 이미지 삭제 메서드
     func removeImage(at index: Int) {
         post.images.remove(at: index)
     }

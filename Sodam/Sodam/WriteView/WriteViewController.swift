@@ -20,7 +20,7 @@ final class WriteViewController: UIViewController {
     private let writeViewModel: WriteViewModel
     private let writeView = WriteView()
     
-    // 초기화
+    // MARK: - 초기화
     init(writeViewModel: WriteViewModel) {
         self.writeViewModel = writeViewModel
         super.init(nibName: nil, bundle: nil)
@@ -31,6 +31,8 @@ final class WriteViewController: UIViewController {
         self.writeViewModel = WriteViewModel(writeModel: writeModel)
         super.init(coder: coder)
     }
+    
+    // MARK: - 뷰 생명주기
     
     // 뷰를 로드할 때 WriteView를 루트 뷰로 설정
     override func loadView() {
@@ -65,6 +67,8 @@ final class WriteViewController: UIViewController {
             delegate?.writeViewControllerDiddismiss()
         }
     }
+    
+    // MARK: - 메서드 선언
     
     // WriteView에 정의된 버튼들의 액션 설정 메서드
     private func setupActions() {
@@ -119,7 +123,7 @@ final class WriteViewController: UIViewController {
     
     // UI 업데이트 메서드
     private func updateUI(with post: Post) {
-        writeView.setTextViewText(post.text) // 텍스트뷰 업데이트
+        writeView.setTextViewText(post.content) // 텍스트뷰 업데이트
         writeView.collectionViewReload() // 컬렉션 뷰 리로드
     }
     
@@ -159,14 +163,16 @@ final class WriteViewController: UIViewController {
     
     // 작성완료 버튼 탭할 때 호출되는 메서드
     @objc private func submitText() {
-        // Todo: 작성 완료 로직
+        // WriteViewModel에 작성 완료 이벤트 전달
+        writeViewModel.submitPost()
     }
     
     // 취소 버튼 탭할 때 호출되는 메서드
     @objc private func tapDismiss() {
+        // WriteViewModel에 취소 이벤트 전달
+        writeViewModel.cancelPost()
         // 모달 닫기
         dismiss(animated: true, completion: nil)
-        // Todo: 글 작성 취소 로직
     }
 
     // 카메라 권한이 없는 경우 설정 화면으로 이동하는 Alert 표시

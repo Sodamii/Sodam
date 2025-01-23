@@ -29,10 +29,13 @@ enum MainMessages: String, CaseIterable {
     case message19 = "자신을 소중히 여길 때, 행복은 더 자주 찾아온답니다."
     case message20 = "지금 느끼는 감사가 내일의 행복을 만들어줄거에요"
     
+    // 첫번쨔 메세지는 별도로 관리
     static let firstMessage = "소소하고 확실한 행복으로 행담이를 깨워볼까요?"
     
     // 랜덤으로 메세지 반환하기 (firstMessage는 제외하기)
     static func getRandomMessage() -> String {
-        return Self.allCases.randomElement()?.rawValue ?? "오늘의 소확행 기록하기."
+        let randomMessages = Self.allCases.map { $0.rawValue }
+        // firstMessage 제외하고 랜덤 메세지 반환
+        return randomMessages.randomElement() ?? "오늘의 소확행 기록하기."
     }
 }

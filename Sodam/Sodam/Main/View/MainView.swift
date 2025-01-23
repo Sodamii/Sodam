@@ -125,5 +125,7 @@ final class MainView: UIView {
         if let gifImage = UIImage.animatedImage(withGIFNamed: name) {
             circularImageView.image = gifImage
         }
+        
+        
     }
 }

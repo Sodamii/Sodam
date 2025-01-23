@@ -10,9 +10,9 @@ import Foundation
 enum MainMessages: String, CaseIterable {
     case message1 = "행복은 먼 곳에 있지 않아요. 지금 이 순간에 왔을지도요."
     case message2 = "작은 것에 감사할 줄 알 때, 큰 행복이 찾아온답니다."
-    case message3 = "당신은 이미 충분히 빛나는 전구 같은 사람!"
+    case message3 = "당신은 이미 충분히 빛나는, 전구 같은 사람!"
     case message4 = "웃음은 마음의 태양이죠. 오늘도 환하게 웃어보기!"
-    case message5 = "당신이 라면만 먹어도 행복하다면 그게 행복이에요."
+    case message5 = "당신이 라면만 먹어도 행복하다면, 그게 행복이에요."
     case message6 = "좋은 생각이 좋은 하루를 만들어준답니다."
     case message7 = "오늘 하루, 고생 많았어요. 화이팅"
     case message8 = "작은 친절 하나가 소소한 행복을 만듭니다."

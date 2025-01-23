@@ -37,7 +37,7 @@ final class MainView: UIView {
         let label = UILabel()
         label.text = "행담이에게 행복한 기억을 먹여주세욤 >< 뿌뿌~~"
         label.textAlignment = .center
-        label.font = .mapoGoldenPier(14)
+        label.font = .mapoGoldenPier(18)
         label.numberOfLines = 0
         label.textColor = .darkGray
         return label
@@ -93,7 +93,7 @@ final class MainView: UIView {
         }
         
         createbutton.snp.makeConstraints {
-            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(30)
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(50)
             $0.centerX.equalToSuperview()
             $0.height.equalTo(60)
             $0.width.equalToSuperview().multipliedBy(0.85)
@@ -125,5 +125,7 @@ final class MainView: UIView {
         if let gifImage = UIImage.animatedImage(withGIFNamed: name) {
             circularImageView.image = gifImage
         }
+        
+        
     }
 }

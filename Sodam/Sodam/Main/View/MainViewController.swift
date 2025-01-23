@@ -141,3 +141,12 @@ extension MainViewController: WriteViewControllerDelegate {
         print("WriteViewController 모달이 닫혔습니다.")
     }
 }
+
+extension MainViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        // 현재 텍스트와 새로운 텍스트를 합친 길이가 6글자를 초과하지 않도록 제한
+        let currentText = textField.text ?? ""
+        let newText = (currentText as NSString).replacingCharacters(in: range, with: string)
+        return newText.count <= 6
+    }
+}

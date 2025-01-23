@@ -26,7 +26,8 @@ struct MockHangdam {
     static let mockHangdam = MockHangdam(name: "멍담이", startDate: Date.now - 86400, endDate: nil)
 }
 
-struct MockHappiness {
+struct MockHappiness: Identifiable {
+    let id: UUID = .init()
     var imagePaths: [String]?
     let content: String
     let tag: Tag?

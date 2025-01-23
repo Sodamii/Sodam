@@ -15,9 +15,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
         
-        let writeModel = WriteModel()
-        let writeViewModel = WriteViewModel(writeModel: writeModel)
-        window.rootViewController = WriteViewController(writeViewModel: writeViewModel)
+        window.rootViewController = CustomTabBarController()
         window.makeKeyAndVisible()
         
         self.window = window

@@ -14,93 +14,91 @@ final class WriteViewModel: NSObject {
     
     private let writeModel: WriteModel
     
-    struct Input {
-        let textUpdated: ((String) -> Void)
-        let cameraAccessRequested: (() -> Void)
-        let imagePickerRequested: (() -> Void)
+    init(writeModel: WriteModel) {
+        self.writeModel = writeModel
+        super.init()
     }
     
-    struct Output {
-        var postUpdated: ((Post) -> Void)
-        var cameraAccessGranted: ((Bool) -> Void)
-        var showImagePicker: ((PHPickerViewController) -> Void)
-        var imagesUpdated: (() -> Void)
-    }
-    
-    var input: Input
-    var output: Output
-    
-    // 데이터 변경 알림용 클로저
-    var onImagesUpdated: (() -> Void)?
+    // Model의 데이터를 View에 전달
     var images: [UIImage] {
         return writeModel.post.images
     }
-    
-    init(writeModel: WriteModel) {
-        self.writeModel = writeModel
-        
-        // 기본값을 설정
-        self.input = Input(
-            textUpdated: { _ in },
-            cameraAccessRequested: { },
-            imagePickerRequested: { }
-        )
-        self.output = Output(
-            postUpdated: { _ in },
-            cameraAccessGranted: { _ in },
-            showImagePicker: { _ in },
-            imagesUpdated: { }
-        )
-        
-        super.init()
-        
-        setupBindings()
+    var text: String {
+        return writeModel.post.text
     }
     
-    private func setupBindings() {
-        // Model에서 Post가 업데이트되면 View로 전달
-        writeModel.onPostUpdated = { [weak self] post in
-            self?.output.postUpdated(post)
-        }
-        
-        // Input/Output 연결
-        self.input = Input(
-            textUpdated: { [weak self] text in
-                self?.writeModel.updateText(text)
-            },
-            cameraAccessRequested: { [weak self] in
-                self?.requestCameraAccess()
-            },
-            imagePickerRequested: { [weak self] in
-                self?.showImagePicker()
-            }
-        )
-    }
-    
-    // 카메라 권한 요청
-    func requestCameraAccess() {
-        AVCaptureDevice.requestAccess(for: .video) { isAuthorized in
-            DispatchQueue.main.async {
-                self.output.cameraAccessGranted(isAuthorized)
-            }
-        }
-    }
-    
-    func showImagePicker() {
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 1 // 한 번에 하나의 이미지 선택
-        configuration.filter = .images // 이미지 형식만 허용
-        
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        
-        output.showImagePicker(picker)
+    // 텍스트 업데이트 메서드
+    func updateText(_ text: String) {
+        writeModel.updateText(text)
     }
     
     // 이미지 제거
     func removeImage(at index: Int) {
         writeModel.removeImage(at: index)
-        output.imagesUpdated()
+    }
+    
+    // Model의 데이터 변경을 관찰
+    func bindPostUpdated(completion: @escaping (Post) -> Void) {
+        writeModel.onPostUpdated = completion
+    }
+    
+    // 카메라 권한 요청
+    func requestCameraAccess(completion: @escaping (Bool) -> Void) {
+        let status = AVCaptureDevice.authorizationStatus(for: .video)
+        
+        switch status {
+        case .authorized:
+            completion(true)
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { isGranted in
+                DispatchQueue.main.async {
+                    completion(isGranted)
+                }
+            }
+        case .denied, .restricted:
+            completion(false)
+        @unknown default:
+            completion(false)
+        }
+    }
+    
+    // 사진 라이브러리 권한 요청
+    func requestPhotoLibraryAccess(completion: @escaping (Bool) -> Void) {
+        let status = PHPhotoLibrary.authorizationStatus()
+        
+        switch status {
+        case .authorized, .limited:
+            completion(true)
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization { newStatus in
+                DispatchQueue.main.async {
+                    completion(newStatus == .authorized)
+                }
+            }
+        case .denied, .restricted:
+            completion(false)
+        @unknown default:
+            completion(false)
+        }
+    }
+    
+    // 카메라 컨트롤러 생성
+    func createCameraPicker() -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = self
+        return picker
+    }
+    
+    // 사진 선택 컨트롤러 생성
+    func createPhotoPicker() -> PHPickerViewController {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 1
+        configuration.filter = .images
+        
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        return picker
     }
 }
 
@@ -118,7 +116,6 @@ extension WriteViewModel: PHPickerViewControllerDelegate {
             if let image = image as? UIImage {
                 DispatchQueue.main.async {
                     self?.writeModel.addImage(image)
-                    self?.output.imagesUpdated()
                 }
             }
         }
@@ -128,7 +125,7 @@ extension WriteViewModel: PHPickerViewControllerDelegate {
 extension WriteViewModel: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         // 찍은 이미지 가져오기
-        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
+        guard let image = info[.originalImage] as? UIImage else {
             // 이미지가 유효하지 않은 경우 이미지 선택창 닫기
             picker.dismiss(animated: true)
             return

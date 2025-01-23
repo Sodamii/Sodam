@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import AVFoundation
 
 // 작성된 텍스트와 사진 저장
 struct Post {
@@ -18,10 +17,11 @@ final class WriteModel {
     
     private(set) var post: Post {
         didSet {
-            onPostUpdated?(post)
+            onPostUpdated?(post) // post가 변경되면 클로저 호출
         }
     }
     
+    // 클로저 정의
     var onPostUpdated: ((Post) -> Void)?
     
     init(initialPost: Post = Post(text: "", images: [])) {

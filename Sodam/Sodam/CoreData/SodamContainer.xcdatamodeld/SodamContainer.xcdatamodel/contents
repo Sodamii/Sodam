@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24C101" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="HangdamEntity" representedClassName="HangdamEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="happinesses" optional="YES" toMany="YES" deletionRule="Deny" ordered="YES" destinationEntity="HappinessEntity" inverseName="hangdam" inverseEntity="HappinessEntity"/>
+    </entity>
+    <entity name="HappinessEntity" representedClassName="HappinessEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="imagePaths" optional="YES" attributeType="Binary"/>
+        <attribute name="tag" optional="YES" attributeType="String"/>
+        <relationship name="hangdam" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="HangdamEntity" inverseName="happinesses" inverseEntity="HangdamEntity"/>
+    </entity>
+</model>

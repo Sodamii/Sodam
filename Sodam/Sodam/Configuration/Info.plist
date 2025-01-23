@@ -2,10 +2,29 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>앱에서 찍은 사진을 앨범에 추가하기 위해 권한이 필요합니다.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>앱에서 사진을 선택하기 위해 사진 라이브러리 접근 권한이 필요합니다.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>앱에서 사진을 촬영하기 위해 카메라 접근 권한이 필요합니다.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>SejongGeulggot.otf</string>
 		<string>MapoGoldenPier.otf</string>
+		<string>MaruBuriot-Bold.otf</string>
+		<string>MaruBuriot-Regular.otf</string>
+		<string>MaruBuriot-SemiBold.otf</string>
+		<string>GyeonggiTitleL.otf</string>
+		<string>GyeonggiTitleM.otf</string>
+		<string>NanumSquareNeoOTF-Bd.otf</string>
+		<string>NanumSquareNeoOTF-Lt.otf</string>
+		<string>NanumSquareNeoOTF-Rg.otf</string>
+		<string>J개구쟁이-Bold.otf</string>
+		<string>J개구쟁이-Light.otf</string>
+		<string>J개구쟁이-Medium.otf</string>
+		<string>경기천년바탕OTF_Bold.otf</string>
+		<string>경기천년바탕OTF_Regular.otf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

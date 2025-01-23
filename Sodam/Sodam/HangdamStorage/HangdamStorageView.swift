@@ -32,7 +32,7 @@ struct HangdamStorageView: View {
             .padding(.top)
             .padding(.horizontal)
         }
-        
+        .background(Color.viewBackground)
     }
 }
 

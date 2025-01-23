@@ -62,10 +62,13 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(title: String, switchAction: Selector?) {
+    func configure(title: String, switchAction: Selector?, timeAction: Selector?) {
         setTitle.text = title
         if let action = switchAction {
-            switchButton.addTarget(nil, action: action, for: .valueChanged) // nil을 self로 변경
+            switchButton.addTarget(nil, action: action, for: .valueChanged)
+        }
+        if let action = timeAction {
+            timePicker.addTarget(nil, action: action, for: .valueChanged)
         }
     }
 }
@@ -88,7 +91,6 @@ private extension SettingTableViewCell {
         setTitle.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(15)
             $0.leading.equalToSuperview().offset(20)
-            //$0.centerY.equalTo(baseView.snp.centerY)
         }
         
         horizonStackView.snp.makeConstraints {

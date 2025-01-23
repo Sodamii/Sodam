@@ -15,8 +15,8 @@ final class MainView: UIView {
         let label = UILabel()
         label.text = ""
         label.textAlignment = .center
-        label.font = .mapoGoldenPier(18)
-        label.textColor = .darkGray
+        label.font = .mapoGoldenPier(27)
+        label.textColor = .textAccent
         label.isHidden = true // 초기 상태에는 숨김
         return label
     }()
@@ -24,7 +24,6 @@ final class MainView: UIView {
     // 이미지 뷰
     public let circularImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage.babyHangdam
         imageView.contentMode = .scaleAspectFit
         imageView.backgroundColor = .imageBackground
         
@@ -118,6 +117,13 @@ final class MainView: UIView {
             nameLabel.isHidden = false
         } else {
             nameLabel.isHidden = true
+        }
+    }
+    
+    // GIF 업데이트 메서드 추가
+    public func updateGif(with name: String) {
+        if let gifImage = UIImage.animatedImage(withGIFNamed: name) {
+            circularImageView.image = gifImage
         }
     }
 }

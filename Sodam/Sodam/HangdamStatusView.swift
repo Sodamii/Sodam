@@ -18,6 +18,7 @@ struct HangdamStatusView: View {
             Image(.babyHangdam)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
+                .frame(width: size.width / 3)
                 .background(Color.imageBackground)
                 .clipShape(.circle)
             

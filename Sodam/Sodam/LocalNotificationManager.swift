@@ -17,7 +17,7 @@ final class LocalNotificationManager {
     /// - Parameters:
     ///   - title: Push Notification에 표시할 제목
     ///   - body: Push Notification에 표시할 본문
-    ///   - time:
+    ///   - time: 사용자가 설정한 알림 시간
     ///   - seconds: 현재로부터 seconds초 이후에 알림을 보냅니다. 0보다 커야하며 1이하 실수도 가능
     ///   - identifier: 실행 취소, 알림 구분 등에 사용되는 식별자입니다. "TEST_NOTI" 형식으로 작성
     func pushReservedNotification(title: String,
@@ -31,11 +31,12 @@ final class LocalNotificationManager {
         notificationContent.title = title
         notificationContent.body = body
         
-        // 조건(시간, 반복)
+        // 알림이 발송될 정확한 시간 설정
         let triggerComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: time)
+        // 사용자가 지정한 `time`을 기반으로 알림 트리거를 설정
         let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: true)
 
-        // 요청
+        // 알림 요청 생성
         let request = UNNotificationRequest(identifier: identifier,
                                             content: notificationContent,
                                             trigger: trigger)

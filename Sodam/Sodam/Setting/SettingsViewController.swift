@@ -131,8 +131,9 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         isSwitchOn = sender.isOn
         print("isSwitchOn \(isSwitchOn)")
         UserDefaultsManager.shared.saveIsToggleNotification(isSwitchOn)
-        // 알림을 예약하거나 취소
+        // 알림 예약 또는 취소 처리
         if let savedTime = UserDefaultsManager.shared.getNotificationTime(), isSwitchOn {
+            // 저장된 알림 시간과 스위치 상태가 켜져 있을 경우
             LocalNotificationManager.shared.pushReservedNotification(
                 title: "Sodam",
                 body: "소소한 행복을 적어 행담이를 키워주세요.",
@@ -140,6 +141,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 seconds: 1,
                 identifier: "SelectedTimeNotification")
         } else {
+            // 스위치가 꺼져 있을 경우 기존 알림시간 삭제
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["SelectedTimeNotification"])
         }
         settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)

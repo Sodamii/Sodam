@@ -29,6 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
+        // 알림을 모두 처리한 후, 배지 숫자를 0으로 설정
         UIApplication.shared.applicationIconBadgeNumber = 0
     }
 

@@ -24,19 +24,37 @@ final class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .viewBackground
-        setTableView()
+        setupTableView()
+        setupScheduledNotification()
     }
 }
 
 // MARK: - Private Method
 
 private extension SettingsViewController {
-    func setTableView() {
+    func setupTableView() {
         settingView.tableView.dataSource = self
         settingView.tableView.delegate = self
         settingView.tableView.separatorInset.right = 15
         
         settingView.tableView.register(SettingTableViewCell.self, forCellReuseIdentifier: SettingTableViewCell.reuseIdentifier)
+    }
+    
+    func setupScheduledNotification() {
+        // UserDefaults에서 알림 상태 복원
+        isSwitchOn = UserDefaultsManager.shared.getIsToggleNotification()
+        
+        if isSwitchOn {
+            if let savedTime = UserDefaultsManager.shared.getNotificationTime() {
+                LocalNotificationManager.shared.pushReservedNotification(
+                    title: "Sodam",
+                    body: "소소한 행복을 적어 행담이를 키워주세요.",
+                    time: savedTime,
+                    seconds: 0,
+                    identifier: "SelectedTimeNotification"
+                )
+            }
+        }
     }
 }
 
@@ -62,7 +80,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     
     // 섹션 헤더 높이 설정
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 20 // 섹션 간 간격
+        return 20
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -86,11 +104,11 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
             
             if indexPath.row == 0 {
                 // 첫 번째 셀: 알림 설정
-                cell.configure(title: Setting.SetCell.notification.rawValue, switchAction: #selector(didToggleSwitch(_:)))
+                cell.configure(title: Setting.SetCell.notification.rawValue, switchAction: #selector(didToggleSwitch(_:)), timeAction: nil)
                 cell.switchButton.isOn = isSwitchOn
             } else if indexPath.row == 1 && isSwitchOn {
                 // 두 번째 셀: 시간 설정 (스위치가 켜졌을 때만 표시)
-                cell.configure(title: Setting.SetCell.setTime.rawValue, switchAction: nil)
+                cell.configure(title: Setting.SetCell.setTime.rawValue, switchAction: nil, timeAction: #selector(userScheduleNotification))
                 cell.timePicker.isHidden = false
                 cell.switchButton.isHidden = true
             }
@@ -102,9 +120,9 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
 
             // 두 번째 섹션의 셀 (항상 두 개 표시)
             if indexPath.row == 0 {
-                cell.configure(title: Setting.SetCell.appReview.rawValue, switchAction: nil)
+                cell.configure(title: Setting.SetCell.appReview.rawValue, switchAction: nil, timeAction: nil)
             } else if indexPath.row == 1 {
-                cell.configure(title: "\(Setting.SetCell.appVersion.rawValue): 1.0.0", switchAction: nil)
+                cell.configure(title: "\(Setting.SetCell.appVersion.rawValue): 1.0.0", switchAction: nil, timeAction: nil)
             }
         }
         return cell
@@ -113,6 +131,35 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     @objc func didToggleSwitch(_ sender: UISwitch) {
         isSwitchOn = sender.isOn
         print("isSwitchOn \(isSwitchOn)")
+        UserDefaultsManager.shared.saveIsToggleNotification(isSwitchOn)
+        // 알림을 예약하거나 취소
+        if let savedTime = UserDefaultsManager.shared.getNotificationTime(), isSwitchOn {
+            LocalNotificationManager.shared.pushReservedNotification(
+                title: "Sodam",
+                body: "소소한 행복을 적어 행담이를 키워주세요.",
+                time: savedTime,
+                seconds: 1,
+                identifier: "SelectedTimeNotification"
+            )
+        } else {
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["SelectedTimeNotification"])
+        }
         settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+    }
+    
+    // 사용자가 선택한 알림 시간 UserDefaultsManager에 저장
+    @objc func userScheduleNotification(_ sender: UIDatePicker) {
+        UserDefaultsManager.shared.saveNotificationTime(sender.date)  // Date객체를 그대로 UserDefaultsManager 저장(현지시간으로는 안보임)
+        
+        // 새로 선택된 시간에 맞춰 알림을 예약하는 코드가 필요하여 작성
+        if isSwitchOn {
+            LocalNotificationManager.shared.pushReservedNotification(
+                title: "Sodam",
+                body: "소소한 행복을 적어 행담이를 키워주세요.",
+                time: sender.date,
+                seconds: 0,
+                identifier: "SelectedTimeNotification"
+            )
+        }
     }
 }

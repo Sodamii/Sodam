@@ -2,7 +2,7 @@
 //  WriteViewController.swift
 //  Sodam
 //
-//  Created by t2023-m0072 on 1/21/25.
+//  Created by 박민석 on 1/21/25.
 //
 
 import UIKit
@@ -11,6 +11,7 @@ import SnapKit
 final class WriteViewController: UIViewController {
     
     private let writeViewModel: WriteViewModel
+    private let writeView = WriteView()
     
     init(writeViewModel: WriteViewModel) {
         self.writeViewModel = writeViewModel
@@ -23,169 +24,23 @@ final class WriteViewController: UIViewController {
         super.init(coder: coder)
     }
     
-    // 제약 조건 변수 선언
-    private var containerBottomConstraint: Constraint?
-    
-    // MARK: - UI 컴포넌트 선언
-    
-    // 화면 상단 날짜 레이블
-    private let dateLabel: UILabel = {
-        let label: UILabel = UILabel()
-        label.text = DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .none)
-        label.font = .mapoGoldenPier(20)
-        label.textColor = .black
-        label.textAlignment = .center
-        return label
-    }()
-    
-    // 글 작성 텍스트뷰
-    private let textView: UITextView = {
-        let textView: UITextView = UITextView()
-        textView.font = .sejongGeulggot(18)
-        textView.textColor = .darkGray
-        textView.backgroundColor = .viewBackground
-        return textView
-    }()
-    
-    // 이미지뷰를 담을 컬렉션뷰
-    private lazy var collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 80, height: 80)
-        layout.minimumInteritemSpacing = 8
-        layout.scrollDirection = .horizontal
-        
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .viewBackground
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: "ImageCollectionViewCell")
-        return collectionView
-    }()
-    
-    // 카메라 버튼
-    private let cameraButton: UIButton = {
-        let button: UIButton = UIButton()
-        button.setImage(UIImage(systemName: "camera"), for: .normal)
-        button.tintColor = .gray
-        button.addTarget(self, action: #selector(openCamera), for: .touchUpInside)
-        return button
-    }()
-    
-    // 사진 선택 버튼
-    private let photoButton: UIButton = {
-        let button: UIButton = UIButton()
-        button.setImage(UIImage(systemName: "photo.on.rectangle"), for: .normal)
-        button.tintColor = .gray
-        button.addTarget(self, action: #selector(addImage), for: .touchUpInside)
-        return button
-    }()
-    
-    // 작성 완료 버튼
-    private let submitButton: UIButton = {
-        let button: UIButton = UIButton()
-        button.setImage(UIImage(systemName: "checkmark"), for: .normal)
-        button.tintColor = .gray
-        button.addTarget(self, action: #selector(submitText), for: .touchUpInside)
-        return button
-    }()
-    
-    // 작성 취소 버튼
-    private let cancelButton: UIButton = {
-        let button: UIButton = UIButton()
-        button.setImage(UIImage(systemName: "xmark"), for: .normal)
-        button.tintColor = .gray
-        button.addTarget(self, action: #selector(cancelText), for: .touchUpInside)
-        return button
-    }()
+    override func loadView() {
+        view = writeView
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setupUI()
+        writeView.setCollectionViewDataSourceDelegate(dataSource: self, delegate: self)
         bindViewModel()
         setupKeyboardNotification()
+        setupActions()
     }
     
-    private func setupUI() {
-        view.backgroundColor = .viewBackground
-        
-        dateLabel.layer.borderWidth = 1
-        textView.layer.borderWidth = 1
-        collectionView.layer.borderWidth = 1
-        cameraButton.layer.borderWidth = 1
-        photoButton.layer.borderWidth = 1
-        cancelButton.layer.borderWidth = 1
-        submitButton.layer.borderWidth = 1
-        
-        
-        let containerView: UIView = UIView()
-        [
-            collectionView,
-            cameraButton,
-            photoButton,
-            submitButton,
-        ].forEach { containerView.addSubview($0) }
-        
-        containerView.layer.borderWidth = 1
-        
-        [
-            dateLabel,
-            textView,
-            cancelButton,
-            containerView
-        ].forEach { view.addSubview($0) }
-        
-        dateLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.height.equalTo(view.safeAreaLayoutGuide.snp.height).multipliedBy(0.05)
-            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(80)
-        }
-        
-        cancelButton.snp.makeConstraints { make in
-            make.centerY.equalTo(dateLabel.snp.centerY)
-            make.width.height.equalTo(view.safeAreaLayoutGuide.snp.width).multipliedBy(0.1)
-            make.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing).offset(-20)
-        }
-        
-        textView.snp.makeConstraints { make in
-            make.top.equalTo(dateLabel.snp.bottom).offset(20)
-            make.height.equalTo(view.safeAreaLayoutGuide.snp.height).multipliedBy(0.6)
-            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
-        }
-        
-        containerView.snp.makeConstraints { make in
-            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
-            make.height.equalTo(view.safeAreaLayoutGuide.snp.height).multipliedBy(0.2)
-            containerBottomConstraint = make.bottom.equalTo(view.safeAreaLayoutGuide).inset(60).constraint
-        }
-        
-        collectionView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
-            make.height.equalTo(view.safeAreaLayoutGuide.snp.width).multipliedBy(0.25)
-        }
-        
-        cameraButton.snp.makeConstraints { make in
-            make.top.equalTo(collectionView.snp.bottom).offset(10)
-            make.bottom.equalTo(containerView.snp.bottom)
-            make.width.equalTo(cameraButton.snp.height)
-            make.leading.equalTo(textView.snp.leading)
-        }
-        
-        photoButton.snp.makeConstraints { make in
-            make.top.equalTo(cameraButton.snp.top)
-            make.centerY.equalTo(cameraButton)
-            make.width.equalTo(photoButton.snp.height)
-            make.leading.equalTo(cameraButton.snp.trailing).offset(8)
-        }
-        
-        submitButton.snp.makeConstraints { make in
-            make.top.equalTo(cameraButton.snp.top)
-            make.centerY.equalTo(cameraButton)
-            make.width.equalTo(submitButton.snp.height)
-            make.trailing.equalTo(textView.snp.trailing)
-        }
+    private func setupActions() {
+        writeView.setCameraButtonAction(target: self, cameraSelector: #selector(openCamera))
+        writeView.setPhotoButtonAction(target: self, photoSelector: #selector(addImage))
+        writeView.setSubmitButtonAction(target: self, submitSelector: #selector(submitText))
+        writeView.setCancelButtonAction(target: self, cancelSelector: #selector(cancelText))
     }
     
     // 키보드 감지
@@ -208,7 +63,7 @@ final class WriteViewController: UIViewController {
 
         // 동적으로 계산된 inset 적용
         let inset = view.safeAreaLayoutGuide.layoutFrame.height * keyboardHeightRatio
-        containerBottomConstraint?.update(inset: inset)
+        writeView.updateContainerBottomConstraint(inset: inset)
         
         // 업데이트 된 레이아웃 반영
         UIView.animate(withDuration: animationDuration) {
@@ -223,7 +78,8 @@ final class WriteViewController: UIViewController {
             return
         }
         
-        containerBottomConstraint?.update(inset: 60)
+        writeView.updateContainerBottomConstraint(inset: 60)
+        
         UIView.animate(withDuration: animationDuration) {
             self.view.layoutIfNeeded()
         }
@@ -231,7 +87,6 @@ final class WriteViewController: UIViewController {
     
     
     private func bindViewModel() {
-        
         writeViewModel.output.postUpdated = { [weak self] post in
             self?.updateUI(with: post)
         }
@@ -252,8 +107,8 @@ final class WriteViewController: UIViewController {
     
     // MARK: - 버튼 액션 메서드
     private func updateUI(with post: Post) {
-        textView.text = post.text // UI 업데이트 예시
-        collectionView.reloadData()
+//        textView.text = post.text
+        writeView.collectionViewReload()
     }
     
     private func showCamera() {
@@ -263,7 +118,7 @@ final class WriteViewController: UIViewController {
         present(cameraPicker, animated: true)
     }
     
-    // 카메라 버튼 탭할 떄 호출되는 메서드
+    // 카메라 버튼 탭할 때 호출되는 메서드
     @objc private func openCamera() {
         writeViewModel.input.cameraAccessRequested()
     }

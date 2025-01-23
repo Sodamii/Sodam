@@ -2,7 +2,7 @@
 //  WriteViewModel.swift
 //  Sodam
 //
-//  Created by t2023-m0072 on 1/22/25.
+//  Created by 박민석 on 1/22/25.
 //
 
 import UIKit

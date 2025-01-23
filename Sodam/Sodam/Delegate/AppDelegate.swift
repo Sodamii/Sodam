@@ -24,10 +24,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("에러 발생: \(error.localizedDescription)")
             }
         }
-        
-        // 예약 알림 설정
-
-
         return true
     }
 

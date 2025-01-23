@@ -51,8 +51,7 @@ private extension SettingsViewController {
                     body: "소소한 행복을 적어 행담이를 키워주세요.",
                     time: savedTime,
                     seconds: 0,
-                    identifier: "SelectedTimeNotification"
-                )
+                    identifier: "SelectedTimeNotification")
             }
         }
     }
@@ -139,8 +138,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 body: "소소한 행복을 적어 행담이를 키워주세요.",
                 time: savedTime,
                 seconds: 1,
-                identifier: "SelectedTimeNotification"
-            )
+                identifier: "SelectedTimeNotification")
         } else {
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["SelectedTimeNotification"])
         }
@@ -158,8 +156,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 body: "소소한 행복을 적어 행담이를 키워주세요.",
                 time: sender.date,
                 seconds: 0,
-                identifier: "SelectedTimeNotification"
-            )
+                identifier: "SelectedTimeNotification")
         }
     }
 }

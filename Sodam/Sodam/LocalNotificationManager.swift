@@ -47,17 +47,4 @@ final class LocalNotificationManager {
             }
         }
     }
-    
-    // 대기중인 Push Notification을 출력
-    func printPendingNotification() {
-        UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
-            for request in requests {
-                print("Identifier: \(request.identifier)")
-                print("Title: \(request.content.title)")
-                print("Body: \(request.content.body)")
-                print("Trigger: \(String(describing: request.trigger))")
-                print("---")
-            }
-        }
-    }
 }

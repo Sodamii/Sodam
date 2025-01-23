@@ -35,7 +35,9 @@ enum MainMessages: String, CaseIterable {
     // 랜덤으로 메세지 반환하기 (firstMessage는 제외하기)
     static func getRandomMessage() -> String {
         let randomMessages = Self.allCases.map { $0.rawValue }
-        // firstMessage 제외하고 랜덤 메세지 반환
-        return randomMessages.randomElement() ?? "오늘의 소확행 기록하기."
-    }
-}
+        let randomMessage = randomMessages.randomElement() ?? "오늘의 소확행 기록하기."
+        
+        // 쉼표를 기준으로 줄바꿈 추가
+        let formattedMessage = randomMessage.replacingOccurrences(of: ",", with: ",\n")
+        return formattedMessage
+    }}

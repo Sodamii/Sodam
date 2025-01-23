@@ -13,6 +13,7 @@ protocol HappinessRepositoryProtocol {
     func deleteHappiness(with id: String)
 }
 
+/// CoreDataManager와 ViewModel 사이에서 행복한 기억 데이터 처리를 맡는 객체
 final class HappinessRepository {
     private let coreDataManager: HappinessManagingProtocol
     

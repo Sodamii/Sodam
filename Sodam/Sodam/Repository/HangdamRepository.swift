@@ -14,6 +14,7 @@ protocol HangdamRepositoryProtocol {
     func nameHangdam(id: String, name: String)
 }
 
+/// CoreDataManager와 ViewModel 사이에서 행담이 데이터 처리를 맡는 객체
 final class HangdamRepository {
     private let coreDataManager: HangdamManagingProtocol
     

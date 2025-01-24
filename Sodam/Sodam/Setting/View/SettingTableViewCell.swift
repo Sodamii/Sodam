@@ -10,7 +10,7 @@ import SnapKit
 
 final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
     let baseView = UIView()
-    private let setTitle: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .mapoGoldenPier(16)
         label.textColor = .darkGray
@@ -50,6 +50,13 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
         return arrowImage
     }()
     
+    let versionLabel: UILabel = {
+        let label = UILabel()
+        label.font = .mapoGoldenPier(16)
+        label.textColor = .darkGray
+        return label
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
@@ -62,8 +69,9 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(title: String, switchAction: Selector?, timeAction: Selector?) {
-        setTitle.text = title
+    func configure(title: String, switchAction: Selector?, timeAction: Selector?, version: String) {
+        titleLabel.text = title
+        versionLabel.text = version
         if let action = switchAction {
             switchButton.addTarget(nil, action: action, for: .valueChanged)
         }
@@ -79,8 +87,8 @@ private extension SettingTableViewCell {
     func setupUI() {
         baseView.backgroundColor = .imageBackground
         contentView.addSubview(baseView)
-        baseView.addSubViews([setTitle, horizonStackView])
-        horizonStackView.addArrangedSubViews([timePicker,switchButton, arrowImage])
+        baseView.addSubViews([titleLabel, horizonStackView])
+        horizonStackView.addArrangedSubViews([timePicker, switchButton, arrowImage, versionLabel])
     }
     
     func setupConstraint() {
@@ -88,15 +96,15 @@ private extension SettingTableViewCell {
             $0.edges.equalToSuperview()
         }
         
-        setTitle.snp.makeConstraints {
+        titleLabel.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(15)
             $0.leading.equalToSuperview().offset(20)
         }
         
         horizonStackView.snp.makeConstraints {
-            $0.leading.equalTo(setTitle.snp.trailing)
+            $0.leading.equalTo(titleLabel.snp.trailing)
             $0.trailing.equalTo(baseView.snp.trailing).offset(-20)
-            $0.centerY.equalTo(setTitle.snp.centerY)
+            $0.centerY.equalTo(titleLabel.snp.centerY)
         }
     }
 }

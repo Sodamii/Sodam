@@ -37,7 +37,8 @@ final class CustomTabBarController: UITabBarController {
         let storageViewController = UIHostingController(rootView: HangdamStorageView())
         storageViewController.tabBarItem = UITabBarItem(title: "기록", image: UIImage(systemName: "book"), selectedImage: UIImage(systemName: "book.fill"))
         
-        let settingsViewController = SettingsViewController()
+        let settingViewModel = SettingViewModel()
+        let settingsViewController = SettingsViewController(settingViewModel: settingViewModel)
         settingsViewController.tabBarItem = UITabBarItem(title: "설정", image: UIImage(systemName: "gear"), selectedImage: UIImage(systemName: "gear.fill"))
         
         viewControllers = [storageViewController, mainViewController, settingsViewController ]

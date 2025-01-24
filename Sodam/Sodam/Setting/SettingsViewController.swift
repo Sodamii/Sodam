@@ -10,7 +10,7 @@ import UIKit
 final class SettingsViewController: UIViewController {
     private let settingViewModel: SettingViewModel
 
-    let settingView = SettingView()
+    private let settingView = SettingView()
 
     init(settingViewModel: SettingViewModel) {
         self.settingViewModel = settingViewModel

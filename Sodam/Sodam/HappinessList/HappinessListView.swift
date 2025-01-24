@@ -62,7 +62,24 @@ struct HappinessListView: View {
             }
             .padding([.top, .horizontal])
             .background(Color.viewBackground)
+            .onAppear {
+                if let tabBarController = getTabBarController() {
+                    tabBarController.tabBar.isHidden = true
+                }
+            }
+            .onDisappear {
+                            }
         }
+    }
+    
+    private func getTabBarController() -> UITabBarController? {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let sceneDelegate = scene.delegate as? SceneDelegate,
+              let rootViewController = sceneDelegate.window?.rootViewController else {
+            return nil
+        }
+        
+        return rootViewController as? UITabBarController
     }
 }
 
@@ -73,6 +90,10 @@ extension HappinessListView {
         static let body: CGFloat = 16
         static let timeStamp: CGFloat = 14
     }
+}
+
+extension HappinessListView {
+   
 }
 
 #Preview {

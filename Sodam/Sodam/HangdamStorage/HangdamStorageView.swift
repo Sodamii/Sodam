@@ -38,8 +38,26 @@ struct HangdamStorageView: View {
                 .padding(.horizontal)
             }
             .background(Color.viewBackground)
+            .onAppear {
+                withAnimation {
+                    if let tabBarController = getRootTabBarController() {
+                        tabBarController.tabBar.isHidden = false
+                    }
+                }
+
+            }
         }
         .tint(.textAccent)
+    }
+    
+    private func getRootTabBarController() -> UITabBarController? {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let sceneDelegate = scene.delegate as? SceneDelegate,
+              let rootViewController = sceneDelegate.window?.rootViewController else {
+            return nil
+        }
+        
+        return rootViewController as? UITabBarController
     }
 }
 

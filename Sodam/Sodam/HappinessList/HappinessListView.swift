@@ -63,16 +63,14 @@ struct HappinessListView: View {
             .padding([.top, .horizontal])
             .background(Color.viewBackground)
             .onAppear {
-                if let tabBarController = getTabBarController() {
+                if let tabBarController = getRootTabBarController() {
                     tabBarController.tabBar.isHidden = true
                 }
             }
-            .onDisappear {
-                            }
         }
     }
     
-    private func getTabBarController() -> UITabBarController? {
+    private func getRootTabBarController() -> UITabBarController? {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let sceneDelegate = scene.delegate as? SceneDelegate,
               let rootViewController = sceneDelegate.window?.rootViewController else {
@@ -93,7 +91,7 @@ extension HappinessListView {
 }
 
 extension HappinessListView {
-   
+    
 }
 
 #Preview {

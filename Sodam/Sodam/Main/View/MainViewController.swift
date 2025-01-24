@@ -28,10 +28,10 @@ final class MainViewController: UIViewController {
     private func updateNameLabelIfNeeded() {
         if let savedName = UserDefaults.standard.string(forKey: "HangdamName") {
             mainView.updateNameLabel(savedName) // 저장된 이름으로 라벨 업데이트
-            mainView.updateGif(with: "wink") // 이름이 있으면 wink.gif 로 변경
+            mainView.updateGif(with: "phase1")
             print("저장된 이름: \(savedName)")
         } else {
-            mainView.updateGif(with: "egg") // 이름 없으면 알로 유지
+            mainView.updateGif(with: "phase0") // 이름 없으면 알로 유지
             print("저장된 이름이 없습니다.")
         }
     }
@@ -81,7 +81,7 @@ final class MainViewController: UIViewController {
             if let savedName = UserDefaults.standard.string(forKey: "HangdamName") {
                 print("저장된 이름으로 작성화면 이동함: \(savedName)")
                 mainView.updateNameLabel(savedName)
-                mainView.updateGif(with: "wink")
+                mainView.updateGif(with: "baby")
                 modalWriteViewController(with: savedName)
             }
         } else {
@@ -99,7 +99,7 @@ final class MainViewController: UIViewController {
                     self.mainView.updateNameLabel(name)
                     
                     // GIF 업데이트
-                    self.mainView.updateGif(with: "wink")
+                    self.mainView.updateGif(with: "baby")
                     
                     // 메인 화면 메세지를 랜덤 메세지로 업데이트
                     self.mainView.updateMessage(MainMessages.getRandomMessage())

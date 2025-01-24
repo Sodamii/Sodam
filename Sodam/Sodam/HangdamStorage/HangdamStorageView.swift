@@ -16,7 +16,7 @@ struct HangdamStorageView: View {
             GeometryReader { geometry in
                 VStack(alignment: .center) {
                     NavigationLink {
-                        TestView(hangdam: $mockHangdam)
+                        HappinessListView()
                     } label: {
                         HangdamStatusView(size: geometry.size, mockHangdam: $mockHangdam)
                             .clipShape(.rect(cornerRadius: 15))

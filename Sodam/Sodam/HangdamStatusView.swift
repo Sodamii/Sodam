@@ -27,7 +27,7 @@ struct HangdamStatusView: View {
                     .font(.maruburiot(type: .bold, size: 25))
                 Text("Lv.\(mockHangdam.level) 애기 행담이")
                     .font(.maruburiot(type: .semiBold, size: 18))
-                Text("\(mockHangdam.startDate?.toString ?? "") ~")
+                Text("\(mockHangdam.startDate?.toFormattedString ?? "") ~")
                     .font(.maruburiot(type: .regular, size: 16))
             }
             .foregroundStyle(Color(uiColor: .white))

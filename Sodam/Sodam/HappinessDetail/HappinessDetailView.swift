@@ -13,8 +13,9 @@ struct HappinessDetailView: View {
     let imgae: Image?
     let text: String
     
+    @State private var isAlertPresented: Bool = false
+    
     var body: some View {
-        
         
         ScrollView {
             VStack {
@@ -32,7 +33,7 @@ struct HappinessDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button( action: {
-                    // 코어데이터 삭제 메서드
+                    isAlertPresented = true
                 }) {
                     Image(systemName: "trash")
                         .foregroundStyle(.gray)
@@ -40,6 +41,12 @@ struct HappinessDetailView: View {
             }
         }
         .background(Color.viewBackground)
+        .alert("정말로 삭제하시겠습니까?", isPresented: $isAlertPresented) {
+            Button("취소", role: .cancel) {}
+            Button("삭제", role: .destructive) {
+                // 데이터 삭제 메서드
+            }
+        }
     }
     
 }

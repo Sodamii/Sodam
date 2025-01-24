@@ -30,7 +30,7 @@ struct HappinessListView: View {
                     
                     List {
                         ForEach(array, id: \.self) { value in
-                            NavigationLink(destination: HappinessDetailView()) {
+                            NavigationLink(destination: HappinessDetailView(date: "1021.123.12", imgae: nil, text: "복권 1등에 당첨이 됐다. 나는 이제 부자다.")) {
                                 HStack {
                                     Rectangle() // 사진 대체용
                                         .frame(width: 90, height: 120)

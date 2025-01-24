@@ -40,13 +40,13 @@ fileprivate struct HangdamGrid: View {
                     .background(Color.imageBackground)
                     .clipShape(.rect(cornerRadius: 15))
                     .padding()
-                
+
                 VStack(alignment: .leading, spacing: 8) {
                     Text(mockHangdam.name)
                         .font(.maruburiot(type: .bold, size: 16))
                         .foregroundStyle(Color(uiColor: .darkGray))
                     
-                    Text(mockHangdam.startDate?.toString ?? "")
+                    Text(mockHangdam.startDate?.toFormattedString ?? "")
                         .font(.maruburiot(type: .regular, size: 14))
                         .foregroundStyle(Color(uiColor: .gray))
                 }

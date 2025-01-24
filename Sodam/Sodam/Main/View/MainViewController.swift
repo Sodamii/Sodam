@@ -28,10 +28,10 @@ final class MainViewController: UIViewController {
     private func updateNameLabelIfNeeded() {
         if let savedName = UserDefaults.standard.string(forKey: "HangdamName") {
             mainView.updateNameLabel(savedName) // 저장된 이름으로 라벨 업데이트
-            mainView.updateGif(with: "baby") // 이름이 있으면 wink.gif 로 변경
+            mainView.updateGif(with: "phase1")
             print("저장된 이름: \(savedName)")
         } else {
-            mainView.updateGif(with: "egg") // 이름 없으면 알로 유지
+            mainView.updateGif(with: "phase0") // 이름 없으면 알로 유지
             print("저장된 이름이 없습니다.")
         }
     }

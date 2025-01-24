@@ -17,6 +17,7 @@ enum FileError: Error {
         }
     }
     
+    // 사용자에게 띄울 alert에 넣을 구문
     var alertDescription: String {
         switch self {
         default: "이미지 업로드에 문제가 생겼어요🥲"

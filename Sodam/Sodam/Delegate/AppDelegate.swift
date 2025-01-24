@@ -10,10 +10,29 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        let center = UNUserNotificationCenter.current() // 알림센터 가져오기
+        center.delegate = self //앱 실행 시 사용자에게 알림 허용 권한을 받음
+        
+        // 권한 요청 메서드(꼭 이곳이 아니어도 원할때 권한을 받을 수 있다.)
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound] // 필요한 알림 권한을 설정
+        center.requestAuthorization(options: authOptions) { success, error in
+            if let error = error {
+                print("알림 권한 요청 중 에러 발생: \(error.localizedDescription)")
+                return
+            }
+            
+            if success {
+                // TODO: - 권한이 허용되었을 경우
+                print("알림 권한이 허용되었습니다.")
+            } else {
+                // TODO: - 권한이 거부되었을 경우
+                print("알림 권한이 거부되었습니다.")
+                // 사용자에게 알림 권한을 요청할 수 있는 방법 안내 혹은 UI 처리
+            }
+        }
+        
         return true
     }
 
@@ -30,7 +49,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
-
-
 }
 
+// MARK: - UNUserNotificationCenterDelegate Setting Method
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    // foreground 상태인 경우(앱 실행중인상태) 알림이 오면 해당 메서드 호출
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .badge, .sound, .list])
+    }
+    
+    // 사용자가 알림을 탭했을때 해당 메서드 호출
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        completionHandler()  // 응답 처리가 완료되었음을 시스템에 알림
+    }
+}

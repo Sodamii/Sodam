@@ -20,13 +20,13 @@ struct HappinessListView: View {
                     HangdamStatusView(size: geometry.size, mockHangdam: $mockHangdam)
                         .clipShape(.rect(cornerRadius: cornerRadius))
                     
-                    Text("여섯글자인보다 어어어엄처엉 긴 애가가 먹고 자란 기억들")
-                        .frame(maxWidth: .infinity,maxHeight: 35, alignment: .leading)
-                        .font(.mapoGoldenPier(FontSize.title))
-                        .lineLimit(2)
+                    Text("여섯글자담이가 먹은 기억들")
+                        .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
+                        .font(.mapoGoldenPier(FontSize.title2))
+                        .lineLimit(1)
                         .minimumScaleFactor(0.5)
                         .foregroundStyle(Color.textAccent)
-                        .padding(.top)
+                        .padding(.vertical, 8)
                     
                     List {
                         ForEach(array, id: \.self) { value in
@@ -55,6 +55,7 @@ struct HappinessListView: View {
                             )
                         }
                     }
+                    .scrollIndicators(.hidden)
                     .listRowSpacing(20)
                     .listStyle(.plain)
                 }
@@ -68,6 +69,7 @@ struct HappinessListView: View {
 extension HappinessListView {
     enum FontSize{
         static let title: CGFloat = 27
+        static let title2: CGFloat = 24
         static let body: CGFloat = 16
         static let timeStamp: CGFloat = 14
     }

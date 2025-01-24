@@ -31,7 +31,7 @@ fileprivate struct HangdamGrid: View {
     
     var body: some View {
         NavigationLink {
-            TestView(hangdam: $mockHangdam)
+            HappinessListView()
         } label: {
             VStack(spacing: 1) {
                 Image(.babyHangdam)

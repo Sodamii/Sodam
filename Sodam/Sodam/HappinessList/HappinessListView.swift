@@ -41,7 +41,7 @@ struct HappinessListView: View {
                                             .font(.mapoGoldenPier(FontSize.body))
                                             .lineLimit(2)
                                             .frame(height: 50, alignment: .topLeading)
-                                        Text("\(mockHangdam.startDate?.toString ?? "")")
+                                        Text("\(mockHangdam.startDate?.toFormattedString ?? "")")
                                             .font(.mapoGoldenPier(FontSize.timeStamp))
                                             .foregroundStyle(.gray)
                                     }

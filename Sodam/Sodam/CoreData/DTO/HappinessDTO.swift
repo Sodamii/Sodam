@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct HappinessDTO {
+struct HappinessDTO: Hashable {
     var id: String?         // context에서 불러왔을 땐 id값이 있겠지만 사용자가 기록해서 entity로 변환하기 전에는 id가 없을 수도 있기 때문에 옵셔널
     let content: String     // 기억 수정 X
     let date: Date          // view에 바인딩 할 때 toFormattedString으로 변환 필요

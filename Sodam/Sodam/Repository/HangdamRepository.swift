@@ -18,7 +18,7 @@ protocol HangdamRepositoryProtocol {
 final class HangdamRepository {
     private let coreDataManager: HangdamManagingProtocol
     
-    init(coreDataManager: HangdamManagingProtocol) {
+    init(coreDataManager: HangdamManagingProtocol = CoreDataManager()) {
         self.coreDataManager = coreDataManager
     }
     

@@ -9,16 +9,26 @@ import SwiftUI
 
 struct HangdamStorageView: View {
     
-    @State var mockHangdam: MockHangdam = .mockHangdam
+    @State private var currentHangdam: HangdamDTO
+    @State private var storedHangdamList: [HangdamDTO]
+    
+    private let hangdamRepository: HangdamRepository
+    
+    init(hangdamRepository: HangdamRepository = HangdamRepository()
+    ) {
+        self.hangdamRepository = hangdamRepository
+        self.currentHangdam = hangdamRepository.getCurrentHangdam()
+        self.storedHangdamList = hangdamRepository.getSavedHangdams()
+    }
     
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
                 VStack(alignment: .center) {
                     NavigationLink {
-                        HappinessListView()
+                        HappinessListView(hangdam: $currentHangdam)
                     } label: {
-                        HangdamStatusView(size: geometry.size, mockHangdam: $mockHangdam)
+                        HangdamStatusView(size: geometry.size, hangdam: $currentHangdam)
                             .clipShape(.rect(cornerRadius: 15))
                     }
                     
@@ -29,7 +39,7 @@ struct HangdamStorageView: View {
                         .padding(.top)
                     
                     ScrollView {
-                        HangdamGridView(mockHangdam: $mockHangdam)
+                        HangdamGridView(hangdamList: $storedHangdamList)
                             .padding(.bottom)
                     }
                     .scrollIndicators(.hidden)
@@ -43,11 +53,20 @@ struct HangdamStorageView: View {
                     if let tabBarController = getRootTabBarController() {
                         tabBarController.tabBar.isHidden = false
                     }
+                    
+                    loadHangdamData()
                 }
-
+                
             }
         }
         .tint(.textAccent)
+    }
+    
+    // MARK: - Helper method
+    
+    private func loadHangdamData() {
+        self.currentHangdam = hangdamRepository.getCurrentHangdam()
+        self.storedHangdamList = hangdamRepository.getSavedHangdams()
     }
     
     private func getRootTabBarController() -> UITabBarController? {

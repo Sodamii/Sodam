@@ -10,7 +10,7 @@ import SwiftUI
 struct HappinessDetailView: View {
     
     let date: String
-    let imgae: Image?
+    let image: UIImage?
     let text: String
     
     @State private var isAlertPresented: Bool = false
@@ -19,9 +19,13 @@ struct HappinessDetailView: View {
         
         ScrollView {
             VStack {
-                RoundedRectangle(cornerRadius: 15)
-                    .fill(Color.primary)
-                    .frame(width: 200, height: 200)
+                if let image = image {
+                    Image(uiImage: image)
+                    
+                    RoundedRectangle(cornerRadius: 15)
+                        .fill(Color.primary)
+                        .frame(width: 200, height: 200)
+                }
                 Text(text)
                     .padding()
             }
@@ -41,17 +45,24 @@ struct HappinessDetailView: View {
             }
         }
         .background(Color.viewBackground)
-        .alert("정말로 삭제하시겠습니까?", isPresented: $isAlertPresented) {
-            Button("취소", role: .cancel) {}
-            Button("삭제", role: .destructive) {
-                // 데이터 삭제 메서드
-            }
+        .sheet(isPresented: $isAlertPresented) {
+            CustomAlertRepresentable(
+                alertBuilder: CustomAlertBuilder()
+                    .setTitle(to: "you real?")
+                    .setMessage(to: "you can't undo")
+                    .setBackground(color: .cellBackground)
+                    .setAlertFont(font: .gowunBatang(type: .regular, size: 16))
+                    .setTitleColor(to: .textAccent)
+                    .setMessageFontColor(to: .darkGray)
+                    .addAction(title: "확인", style: .onlyYes) { _ in }
+                    .addAction(title: "취소", style: .canCancle) { _ in }
+            )
         }
     }
     
 }
 
 #Preview {
-    HappinessDetailView(date: "2002.12.12", imgae: nil, text: "오늘 복권 1등 당첨됐다. 행담이 회사 내가 사주지.")
+    HappinessDetailView(date: "2002.12.12", image: nil, text: "오늘 복권 1등 당첨됐다. 행담이 회사 내가 사주지.")
 }
 

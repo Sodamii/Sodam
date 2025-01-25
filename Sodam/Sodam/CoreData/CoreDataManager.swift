@@ -7,6 +7,8 @@
 
 import CoreData
 
+// MARK: - Protocol
+// 현재로서는 약간 불필요한 프로토콜 같습니다. 튜터님 말씀으로는 너무 구체적인 건 오히려 이상하다고 하시네요.
 /// HangdamRepository에서 필요한 메소드들
 protocol HangdamManagingProtocol {
     var context: NSManagedObjectContext { get }
@@ -28,10 +30,12 @@ protocol HappinessManagingProtocol {
     func updateHangdam(with id: NSManagedObjectID, updateCase: HangdamUpdateCase)
 }
 
+// MARK: - CoreDataManager
+
 final class CoreDataManager: HangdamManagingProtocol, HappinessManagingProtocol {
     private let persistentContainer: NSPersistentContainer
     
-    private init() {
+    init() {
         persistentContainer = NSPersistentContainer(name: CDKey.container.rawValue)
         persistentContainer.loadPersistentStores { description, error in
             if let error = error {

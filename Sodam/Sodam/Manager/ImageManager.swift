@@ -9,11 +9,11 @@ import UIKit
 
 final class ImageManager {
     
-    /// 이미지 리사이징 목표 크기
+    // 이미지 리사이징 목표 크기
     private let resizeFloat: CGFloat = 450
     
-    /// 현재 시간 timestamp를 String으로 반환하는 함수 - 내부 호출
-    private func nameImagePath() -> String {
+    // 현재 시간 timestamp를 String으로 반환하는 함수
+    func nameImagePath() -> String {
         /// split.first 접근에 실패할 경우 uuid 값으로라도 고유한 값 생성하도록 처리
         guard let imagePath = String(Date.now.timeIntervalSince1970).split(separator: ".").first
         else {
@@ -23,14 +23,26 @@ final class ImageManager {
         return String(imagePath)
     }
     
-    /// 이미지 크기를 450으로 리사이징하는 함수 - 내부 호출
+    // 이미지 저장
+    func saveImage(_ image: UIImage, with imagePath: String) {
+        /// 1.  이미지 리사이징
+        let resizedImage = resizeImage(image)
+        
+        /// 2. FileManager로 기기에 저장
+        saveImageAsFile(image: resizedImage, imagePath: imagePath)
+    }
+}
+
+// 내부 호출 함수 모음
+extension ImageManager {
+    /// 이미지 리사이징하는 함수
     private func resizeImage(_ image: UIImage) -> UIImage {
         /// 이미지 고유 비율
         let aspectRatio = image.size.width / image.size.height
         
         var newSize: CGSize
         
-        /// 가로 사진이면 가로가 450, 세로 사진이면 세로가 450이 되게 리사이징
+        /// 가로 사진이면 가로가 목표 크기, 세로 사진이면 세로가 목표 크기가 되게 리사이징
         if image.size.width > image.size.height {
             newSize = CGSize(width: resizeFloat, height: resizeFloat / aspectRatio)
         } else {
@@ -63,17 +75,5 @@ final class ImageManager {
             print(FileError.imageSaveFailed.localizedDescription)
             print(error.localizedDescription)
         }
-    }
-    
-    /// 외부 호출 함수 - 이미지 저장
-    func saveImage(_ image: UIImage) {
-        /// 1.  이미지 리사이징
-        let resizedImage = resizeImage(image)
-        
-        /// 2. 파일명 생성(현재 시간 timestamp)
-        let imagePath = nameImagePath()
-        
-        /// 3. FileManager로 기기에 저장
-        saveImageAsFile(image: resizedImage, imagePath: imagePath)
     }
 }

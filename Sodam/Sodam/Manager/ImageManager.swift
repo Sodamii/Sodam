@@ -31,6 +31,19 @@ final class ImageManager {
         /// 2. FileManager로 기기에 저장
         saveImageAsFile(image: resizedImage, imagePath: imagePath)
     }
+    
+    // 이미지 불러오기
+    func getImage(with imagePath: String) -> UIImage? {
+        let result = loadImageFile(imagePath: imagePath)
+        
+        switch result {
+        case .success(let image):
+            return image
+        case .failure(let error):
+            print(error.localizedDescription)
+            return nil
+        }
+    }
 }
 
 // 내부 호출 함수 모음
@@ -75,5 +88,16 @@ extension ImageManager {
             print(FileError.imageSaveFailed.localizedDescription)
             print(error.localizedDescription)
         }
+    }
+    
+    /// FileManager를 통해 이미지를 불러오는 함수
+    private func loadImageFile(imagePath: String) -> Result<UIImage?, FileError> {
+        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appending(component: "\(imagePath).jpeg"),
+              let data = FileManager.default.contents(atPath: url.path())
+        else {
+            return .failure(FileError.imageFetchFailed)
+        }
+        
+        return .success(UIImage(data: data))
     }
 }

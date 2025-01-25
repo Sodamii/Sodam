@@ -36,6 +36,10 @@ final class UserDefaultsManager {
         userDefaults.set(content, forKey: Keys.content)
     }
     
+    func saveImagePath(_ imagePath: String) {
+        userDefaults.set(imagePath, forKey: Keys.imagePath)
+    }
+    
     // MARK: - UserDefaults에 저장된 값 얻어오기
     
     func getNotificationTime() -> Date? {
@@ -48,5 +52,9 @@ final class UserDefaultsManager {
     
     func getContent() -> String? {
         userDefaults.string(forKey: Keys.content)
+    }
+    
+    func getImagePath() -> String? {
+        userDefaults.string(forKey: Keys.imagePath)
     }
 }

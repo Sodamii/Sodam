@@ -9,16 +9,10 @@ import SwiftUI
 
 struct HangdamStorageView: View {
     
-    @State private var currentHangdam: HangdamDTO
-    @State private var storedHangdamList: [HangdamDTO]
+    @StateObject private var viewModel: HangdamStorageViewModel
     
-    private let hangdamRepository: HangdamRepository
-    
-    init(hangdamRepository: HangdamRepository = HangdamRepository()
-    ) {
-        self.hangdamRepository = hangdamRepository
-        self.currentHangdam = hangdamRepository.getCurrentHangdam()
-        self.storedHangdamList = hangdamRepository.getSavedHangdams()
+    init(viewModel: HangdamStorageViewModel = HangdamStorageViewModel()) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
     
     var body: some View {
@@ -26,9 +20,9 @@ struct HangdamStorageView: View {
             GeometryReader { geometry in
                 VStack(alignment: .center) {
                     NavigationLink {
-                        HappinessListView(hangdam: $currentHangdam)
+                        HappinessListView(hangdam: $viewModel.currentHangdam)
                     } label: {
-                        HangdamStatusView(size: geometry.size, hangdam: $currentHangdam)
+                        HangdamStatusView(size: geometry.size, hangdam: $viewModel.currentHangdam)
                             .clipShape(.rect(cornerRadius: 15))
                     }
                     
@@ -39,7 +33,7 @@ struct HangdamStorageView: View {
                         .padding(.top)
                     
                     ScrollView {
-                        HangdamGridView(hangdamList: $storedHangdamList)
+                        HangdamGridView(hangdamList: $viewModel.storedHangdamList)
                             .padding(.bottom)
                     }
                     .scrollIndicators(.hidden)
@@ -53,10 +47,8 @@ struct HangdamStorageView: View {
                     if let tabBarController = getRootTabBarController() {
                         tabBarController.tabBar.isHidden = false
                     }
-                    
-                    loadHangdamData()
+                    viewModel.loadHangdamData()
                 }
-                
             }
         }
         .tint(.textAccent)
@@ -64,18 +56,12 @@ struct HangdamStorageView: View {
     
     // MARK: - Helper method
     
-    private func loadHangdamData() {
-        self.currentHangdam = hangdamRepository.getCurrentHangdam()
-        self.storedHangdamList = hangdamRepository.getSavedHangdams()
-    }
-    
     private func getRootTabBarController() -> UITabBarController? {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let sceneDelegate = scene.delegate as? SceneDelegate,
               let rootViewController = sceneDelegate.window?.rootViewController else {
             return nil
         }
-        
         return rootViewController as? UITabBarController
     }
 }

@@ -46,12 +46,34 @@ final class ImageManager {
         
         return resizedImage
     }
-
-    func saveImage(_ image: UIImage) {
+    
+    /// 이미지를 FileManager를 통해 기기에 저장하는 함수
+    private func saveImageAsFile(image: UIImage, imagePath: String) {
+        /// 이미지 퀄리티 원본의 80%, 확장자 jpeg인 Data로 변환
+        guard let data = image.jpegData(compressionQuality: 0.8),
+              let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        else { return }
         
+        let fileURL = directory.appendingPathComponent("\(imagePath).jpeg")
+        
+        do {
+            try data.write(to: fileURL)
+            print("[FileManager] 이미지 저장 성공")
+        } catch let error {
+            print(FileError.imageSaveFailed.localizedDescription)
+            print(error.localizedDescription)
+        }
     }
     
-    private func resizeImage(_ image: UIImage) -> UIImage? {
-        return nil
+    /// 외부 호출 함수 - 이미지 저장
+    func saveImage(_ image: UIImage) {
+        /// 1.  이미지 리사이징
+        let resizedImage = resizeImage(image)
+        
+        /// 2. 파일명 생성(현재 시간 timestamp)
+        let imagePath = nameImagePath()
+        
+        /// 3. FileManager로 기기에 저장
+        saveImageAsFile(image: resizedImage, imagePath: imagePath)
     }
 }

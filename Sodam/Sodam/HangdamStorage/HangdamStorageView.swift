@@ -20,7 +20,7 @@ struct HangdamStorageView: View {
             GeometryReader { geometry in
                 VStack(alignment: .center) {
                     NavigationLink {
-                        HappinessListView(hangdam: $viewModel.currentHangdam)
+                        HappinessListView(hangdam: $viewModel.currentHangdam.wrappedValue)
                     } label: {
                         HangdamStatusView(size: geometry.size, hangdam: $viewModel.currentHangdam)
                             .clipShape(.rect(cornerRadius: 15))

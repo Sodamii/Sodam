@@ -9,18 +9,12 @@ import SwiftUI
 
 struct HappinessListView: View {
     
-    @Binding  var hangdam: HangdamDTO
-    
-    let happinessRepository: HappinessRepository
+    @StateObject var viewModel: HappinessListViewModel
+ 
     private let cornerRadius: CGFloat = 15
-    private var happinessList: [HappinessDTO]?
     
-    init(hangdam: Binding<HangdamDTO>,
-         happinessRepository: HappinessRepository = HappinessRepository()
-    ) {
-        self._hangdam = hangdam
-        self.happinessRepository = happinessRepository
-        self.happinessList = happinessRepository.getHappinesses(of: hangdam.wrappedValue.id)
+    init(hangdam: HangdamDTO) {
+        self._viewModel = StateObject(wrappedValue: HappinessListViewModel(hangdam: hangdam))
     }
     
     var body: some View {
@@ -28,13 +22,12 @@ struct HappinessListView: View {
         NavigationStack {
             GeometryReader { geometry in
                 VStack(alignment: .center) {
-                    HangdamStatusView(size: geometry.size, hangdam: $hangdam)
+                    HangdamStatusView(size: geometry.size, hangdam: $viewModel.hangdam)
                         .clipShape(.rect(cornerRadius: cornerRadius))
                     
-                    if let happinessList = happinessList,
-                       happinessList.count != 0
-                    {
-                        Text("\(hangdam.id)담이가 먹은 기억들")
+                    if let happinessList = $viewModel.happinessList.wrappedValue,
+                       !happinessList.isEmpty {
+                        Text("\($viewModel.hangdam.wrappedValue.id)담이가 먹은 기억들")
                             .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
                             .font(.mapoGoldenPier(FontSize.title2))
                             .lineLimit(1)
@@ -121,6 +114,6 @@ extension HappinessListView {
 
 #Preview {
     let hangdamRepository: HangdamRepository = HangdamRepository()
-    HappinessListView(hangdam: .constant(hangdamRepository.getCurrentHangdam()))
+    HappinessListView(hangdam: hangdamRepository.getCurrentHangdam())
 }
 

@@ -34,7 +34,7 @@ fileprivate struct HangdamGrid: View {
             HappinessListView()
         } label: {
             VStack(spacing: 1) {
-                Image(.kingdam0)
+                Image(.kingdam1)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .background(Color.imageBackground)

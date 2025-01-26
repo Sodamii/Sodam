@@ -32,10 +32,6 @@ final class MainViewModel: ObservableObject {
         setGif()
     }
     
-    func createEmptyHangdam() {
-        hangdamRepository.createNewHangdam()
-    }
-    
     func updateMessage() {
         if let _ = name {
             message = MainMessages.getRandomMessage()

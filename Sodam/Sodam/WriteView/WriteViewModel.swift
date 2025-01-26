@@ -14,6 +14,7 @@ final class WriteViewModel: NSObject {
     
     private let writeModel: WriteModel
     
+    
     init(writeModel: WriteModel) {
         self.writeModel = writeModel
         super.init()

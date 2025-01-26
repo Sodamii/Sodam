@@ -41,4 +41,8 @@ final class MainViewModel: ObservableObject {
             print("이름이 없음. 부화 메시지 표시")
         }
     }
+    
+    func getCurrentHangdamID() -> String {
+        return hangdamRepository.getCurrentHangdam().id
+    }
 }

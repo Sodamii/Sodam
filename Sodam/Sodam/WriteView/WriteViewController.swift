@@ -15,7 +15,7 @@ protocol WriteViewControllerDelegate: AnyObject {
 final class WriteViewController: UIViewController {
     
     weak var delegate: WriteViewControllerDelegate?
-    var hangdamName: String? // 전달받을 이름
+    var hangdamName: String?
     
     private let writeViewModel: WriteViewModel
     private let writeView = WriteView()
@@ -28,7 +28,7 @@ final class WriteViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         let writeModel = WriteModel()
-        self.writeViewModel = WriteViewModel(writeModel: writeModel)
+        self.writeViewModel = WriteViewModel(writeModel: writeModel, hangdamID: "")
         super.init(coder: coder)
     }
     
@@ -165,6 +165,8 @@ final class WriteViewController: UIViewController {
     @objc private func submitText() {
         // WriteViewModel에 작성 완료 이벤트 전달
         writeViewModel.submitPost()
+        // 모달 닫기
+        dismiss(animated: true, completion: nil)
     }
     
     // 취소 버튼 탭할 때 호출되는 메서드

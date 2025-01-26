@@ -65,7 +65,7 @@ final class MainViewController: UIViewController {
         mainView.circularImageView.isUserInteractionEnabled = true
     }
     
-    private let writeViewModel: WriteViewModel = .init(writeModel: WriteModel())
+    private lazy var writeViewModel: WriteViewModel = .init(writeModel: WriteModel(), hangdamID: viewModel.getCurrentHangdamID())
     
     // 작성화면 모달 띄우는 메서드
     private func modalWriteViewController(with name: String) {

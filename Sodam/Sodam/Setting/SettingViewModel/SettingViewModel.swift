@@ -8,20 +8,26 @@
 import UIKit
 
 final class SettingViewModel {
+    private let userDefaultsManager = UserDefaultsManager.shared
+    private let localNotificationManager = LocalNotificationManager.shared
+    
     var isSwitchOn: Bool = false
     let sectionType: [Setting.SetSection] = [.appSetting, .develop]
     var version: String? {
         guard let dictionary = Bundle.main.infoDictionary,
               let version = dictionary["CFBundleShortVersionString"] as? String else {
-                  return nil
-              }
+            return nil
+        }
         
         let versionString: String = "\(version)"
         return versionString
     }
     
-    let userDefaultsManager = UserDefaultsManager.shared
-    let localNotificationManager = LocalNotificationManager.shared
+    // MARK: - Initializer
+    init() {
+        // 앱 시작 시 UserDefaults에서 값 로드
+        self.isSwitchOn = userDefaultsManager.getIsToggleNotification()
+    }
     
     func saveNotificationTime(_ sender: Date) {
         userDefaultsManager.saveNotificationTime(sender)

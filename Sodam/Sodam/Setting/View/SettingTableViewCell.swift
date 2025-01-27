@@ -28,7 +28,7 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
     
     let timePicker: UIDatePicker = {
         let timePicker = UIDatePicker()
-        timePicker.preferredDatePickerStyle = .automatic
+        timePicker.preferredDatePickerStyle = .compact
         timePicker.datePickerMode = .time
         timePicker.locale = Locale(identifier: "ko")
         timePicker.minuteInterval = 30
@@ -57,6 +57,9 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
         return label
     }()
     
+    private var currentSwitchAction: Selector?
+    private var currentTimeAction: Selector?
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
@@ -67,6 +70,16 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        // 셀 재사용 시 타겟 액션 제거(메모리 누수 방지)
+        switchButton.removeTarget(nil, action: nil, for: .valueChanged)
+        timePicker.removeTarget(nil, action: nil, for: .valueChanged)
+        
+        currentSwitchAction = nil
+        currentTimeAction = nil
     }
     
     func configure(title: String, switchAction: Selector?, timeAction: Selector?, version: String) {

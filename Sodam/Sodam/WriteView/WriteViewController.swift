@@ -170,13 +170,14 @@ final class WriteViewController: UIViewController {
     
     // 이미지 버튼 탭할 때 호출되는 메서드
     @objc private func addImage() {
+        // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
+        guard writeViewModel.images.count < 1 else {
+            showAlertMaxImageLimitReached()
+            return
+        }
+        
         writeViewModel.requestPhotoLibraryAccess { [weak self] isGranted in
             if isGranted {
-                // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
-                guard self?.writeViewModel.images.count ?? 0 < 1 else {
-                    self?.showAlertMaxImageLimitReached()
-                    return
-                }
                 // 사진 라이브러리 권한이 허용된 경우 사진 피커 생성 및 표시
                 let photoPicker = self?.writeViewModel.createPhotoPicker()
                 if let picker = photoPicker {

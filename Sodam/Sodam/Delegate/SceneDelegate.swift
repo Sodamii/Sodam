@@ -36,7 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.addSubview(overlayView)
 
         // 페이드아웃 후 메인 화면 전환 + 페이드인
-        UIView.animate(withDuration: 0.8, delay: 2.0, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.8, delay: 1.5, options: .curveEaseOut, animations: {
             overlayView.alpha = 0.0 // 페이드아웃
         }, completion: { _ in
             

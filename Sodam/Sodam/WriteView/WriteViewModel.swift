@@ -15,6 +15,9 @@ final class WriteViewModel: NSObject {
     private let writeModel: WriteModel
     private let happinessRepository: HappinessRepository
     private let currentHangdamID: String
+    private let imageManager: ImageManager = .init()
+    
+    var isPostSubmitted: Bool = false // 작성 완료, 임시 저장 구분하기 위한 Bool 타입 변수. 첫 작성을 고려하여 초기값은 false
     
     init(writeModel: WriteModel,
          repository: HappinessRepository = HappinessRepository(),
@@ -50,14 +53,23 @@ final class WriteViewModel: NSObject {
     }
     
     // 작성 완료 이벤트 처리
-    func submitPost() {
-        let newHappiness: HappinessDTO = HappinessDTO(content: text, date: Date.now, imagePaths: [], hangdamID: currentHangdamID)
+    func submitPost(completion: @escaping () -> Void) {
+        let imagePaths = saveImages(writeModel.post.images)
+        
+        let newHappiness: HappinessDTO = HappinessDTO(content: text, date: Date.now, imagePaths: imagePaths, hangdamID: currentHangdamID)
         happinessRepository.createHappiness(newHappiness)
+        
+        isPostSubmitted = true
+        // post 초기화
+        writeModel.resetPost()
+        // 작성 완료 알림 표시 후 모달 닫기
+        completion()
     }
     
     // 작성 취소 이벤트 처리
     func cancelPost() {
-        
+        saveTemporaryPost()
+        isPostSubmitted = false
     }
     
     // MARK: - 데이터 변경 관찰
@@ -130,6 +142,52 @@ final class WriteViewModel: NSObject {
         return picker
     }
 }
+
+// MARK: - 이미지 임시저장, 불러오기 메서드
+extension WriteViewModel {
+    // 이미지 경로 생성 및 파일매니저에 저장하기 위한 메서드
+    private func saveImages(_ images: [UIImage]) -> [String] {
+        var imagePaths: [String] = []
+        
+        for image in images {
+            let imagePath = imageManager.nameImagePath() // ImageManager의 nameImagePath 호출
+            imageManager.saveImage(image, with: imagePath) // ImageManager의 saveImage 호출
+            imagePaths.append(imagePath)
+        }
+        
+        // 임시 저장과 영구 저장에서 사용할 imagePath 배열 반환
+        return imagePaths
+    }
+    
+    // 임시 저장을 위한 메서드
+    func saveTemporaryPost() {
+        let imagePaths = saveImages(writeModel.post.images)
+        
+        UserDefaultsManager.shared.saveContent(writeModel.post.content)
+        UserDefaultsManager.shared.saveImagePath(imagePaths)
+    }
+    
+    // 임시 저장된 글 불러오는 메서드
+    func loadTemporaryPost() {
+        guard let content = UserDefaultsManager.shared.getContent(), // 임시 저장된 글 불러오기
+              let imagePaths = UserDefaultsManager.shared.getImagePath() // 임시 저장된 이미지 경로 불러오기
+        else {
+            // 불러올 데이터가 없는 경우 종료
+            return
+        }
+        
+        // 불러온 글 내용을 모델에 업데이트
+        writeModel.updateText(content)
+        
+        for imagePath in imagePaths {
+            if let result = imageManager.getImage(with: imagePath) { // ImageManager의 getImage 호출해서 이미지 불러오기
+                // 뷰에 이미지 추가
+                writeModel.addImage(result)
+            }
+        }
+    }
+}
+
 
 // MARK: - PHPickerViewController(이미지 선택할 때 사용) 설정
 

@@ -121,7 +121,7 @@ extension MainViewController: WriteViewControllerDelegate {
     func writeViewControllerDiddismiss() {
         print("WriteViewController 모달이 닫혔습니다.")
         
-        viewModel.updateMessage()
+//        viewModel.updateMessage()
         viewModel.setGif()
     }
 }

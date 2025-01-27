@@ -24,6 +24,9 @@ struct HangdamDTO {
         default: return 0       // 알담이 : 1개 작성 필요
         }
     }
+    var message: String {
+        return MainMessages.messageForLevel(level, name: name ?? "이름 없음")
+    }
 }
 
 extension HangdamEntity {

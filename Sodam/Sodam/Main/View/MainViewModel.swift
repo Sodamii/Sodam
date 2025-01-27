@@ -59,8 +59,8 @@ final class MainViewModel: ObservableObject {
         /// 디버깅
         print("행담이 레벨 \(level)로 성장함")
         
-        // TODO: 레벨에 따라 다른 메시지 설정
-        // MARK: 레벨에 따라 gif 설정하는 것도 여기서 하면 좋을 듯 (setGif 구현 여기로 옮기기)
+        message = MainMessages.messageForLevel(level, name: name ?? "")
+        gifName = "phase\(level)"
     }
     
     /// deinit 시 observing 해제

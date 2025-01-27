@@ -122,6 +122,7 @@ extension MainViewController: WriteViewControllerDelegate {
         print("WriteViewController 모달이 닫혔습니다.")
         
         viewModel.updateMessage()
+        viewModel.setGif()
     }
 }
 

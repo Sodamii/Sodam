@@ -7,27 +7,21 @@
 
 import Foundation
 
-protocol HangdamRepositoryProtocol {
-    func getCurrentHangdam() -> HangdamDTO
-    func getSavedHangdams() -> [HangdamDTO]
-    func createNewHangdam() -> HangdamDTO
-    func nameHangdam(id: String, name: String)
-}
-
 /// CoreDataManager와 ViewModel 사이에서 행담이 데이터 처리를 맡는 객체
 final class HangdamRepository {
-    private let coreDataManager: HangdamManagingProtocol
+    private let coreDataManager: CoreDataManager
     
-    init(coreDataManager: HangdamManagingProtocol = CoreDataManager()) {
+    init(coreDataManager: CoreDataManager = CoreDataManager()) {
         self.coreDataManager = coreDataManager
     }
     
     /// 현재 키우는 행담이 불러오기
     func getCurrentHangdam() -> HangdamDTO {
         guard !coreDataManager.fetchHangdams().isEmpty,
-              let currentHangdam = coreDataManager.fetchHangdams().last
+              let currentHangdam = coreDataManager.fetchHangdams().last,
+              currentHangdam.endDate == nil
         else {
-            /// context에 저장된 행담이가 없을 경우(첫 접속) 새로운 행담이 생성
+            /// context에 저장된 행담이가 없을 경우(첫 접속) 또는 행담이가 기억 30개를 채운 경우 새로운 행담이 생성
             return createNewHangdam()
         }
         

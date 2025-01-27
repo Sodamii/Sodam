@@ -145,19 +145,21 @@ final class WriteViewModel: NSObject {
 
 // MARK: - 이미지 임시저장, 불러오기 메서드
 extension WriteViewModel {
+    // 이미지 경로 생성 및 파일매니저에 저장하기 위한 메서드
     private func saveImages(_ images: [UIImage]) -> [String] {
         var imagePaths: [String] = []
         
         for image in images {
-            let imagePath = imageManager.nameImagePath()
-            imageManager.saveImage(image, with: imagePath)
+            let imagePath = imageManager.nameImagePath() // ImageManager의 nameImagePath 호출
+            imageManager.saveImage(image, with: imagePath) // ImageManager의 saveImage 호출
             imagePaths.append(imagePath)
         }
         
+        // 임시 저장과 영구 저장에서 사용할 imagePath 배열 반환
         return imagePaths
     }
     
-    
+    // 임시 저장을 위한 메서드
     func saveTemporaryPost() {
         let imagePaths = saveImages(writeModel.post.images)
         
@@ -165,17 +167,21 @@ extension WriteViewModel {
         UserDefaultsManager.shared.saveImagePath(imagePaths)
     }
     
+    // 임시 저장된 글 불러오는 메서드
     func loadTemporaryPost() {
-        guard let content = UserDefaultsManager.shared.getContent(),
-              let imagePaths = UserDefaultsManager.shared.getImagePath()
+        guard let content = UserDefaultsManager.shared.getContent(), // 임시 저장된 글 불러오기
+              let imagePaths = UserDefaultsManager.shared.getImagePath() // 임시 저장된 이미지 경로 불러오기
         else {
+            // 불러올 데이터가 없는 경우 종료
             return
         }
         
+        // 불러온 글 내용을 모델에 업데이트
         writeModel.updateText(content)
         
         for imagePath in imagePaths {
-            if let result = imageManager.getImage(with: imagePath) {
+            if let result = imageManager.getImage(with: imagePath) { // ImageManager의 getImage 호출해서 이미지 불러오기
+                // 뷰에 이미지 추가
                 writeModel.addImage(result)
             }
         }

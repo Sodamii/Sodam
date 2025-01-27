@@ -148,6 +148,12 @@ final class WriteViewController: UIViewController {
     
     // 카메라 버튼 탭할 때 호출되는 메서드
     @objc private func openCamera() {
+        // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
+        guard writeViewModel.images.count < 1 else {
+            showAlertMaxImageLimitReached()
+            return
+        }
+        
         writeViewModel.requestCameraAccess { [weak self] isGranted in
             if isGranted {
                 // 카메라 권한이 허용된 경우 카메라 생성 및 표시
@@ -237,6 +243,8 @@ final class WriteViewController: UIViewController {
             self.present(alertControlelr, animated: true)
         }
     }
+    
+    // MARK: - Alert 메서드
     
     // 이미지 상한을 알리는 Alert 표시
     private func showAlertMaxImageLimitReached() {

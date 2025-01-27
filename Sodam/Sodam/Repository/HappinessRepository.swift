@@ -7,17 +7,11 @@
 
 import Foundation
 
-protocol HappinessRepositoryProtocol {
-    func createHappiness(_ happiness: HappinessDTO)
-    func getHappinesses(of hangdamID: String) -> [HappinessDTO]?
-    func deleteHappiness(with id: String)
-}
-
 /// CoreDataManager와 ViewModel 사이에서 행복한 기억 데이터 처리를 맡는 객체
 final class HappinessRepository {
-    private let coreDataManager: HappinessManagingProtocol
+    private let coreDataManager: CoreDataManager
     
-    init(coreDataManager: HappinessManagingProtocol = CoreDataManager()) {
+    init(coreDataManager: CoreDataManager = CoreDataManager()) {
         self.coreDataManager = coreDataManager
     }
     

@@ -7,18 +7,11 @@
 
 import Foundation
 
-protocol HangdamRepositoryProtocol {
-    func getCurrentHangdam() -> HangdamDTO
-    func getSavedHangdams() -> [HangdamDTO]
-    func createNewHangdam() -> HangdamDTO
-    func nameHangdam(id: String, name: String)
-}
-
 /// CoreDataManager와 ViewModel 사이에서 행담이 데이터 처리를 맡는 객체
 final class HangdamRepository {
-    private let coreDataManager: HangdamManagingProtocol
+    private let coreDataManager: CoreDataManager
     
-    init(coreDataManager: HangdamManagingProtocol = CoreDataManager()) {
+    init(coreDataManager: CoreDataManager = CoreDataManager()) {
         self.coreDataManager = coreDataManager
     }
     

@@ -8,11 +8,7 @@
 import UIKit
 
 final class ImageManager {
-    
-    // 이미지 리사이징 목표 크기
-    private let resizeFloat: CGFloat = 450
-    
-    // 현재 시간 timestamp를 String으로 반환하는 함수
+    /// 현재 시간 timestamp를 String으로 반환하는 함수
     func nameImagePath() -> String {
         /// split.first 접근에 실패할 경우 uuid 값으로라도 고유한 값 생성하도록 처리
         guard let imagePath = String(Date.now.timeIntervalSince1970).split(separator: ".").first
@@ -23,10 +19,10 @@ final class ImageManager {
         return String(imagePath)
     }
     
-    // 이미지 저장
-    func saveImage(_ image: UIImage, with imagePath: String) {
+    /// 이미지를 저장하는 함수 : 리사이징 목표치 기본값 450
+    func saveImage(_ image: UIImage, with imagePath: String, size: CGFloat = 450) {
         /// 1.  이미지 리사이징
-        let resizedImage = resizeImage(image)
+        let resizedImage = resizeImage(image, resizeFloat: size)
         
         /// 2. FileManager로 기기에 저장
         saveImageAsFile(image: resizedImage, imagePath: imagePath)
@@ -49,7 +45,7 @@ final class ImageManager {
 // 내부 호출 함수 모음
 extension ImageManager {
     /// 이미지 리사이징하는 함수
-    private func resizeImage(_ image: UIImage) -> UIImage {
+    private func resizeImage(_ image: UIImage, resizeFloat: CGFloat) -> UIImage {
         /// 이미지 고유 비율
         let aspectRatio = image.size.width / image.size.height
         
@@ -65,9 +61,9 @@ extension ImageManager {
         /// newSize에 맞게 이미지 렌더링
         let renderer = UIGraphicsImageRenderer(size: newSize)
         
-        let resizedImage = renderer.image(actions: { _ in
+        let resizedImage = renderer.image { _ in
             image.draw(in: CGRect(origin: .zero, size: newSize))
-        })
+        }
         
         return resizedImage
     }

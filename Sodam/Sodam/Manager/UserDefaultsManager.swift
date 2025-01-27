@@ -15,7 +15,6 @@ final class UserDefaultsManager {
     
     // 이름 충돌 방지 및 재사용성 증가
     private enum Keys {
-        static let id = "id"
         static let notificationTime = "Date"
         static let isToggleNotification = "isToggleNotification"
         static let content = "content"

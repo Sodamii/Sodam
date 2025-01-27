@@ -24,6 +24,7 @@ final class HappinessRepository {
         }
         
         /// 날짜 업데이트 필요성 체크
+        print("createHappiness: updateHangdamIfNeeded 호출")
         updateHangdamIfNeeded(hangdamID: happiness.hangdamID)
         
         /// 기억생성
@@ -39,18 +40,25 @@ final class HappinessRepository {
             return
         }
         
+        print("updateHangdamIfNeeded: count=\(count)")
+        
         switch count {
-        case 0:     // 행담이 startDate 업데이트, 레벨 1로 성장
+        case 0:
             coreDataManager.updateHangdam(with: hangdamID, updateCase: .startDate(Date.now))
+            coreDataManager.updateHangdam(with: hangdamID, updateCase: .level(1))
             postNotification(level: 1)
-        case 3:     // 행담이 레벨 2로 성장
+        case 3:
+            coreDataManager.updateHangdam(with: hangdamID, updateCase: .level(2))
             postNotification(level: 2)
-        case 10:    // 행담이 레벨 3으로 성장
+        case 10:
+            coreDataManager.updateHangdam(with: hangdamID, updateCase: .level(3))
             postNotification(level: 3)
-        case 24:    // 행담이 레벨 4로 성장
+        case 24:
+            coreDataManager.updateHangdam(with: hangdamID, updateCase: .level(4))
             postNotification(level: 4)
-        case 29:    // 행담이 endDate 업데이트, 최종 성장(보관함 이동)
+        case 29:
             coreDataManager.updateHangdam(with: hangdamID, updateCase: .endDate(Date.now))
+            coreDataManager.updateHangdam(with: hangdamID, updateCase: .level(5)) // 최종 레벨 저장
             postNotification(level: 5)
         default:
             return

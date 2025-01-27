@@ -12,4 +12,5 @@ enum HangdamUpdateCase {
     case name(String)
     case startDate(Date)
     case endDate(Date)
+    case level(Int)
 }

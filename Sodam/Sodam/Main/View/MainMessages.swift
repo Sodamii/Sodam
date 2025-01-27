@@ -40,4 +40,23 @@ enum MainMessages: String, CaseIterable {
         // 쉼표를 기준으로 줄바꿈 추가
         let formattedMessage = randomMessage.replacingOccurrences(of: ",", with: ",\n")
         return formattedMessage
-    }}
+    }
+    
+    // 레벨 별 메세지
+    static func getLevelUpMessage(level: Int, name: String) -> String {
+        switch level {
+        case 1:
+            return "드디어 알을 깨고 아기 \(name)(이)가 눈을 마주치네요!"
+        case 2:
+            return "하트 윙크 발사하는 사랑스러운 \(name)(이)로 성장했네요!"
+        case 3:
+            return "주황 목도리를 하고 어엿한 \(name)(이)로 성장 완료!"
+        case 4:
+            return "소확행을 좋아하는 \(name)(이)에게 행복한 기억을 더 줘볼까요?"
+        case 5: // 마지막 메시지
+            return "\(name)(이)가 당신의 소확행을 배부르게 먹고 보관되었습니다. 다음엔 누가 나올까요?"
+        default:
+            return "행복한 성장이 진행 중입니다!"
+        }
+    }
+}

@@ -104,8 +104,8 @@ final class MainViewController: UIViewController {
         // 연속 클릭 방지
         mainView.circularImageView.isUserInteractionEnabled = false             // 클릭 비활성화
         
-        // 저정된 이름 유무에 따라서 메세지 업데이트
-        viewModel.updateMessage()
+        // 랜덤 메세지 강제 업데이트
+        viewModel.updateMessage(force:  true)
         
         // 2초 후 다시 활성화
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {

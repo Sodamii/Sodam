@@ -82,6 +82,8 @@ final class CoreDataManager {
             entity.startDate = date
         case .endDate(let date):
             entity.endDate = date
+        case .level(let level):
+            entity.level = Int16(level)
         }
 
         print("[CoreData] 행담이 정보 업데이트 완료")

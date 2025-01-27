@@ -25,9 +25,10 @@ final class HangdamRepository {
     /// 현재 키우는 행담이 불러오기
     func getCurrentHangdam() -> HangdamDTO {
         guard !coreDataManager.fetchHangdams().isEmpty,
-              let currentHangdam = coreDataManager.fetchHangdams().last
+              let currentHangdam = coreDataManager.fetchHangdams().last,
+              currentHangdam.endDate == nil
         else {
-            /// context에 저장된 행담이가 없을 경우(첫 접속) 새로운 행담이 생성
+            /// context에 저장된 행담이가 없을 경우(첫 접속) 또는 행담이가 기억 30개를 채운 경우 새로운 행담이 생성
             return createNewHangdam()
         }
         

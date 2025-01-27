@@ -47,4 +47,13 @@ final class SettingViewModel {
             seconds: 0,
             identifier: "SelectedTimeNotification")
     }
+    
+    // URL 열기 메서드
+    func openURL(_ urlString: String) {
+        guard let url = URL(string: urlString), UIApplication.shared.canOpenURL(url) else {
+            print("유효하지 않은 URL입니다: \(urlString)")
+            return
+        }
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
 }

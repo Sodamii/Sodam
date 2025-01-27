@@ -28,7 +28,7 @@ final class ImageManager {
         saveImageAsFile(image: resizedImage, imagePath: imagePath)
     }
     
-    // 이미지 불러오기
+    /// 이미지 불러오는 함수
     func getImage(with imagePath: String) -> UIImage? {
         let result = loadImageFile(imagePath: imagePath)
         
@@ -39,6 +39,35 @@ final class ImageManager {
             print(error.localizedDescription)
             return nil
         }
+    }
+    
+    /// 썸네일 이미지 만드는 함수 : 리사이징 목표치 기본값 150
+    func getThumbnailImage(with imagePath: String, size: CGFloat = 150) -> UIImage {
+        guard let image = getImage(with: imagePath) else {
+            return UIImage(resource: .kingdam3)
+        }
+        
+        /// 이미지 크기
+        let width = image.size.width
+        let height = image.size.height
+        
+        let scale = size / min(width, height)
+        
+        /// 이미지 비율 유지한 채 150 크기로 줄임
+        let newWidth = width * scale
+        let newHeight = height * scale
+        
+        /// 가운데 부분을 crop 하기 위해 긴 부분만큼 이동시킬 offset 계산
+        let xOffset = (newWidth - size) / -2.0
+        let yOffset = (newHeight - size) / -2.0
+        
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: size, height: size))
+        
+        let thumbnail = renderer.image { _ in
+            image.draw(in: CGRect(x: xOffset, y: yOffset, width: newWidth, height: newHeight))
+        }
+        
+        return thumbnail
     }
 }
 

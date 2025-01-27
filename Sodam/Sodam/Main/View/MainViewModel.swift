@@ -17,6 +17,7 @@ final class MainViewModel: ObservableObject {
     init(repository: HangdamRepository = HangdamRepository()) {
         self.hangdamRepository = repository
         self.name = hangdamRepository.getCurrentHangdam().name
+        self.updateMessage() // 초기화 시 메세지 업데이트
     }
     
     func setGif() {

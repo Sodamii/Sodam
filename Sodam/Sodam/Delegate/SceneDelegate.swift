@@ -14,41 +14,45 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
+
+        // 메인 ViewController 설정
+        let mainViewController = CustomTabBarController()
         
-        window.rootViewController = CustomTabBarController()
-        window.makeKeyAndVisible()
-        
+        window.backgroundColor = .white
+
+        // 페이드인/페이드아웃 오버레이 설정
+        let overlayView = UIView(frame: UIScreen.main.bounds)
+        let imageView = UIImageView(image: UIImage(named: "LaunchImage"))
+        imageView.contentMode = .scaleAspectFill
+        imageView.frame = overlayView.bounds
+        overlayView.addSubview(imageView)
+
+        overlayView.alpha = 1.0 // 처음에 보이는 상태로 시작 함
+        window.rootViewController = UIViewController()
         self.window = window
-    }
-    
-    func sceneDidDisconnect(_ scene: UIScene) {
-        // Called as the scene is being released by the system.
-        // This occurs shortly after the scene enters the background, or when its session is discarded.
-        // Release any resources associated with this scene that can be re-created the next time the scene connects.
-        // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
-    }
+        window.makeKeyAndVisible()
 
-    func sceneDidBecomeActive(_ scene: UIScene) {
-        // 알림을 모두 처리한 후, 배지 숫자를 0으로 설정
-        UIApplication.shared.applicationIconBadgeNumber = 0
+        // 오버레이 추가
+        window.addSubview(overlayView)
+
+        // 페이드아웃 후 메인 화면 전환 + 페이드인
+        UIView.animate(withDuration: 0.8, delay: 1.5, options: .curveEaseOut, animations: {
+            overlayView.alpha = 0.0 // 페이드아웃
+        }, completion: { _ in
+            
+            // 메인 화면으로 전환
+            self.window?.rootViewController = mainViewController
+
+            // 메인 뷰 페이드인 애니메이션
+            mainViewController.view.alpha = 0.0
+            UIView.animate(withDuration: 0.7, animations: {
+                mainViewController.view.alpha = 1.0 // 메인 뷰 서서히 나타남
+            })
+
+            overlayView.removeFromSuperview() // 오버레이 제거
+        })
     }
-
-    func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
-    }
-
-    func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
-    }
-
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
-    }
-
-
 }
+
+
 

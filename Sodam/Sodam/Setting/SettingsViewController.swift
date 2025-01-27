@@ -132,6 +132,20 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
+    // 셀이 선택되었을 때 동작 처리
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let sectionType = settingViewModel.sectionType[safe: indexPath.section] else { return }
+        switch sectionType {
+        case .develop:
+            if indexPath.row == 0 {
+                // TODO: - 리뷰 남기기 링크로 변경 필요
+                settingViewModel.openURL("https://www.naver.com")
+            }
+        default:
+            break
+        }
+    }
+    
     @objc func didToggleSwitch(_ sender: UISwitch) {
         settingViewModel.isSwitchOn = sender.isOn
 

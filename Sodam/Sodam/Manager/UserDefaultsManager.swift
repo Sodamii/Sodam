@@ -15,7 +15,6 @@ final class UserDefaultsManager {
     
     // 이름 충돌 방지 및 재사용성 증가
     private enum Keys {
-        static let id = "id"
         static let notificationTime = "Date"
         static let isToggleNotification = "isToggleNotification"
         static let content = "content"
@@ -36,6 +35,10 @@ final class UserDefaultsManager {
         userDefaults.set(content, forKey: Keys.content)
     }
     
+    func saveImagePath(_ imagePath: String) {
+        userDefaults.set(imagePath, forKey: Keys.imagePath)
+    }
+    
     // MARK: - UserDefaults에 저장된 값 얻어오기
     
     func getNotificationTime() -> Date? {
@@ -48,5 +51,9 @@ final class UserDefaultsManager {
     
     func getContent() -> String? {
         userDefaults.string(forKey: Keys.content)
+    }
+    
+    func getImagePath() -> String? {
+        userDefaults.string(forKey: Keys.imagePath)
     }
 }

@@ -38,11 +38,20 @@ final class WriteModel {
     
     // 이미지 추가 메서드
     func addImage(_ image: UIImage) {
+        // 사진이 두 장 이상 있을 경우 추가되지 않게 하기
+        guard post.images.count < 1 else {
+            return
+        }
         post.images.append(image)
     }
     
     // 이미지 삭제 메서드
     func removeImage(at index: Int) {
         post.images.remove(at: index)
+    }
+    
+    // post 초기화 메서드(작성 완료시 호출)
+    func resetPost() {
+        post = Post(content: "", images: [])
     }
 }

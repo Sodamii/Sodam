@@ -39,6 +39,13 @@ final class WriteViewController: UIViewController {
         view = writeView
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // 임시 저장글 있는지 확인하고 로드
+        writeViewModel.loadTemporaryPost()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // 컬렉션 뷰의 데이터 소스와 델리게이트 설정
@@ -64,6 +71,16 @@ final class WriteViewController: UIViewController {
         super.viewWillDisappear(animated)
         // 뷰가 닫힐 때 delegate 호출하기
         if self.isBeingDismissed {
+            if writeViewModel.isPostSubmitted {
+                print("viewWillDisappear 동작. CoreData에 저장됨.")
+                // 작성 완료시 UserDefaults에 임시 저장된 글 삭제
+                UserDefaultsManager.shared.deleteTemporaryPost()
+            } else {
+                print("viewWillDisappear. UserDefaults에 저장됨.")
+                // 작성 취소 시 임시 저장
+                writeViewModel.saveTemporaryPost()
+            }
+            
             delegate?.writeViewControllerDiddismiss()
         }
     }
@@ -149,6 +166,11 @@ final class WriteViewController: UIViewController {
     @objc private func addImage() {
         writeViewModel.requestPhotoLibraryAccess { [weak self] isGranted in
             if isGranted {
+                // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
+                guard self?.writeViewModel.images.count ?? 0 < 1 else {
+                    self?.showAlertMaxImageLimitReached()
+                    return
+                }
                 // 사진 라이브러리 권한이 허용된 경우 사진 피커 생성 및 표시
                 let photoPicker = self?.writeViewModel.createPhotoPicker()
                 if let picker = photoPicker {
@@ -163,10 +185,14 @@ final class WriteViewController: UIViewController {
     
     // 작성완료 버튼 탭할 때 호출되는 메서드
     @objc private func submitText() {
-        // WriteViewModel에 작성 완료 이벤트 전달
-        writeViewModel.submitPost()
-        // 모달 닫기
-        dismiss(animated: true, completion: nil)
+        // 작성 완료 알림 표시
+        showCompletionAlert {
+            // WriteViewModel에 작성 완료 이벤트 전달
+            self.writeViewModel.submitPost {
+                // 모달 닫기
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
     }
     
     // 취소 버튼 탭할 때 호출되는 메서드
@@ -211,6 +237,37 @@ final class WriteViewController: UIViewController {
             self.present(alertControlelr, animated: true)
         }
     }
+    
+    // 이미지 상한을 알리는 Alert 표시
+    private func showAlertMaxImageLimitReached() {
+        let alert = UIAlertController(
+            title: "이미지를 추가할 수 없습니다.",
+            message: "하나의 글에 최대 한 개의 이미지만 추가할 수 있습니다.",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+            alert.dismiss(animated: true, completion: nil)
+        }
+        alert.addAction(okAction)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true)
+        }
+    }
+    
+    // 작성 완료 Alert
+    private func showCompletionAlert(completion: @escaping () -> Void) {
+        let alert = UIAlertController(
+            title: "작성 완료",
+            message: "글이 성공적으로 작성되었습니다!",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+            alert.dismiss(animated: true, completion: completion)
+        }
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+    }
+
 }
 
 // MARK: - 컬렉션뷰 DataSource 설정

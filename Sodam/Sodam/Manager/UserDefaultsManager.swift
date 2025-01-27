@@ -35,7 +35,7 @@ final class UserDefaultsManager {
         userDefaults.set(content, forKey: Keys.content)
     }
     
-    func saveImagePath(_ imagePath: String) {
+    func saveImagePath(_ imagePath: [String]) {
         userDefaults.set(imagePath, forKey: Keys.imagePath)
     }
     
@@ -53,7 +53,14 @@ final class UserDefaultsManager {
         userDefaults.string(forKey: Keys.content)
     }
     
-    func getImagePath() -> String? {
-        userDefaults.string(forKey: Keys.imagePath)
+    func getImagePath() -> [String]? {
+        userDefaults.stringArray(forKey: Keys.imagePath)
     }
+    
+    func deleteTemporaryPost() {
+        print("deleteTemporaryPost 호출")
+        userDefaults.removeObject(forKey: Keys.content)
+        userDefaults.removeObject(forKey: Keys.imagePath)
+    }
+    
 }

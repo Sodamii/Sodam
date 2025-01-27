@@ -9,16 +9,20 @@ import SwiftUI
 
 struct HangdamStorageView: View {
     
-    @State var mockHangdam: MockHangdam = .mockHangdam
+    @StateObject private var viewModel: HangdamStorageViewModel
+    
+    init(viewModel: HangdamStorageViewModel = HangdamStorageViewModel()) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+    }
     
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
                 VStack(alignment: .center) {
                     NavigationLink {
-                        HappinessListView()
+                        HappinessListView(hangdam: $viewModel.currentHangdam.wrappedValue)
                     } label: {
-                        HangdamStatusView(size: geometry.size, mockHangdam: $mockHangdam)
+                        HangdamStatusView(size: geometry.size, hangdam: $viewModel.currentHangdam)
                             .clipShape(.rect(cornerRadius: 15))
                     }
                     
@@ -29,7 +33,7 @@ struct HangdamStorageView: View {
                         .padding(.top)
                     
                     ScrollView {
-                        HangdamGridView(mockHangdam: $mockHangdam)
+                        HangdamGridView(hangdamList: $viewModel.storedHangdamList)
                             .padding(.bottom)
                     }
                     .scrollIndicators(.hidden)
@@ -43,12 +47,14 @@ struct HangdamStorageView: View {
                     if let tabBarController = getRootTabBarController() {
                         tabBarController.tabBar.isHidden = false
                     }
+                    viewModel.loadHangdamData()
                 }
-
             }
         }
         .tint(.textAccent)
     }
+    
+    // MARK: - Helper method
     
     private func getRootTabBarController() -> UITabBarController? {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -56,7 +62,6 @@ struct HangdamStorageView: View {
               let rootViewController = sceneDelegate.window?.rootViewController else {
             return nil
         }
-        
         return rootViewController as? UITabBarController
     }
 }

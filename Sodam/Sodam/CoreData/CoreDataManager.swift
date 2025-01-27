@@ -7,6 +7,8 @@
 
 import CoreData
 
+// MARK: - Protocol
+// 현재로서는 약간 불필요한 프로토콜 같습니다. 튜터님 말씀으로는 너무 구체적인 건 오히려 이상하다고 하시네요.
 /// HangdamRepository에서 필요한 메소드들
 protocol HangdamManagingProtocol {
     var context: NSManagedObjectContext { get }
@@ -28,10 +30,12 @@ protocol HappinessManagingProtocol {
     func updateHangdam(with id: NSManagedObjectID, updateCase: HangdamUpdateCase)
 }
 
+// MARK: - CoreDataManager
+
 final class CoreDataManager: HangdamManagingProtocol, HappinessManagingProtocol {
     private let persistentContainer: NSPersistentContainer
     
-    private init() {
+    init() {
         persistentContainer = NSPersistentContainer(name: CDKey.container.rawValue)
         persistentContainer.loadPersistentStores { description, error in
             if let error = error {
@@ -53,6 +57,7 @@ final class CoreDataManager: HangdamManagingProtocol, HappinessManagingProtocol 
         
         do {
             try context.save()
+            print("컨텍스트 변경사항 저장 완료")
         } catch let error {
             print(DataError.contextSaveFailed.localizedDescription)
             print(error.localizedDescription)
@@ -162,8 +167,12 @@ final class CoreDataManager: HangdamManagingProtocol, HappinessManagingProtocol 
     
     /// 행복한 기억 단일 삭제
     func deleteHappiness(with id: NSManagedObjectID) {
-        guard let entity = searchHappiness(with: id) else { return }
-        context.delete(entity)
+//        guard let entity = searchHappiness(with: id) else { return }
+//        context.delete(entity)
+        // TODO: 기존 메서드 방식으로는 context에 변경사항이 안 생겨서 save 메서드 또한 실행이 안 되길래 제가 쓰는 방식으로 바꾸었습니다.
+        let happiness = context.object(with: id)
+        context.delete(happiness)
+       
         print("[CoreData] 행복 삭제 완료")
         saveContext()
     }

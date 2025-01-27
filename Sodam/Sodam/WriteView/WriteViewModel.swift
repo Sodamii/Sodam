@@ -13,9 +13,16 @@ import AVFoundation
 final class WriteViewModel: NSObject {
     
     private let writeModel: WriteModel
+    private let happinessRepository: HappinessRepository
+    private let currentHangdamID: String
     
-    init(writeModel: WriteModel) {
+    init(writeModel: WriteModel,
+         repository: HappinessRepository = HappinessRepository(),
+         hangdamID: String
+    ) {
         self.writeModel = writeModel
+        self.happinessRepository = repository
+        self.currentHangdamID = hangdamID
         super.init()
     }
     
@@ -44,7 +51,8 @@ final class WriteViewModel: NSObject {
     
     // 작성 완료 이벤트 처리
     func submitPost() {
-        
+        let newHappiness: HappinessDTO = HappinessDTO(content: text, date: Date.now, imagePaths: [], hangdamID: currentHangdamID)
+        happinessRepository.createHappiness(newHappiness)
     }
     
     // 작성 취소 이벤트 처리

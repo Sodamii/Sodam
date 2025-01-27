@@ -17,7 +17,7 @@ protocol HappinessRepositoryProtocol {
 final class HappinessRepository {
     private let coreDataManager: HappinessManagingProtocol
     
-    init(coreDataManager: HappinessManagingProtocol) {
+    init(coreDataManager: HappinessManagingProtocol = CoreDataManager()) {
         self.coreDataManager = coreDataManager
     }
     

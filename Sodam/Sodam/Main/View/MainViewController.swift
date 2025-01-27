@@ -6,11 +6,14 @@
 //
 
 import UIKit
+import Combine
 
 final class MainViewController: UIViewController {
     
-    // 메인 뷰 인스턴스 생성
-    private let mainView = MainView()
+    //뷰, 뷰모델 연결
+    private let mainView: MainView  = MainView()
+    private let viewModel: MainViewModel = MainViewModel()
+    private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     override func loadView() {
         self.view = mainView
@@ -18,38 +21,37 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupMessage()    // 초기 메세지 설정
+        bindViewModel()
         configureButtonAction()    // 작성 버튼 액션 설정
         addGesture()               // 이미지 탭 제스처
-        updateNameLabelIfNeeded()  // 앱 로드 시에 이름 라벨 업데이트
     }
     
-    // 이름 라벨 업데이트
-    private func updateNameLabelIfNeeded() {
-        if let savedName = UserDefaults.standard.string(forKey: "HangdamName") {
-            mainView.updateNameLabel(savedName) // 저장된 이름으로 라벨 업데이트
-            mainView.updateGif(with: "phase1")
-            print("저장된 이름: \(savedName)")
-        } else {
-            mainView.updateGif(with: "phase0") // 이름 없으면 알로 유지
-            print("저장된 이름이 없습니다.")
-        }
+    // MARK: - bind view model for update view
+    
+    private func bindViewModel() {
+        viewModel.$name
+            .receive(on: RunLoop.main)
+            .sink { [weak self] name in
+                self?.mainView.updateNameLabel(name ?? "알 수 없는 알") // TODO: 이름이 안 정해졌을 때 비워두는 것보다 귀여운 이름 넣으면 좋을 거 같아요
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$message
+            .receive(on: RunLoop.main)
+            .sink { [weak self] message in
+                self?.mainView.updateMessage(message)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$gifName
+            .receive(on: RunLoop.main)
+            .sink { [weak self] gifName in
+                self?.mainView.updateGif(with: gifName)
+            }
+            .store(in: &cancellables)
     }
     
-    // 저장된 이름 여부 확인
-    private func isNameSet() -> Bool {
-        return UserDefaults.standard.string(forKey: "HangdamName") != nil
-    }
-    
-    private func setupMessage() {
-        if isNameSet() {
-            mainView.updateMessage(MainMessages.getRandomMessage())
-            print("이름이 저장된 후 앱 로드되어 랜덤 메세지를 표시")
-        } else {
-            mainView.updateMessage(MainMessages.firstMessage)
-            print("이름이 저장되지 않은 경우 첫번째 메세지 표시")
-        }
-    }
+    // MARK: - setup button action
     
     // 작성 버튼 클릭 시 액션 설정
     private func configureButtonAction() {
@@ -63,7 +65,7 @@ final class MainViewController: UIViewController {
         mainView.circularImageView.isUserInteractionEnabled = true
     }
     
-    private let writeViewModel: WriteViewModel = .init(writeModel: WriteModel())
+    private lazy var writeViewModel: WriteViewModel = .init(writeModel: WriteModel(), hangdamID: viewModel.getCurrentHangdamID())
     
     // 작성화면 모달 띄우는 메서드
     private func modalWriteViewController(with name: String) {
@@ -76,40 +78,23 @@ final class MainViewController: UIViewController {
     
     // 작성 버튼 클릭 시 호출
     @objc private func createButtonTapped() {
-        if isNameSet() {
+        if let name = viewModel.name {
             // 이미 저장된 이름이 있는 경우에 바로 작성화면으로 이동
-            if let savedName = UserDefaults.standard.string(forKey: "HangdamName") {
-                print("저장된 이름으로 작성화면 이동함: \(savedName)")
-                mainView.updateNameLabel(savedName)
-                mainView.updateGif(with: "baby")
-                modalWriteViewController(with: savedName)
-            }
+            print("저장된 이름으로 작성화면 이동함: \(name)")
+            modalWriteViewController(with: name)
         } else {
             // 저장된 이름이 없는 경우 알림창 표시
             AlertManager.showAlert(on: self) { [weak self] name in
-                guard let self = self else { return }
-                
-                if let name = name, !name.isEmpty {
-                    print("입력 된 이름: \(name)")
-                    
-                    UserDefaults.standard.set(name, forKey: "HangdamName")       // 이름 저장
-                    UserDefaults.standard.synchronize()                          // 동기화 강제
-                    
-                    // 이름 라벨 업데이트
-                    self.mainView.updateNameLabel(name)
-                    
-                    // GIF 업데이트
-                    self.mainView.updateGif(with: "baby")
-                    
-                    // 메인 화면 메세지를 랜덤 메세지로 업데이트
-                    self.mainView.updateMessage(MainMessages.getRandomMessage())
-                    print("이름을 지은 후 랜덤 메세지 표시 됨")
-                    
-                    // 작성 화면으로 이동
-                    self.modalWriteViewController(with: name)
-                } else {
+                guard let self = self,
+                      let name = name,
+                      !name.isEmpty
+                else {
                     print("이름이 입력되지 않았습니다.")
+                    return
                 }
+                viewModel.saveNewName(as: name)
+                print("입력 된 이름: \(name)")
+                self.modalWriteViewController(with: name) // 작성 화면으로 이동
             }
         }
     }
@@ -120,13 +105,7 @@ final class MainViewController: UIViewController {
         mainView.circularImageView.isUserInteractionEnabled = false             // 클릭 비활성화
         
         // 저정된 이름 유무에 따라서 메세지 업데이트
-        if let savedName = UserDefaults.standard.string(forKey: "HangdamName"), !savedName.isEmpty {
-            print("저장된 이름 있음: \(savedName)")
-            mainView.updateMessage(MainMessages.getRandomMessage())             // 이름 있으면 메세지 표시
-        } else {
-            print("저장된 이름 없음. 첫번째 메세지 유지")
-            mainView.updateMessage(MainMessages.firstMessage)                   // 이름 없으면 첫번째 메세지 유지
-        }
+        viewModel.updateMessage()
         
         // 2초 후 다시 활성화
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -134,6 +113,8 @@ final class MainViewController: UIViewController {
         }
     }
 }
+
+// MARK: - extension for delegate
 
 // 작성화면 모달이 닫힐 때 처리
 extension MainViewController: WriteViewControllerDelegate {

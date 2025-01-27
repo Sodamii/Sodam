@@ -9,32 +9,29 @@ import SwiftUI
 
 struct HangdamGridView: View {
     
-    @Binding var mockHangdam: MockHangdam
+    @Binding var hangdamList: [HangdamDTO]
     
     let columns = Array(repeating: GridItem(spacing: 16), count: 2)
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: 16) {
-            HangdamGrid(mockHangdam: $mockHangdam)
-            HangdamGrid(mockHangdam: $mockHangdam)
-            HangdamGrid(mockHangdam: $mockHangdam)
-            HangdamGrid(mockHangdam: $mockHangdam)
-            HangdamGrid(mockHangdam: $mockHangdam)
-            HangdamGrid(mockHangdam: $mockHangdam)
+            ForEach(hangdamList.indices, id: \.self) { index in
+                HangdamGrid(hangdam: $hangdamList[index])
+            }
         }
     }
 }
 
 fileprivate struct HangdamGrid: View {
     
-    @Binding var mockHangdam: MockHangdam
+    @Binding var hangdam: HangdamDTO
     
     var body: some View {
         NavigationLink {
-            HappinessListView()
+            HappinessListView(hangdam: hangdam)
         } label: {
             VStack(spacing: 1) {
-                Image(.kingdam0)
+                Image(.kingdam1)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .background(Color.imageBackground)
@@ -42,13 +39,16 @@ fileprivate struct HangdamGrid: View {
                     .padding()
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(mockHangdam.name)
+                    Text(hangdam.name ?? "이름을 잃었다.")
                         .font(.maruburiot(type: .bold, size: 16))
                         .foregroundStyle(Color(uiColor: .darkGray))
-                    
-                    Text(mockHangdam.startDate?.toFormattedString ?? "")
-                        .font(.maruburiot(type: .regular, size: 14))
-                        .foregroundStyle(Color(uiColor: .gray))
+                    if let startDate = hangdam.startDate {
+                        Text(startDate)
+                            .font(.maruburiot(type: .regular, size: 14))
+                            .foregroundStyle(Color(uiColor: .gray))
+                    } else {
+                        Text("")
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding([.leading, .bottom])
@@ -60,5 +60,6 @@ fileprivate struct HangdamGrid: View {
 }
 
 #Preview {
-    HangdamGridView(mockHangdam: .constant(.mockHangdam))
+    let hangdamRepository: HangdamRepository = HangdamRepository()
+    HangdamGridView(hangdamList: .constant(hangdamRepository.getSavedHangdams()))
 }

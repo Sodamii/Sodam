@@ -22,7 +22,7 @@ final class MainView: UIView {
     }()
     
     // 이미지 뷰
-    public let circularImageView: UIImageView = {
+    let circularImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.backgroundColor = .imageBackground
@@ -106,12 +106,12 @@ final class MainView: UIView {
     }
     
     // 메세지라벨
-    public func updateMessage(_ message: String) {
+    func updateMessage(_ message: String) {
         messageLabel.text = message
     }
     
     // 이름 라벨 업데이트
-    public func updateNameLabel(_ name: String?) {
+    func updateNameLabel(_ name: String?) {
         if let name = name, !name.isEmpty {
             nameLabel.text = name
             nameLabel.isHidden = false
@@ -121,7 +121,7 @@ final class MainView: UIView {
     }
     
     // GIF 업데이트 메서드 추가
-    public func updateGif(with name: String) {
+    func updateGif(with name: String) {
         if let gifImage = UIImage.animatedImage(withGIFNamed: name) {
             circularImageView.image = gifImage
         }

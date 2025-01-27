@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct HappinessListView: View {
     
@@ -27,7 +28,7 @@ struct HappinessListView: View {
                     
                     if let happinessList = $viewModel.happinessList.wrappedValue,
                        !happinessList.isEmpty {
-                        Text("\($viewModel.hangdam.wrappedValue.id)담이가 먹은 기억들")
+                        Text("\($viewModel.hangdam.wrappedValue.name ?? "이름없는 ")담이가 먹은 기억들")
                             .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
                             .font(.mapoGoldenPier(FontSize.title2))
                             .lineLimit(1)
@@ -37,7 +38,7 @@ struct HappinessListView: View {
                         
                         List {
                             ForEach(happinessList, id: \.self) { happiness in
-                                NavigationLink(destination: HappinessDetailView(date: happiness.date.toFormattedString, image: nil, text: happiness.content)) {
+                                NavigationLink(destination: HappinessDetailView(viewModel: HappinessDetailViewModel(happiness: happiness))) {
                                     HStack {
                                         Rectangle() // 사진 대체용
                                             .frame(width: 90, height: 120)
@@ -84,6 +85,8 @@ struct HappinessListView: View {
                 if let tabBarController = getRootTabBarController() {
                     tabBarController.tabBar.isHidden = true
                 }
+                viewModel.reloadData()
+                print("list 뷰 등장 및 데이터 리로드")
             }
         }
     }

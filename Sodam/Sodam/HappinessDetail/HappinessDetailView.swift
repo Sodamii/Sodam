@@ -9,30 +9,30 @@ import SwiftUI
 
 struct HappinessDetailView: View {
     
-    let date: String
-    let image: UIImage?
-    let text: String
-    
+    var viewModel: HappinessDetailViewModel
     @State private var isAlertPresented: Bool = false
+    @Environment(\.dismiss) private var dismiss
     
+    init(viewModel: HappinessDetailViewModel) {
+        self.viewModel = viewModel
+    }
     var body: some View {
-        
         ScrollView {
             VStack {
-                if let image = image {
-                    Image(uiImage: image)
-                    
+                if let imagePath = viewModel.happiness.imagePaths.first {
+                    // TODO: 이미지 호출하여 뷰로 구성하는 메서드 필요,
                     RoundedRectangle(cornerRadius: 15)
                         .fill(Color.primary)
                         .frame(width: 200, height: 200)
                 }
-                Text(text)
+                
+                Text(viewModel.happiness.content)
                     .padding()
             }
             .frame(maxWidth: .infinity)
         }
         .padding()
-        .navigationTitle(date)
+        .navigationTitle(viewModel.happiness.date.toFormattedString)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -45,24 +45,34 @@ struct HappinessDetailView: View {
             }
         }
         .background(Color.viewBackground)
-        .sheet(isPresented: $isAlertPresented) {
-            CustomAlertRepresentable(
-                alertBuilder: CustomAlertBuilder()
-                    .setTitle(to: "you real?")
-                    .setMessage(to: "you can't undo")
-                    .setBackground(color: .cellBackground)
-                    .setAlertFont(font: .gowunBatang(type: .regular, size: 16))
-                    .setTitleColor(to: .textAccent)
-                    .setMessageFontColor(to: .darkGray)
-                    .addAction(title: "확인", style: .onlyYes) { _ in }
-                    .addAction(title: "취소", style: .canCancle) { _ in }
-            )
+        .alert("정말 삭제하시겠습니까?", isPresented: $isAlertPresented) {
+            Button("취소", role: .cancel) { }
+            Button("삭제", role: .destructive) {
+                viewModel.deleteHappiness()
+                print("삭제 메서드 실행 및 뷰 dismiss")
+                dismiss()
+            }
+        } message: {
+            Text("삭제한 행복은 되돌릴 수 없습니다.")
         }
+        //        .sheet(isPresented: $isAlertPresented) {
+        //            CustomAlertRepresentable(
+        //                alertBuilder: CustomAlertBuilder()
+        //                    .setTitle(to: "you real?")
+        //                    .setMessage(to: "you can't undo")
+        //                    .setBackground(color: .cellBackground)
+        //                    .setAlertFont(font: .gowunBatang(type: .regular, size: 16))
+        //                    .setTitleColor(to: .textAccent)
+        //                    .setMessageFontColor(to: .darkGray)
+        //                    .addAction(title: "확인", style: .onlyYes) { _ in }
+        //                    .addAction(title: "취소", style: .canCancle) { _ in }
+        //            )
+        //        }
     }
     
 }
 
 #Preview {
-    HappinessDetailView(date: "2002.12.12", image: nil, text: "오늘 복권 1등 당첨됐다. 행담이 회사 내가 사주지.")
+//    HappinessDetailView(viewModel: HappinessDetailViewModel())
 }
 

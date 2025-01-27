@@ -45,11 +45,10 @@ private extension SettingsViewController {
     }
     
     func setupScheduledNotification() {
-        // UserDefaults에서 알림 상태 복원
-        settingViewModel.isSwitchOn =
-        settingViewModel.getIsToggle()
+        // UserDefaults에서 알림 상태 복원 (이미 뷰모델에서 초기화했으므로 중복 처리 없음)
         if settingViewModel.isSwitchOn {
             if let savedTime = settingViewModel.getNotificationTime() {
+                print("savedTime \(savedTime)")
                 settingViewModel.setReservedNotificaion(savedTime)
             }
         }
@@ -111,6 +110,12 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 cell.titleLabel.textColor = .black
                 cell.timePicker.isHidden = false
                 cell.switchButton.isHidden = true
+                
+                // 저장된 시간이 있으면 설정
+                if let savedTime = settingViewModel.getNotificationTime() {
+                    print("savedTimeCell \(savedTime)")
+                    cell.timePicker.date = savedTime
+                }
             }
             
         case .develop:
@@ -148,25 +153,33 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     
     @objc func didToggleSwitch(_ sender: UISwitch) {
         settingViewModel.isSwitchOn = sender.isOn
-
-        settingViewModel.saveIsToggleNotification(settingViewModel.isSwitchOn)
-        // 알림 예약 또는 취소 처리
-        if let savedTime = settingViewModel.getNotificationTime(), settingViewModel.isSwitchOn {
-            // 저장된 알림 시간과 스위치 상태가 켜져 있을 경우
-            settingViewModel.setReservedNotificaion(savedTime)
+        settingViewModel.saveIsToggleNotification(sender.isOn)
+        
+        if sender.isOn {
+            if let savedTime = settingViewModel.getNotificationTime() {
+                settingViewModel.setReservedNotificaion(savedTime)
+            } else {
+                // 저장된 시간이 없는 경우 현재 시간을 기본값으로 저장
+                let currentDate = Date()
+                settingViewModel.saveNotificationTime(currentDate)
+                settingViewModel.setReservedNotificaion(currentDate)
+            }
         } else {
-            // 스위치가 꺼져 있을 경우 기존 알림시간 삭제
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["SelectedTimeNotification"])
         }
+        
         settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
     
     // 사용자가 선택한 알림 시간 UserDefaultsManager에 저장
     @objc func userScheduleNotification(_ sender: UIDatePicker) {
-        settingViewModel.saveNotificationTime(sender.date)  // Date객체를 그대로 UserDefaultsManager 저장(현지시간으로는 안보임)
-        // 새로 선택된 시간에 맞춰 알림을 예약하는 코드가 필요하여 작성
+        settingViewModel.saveNotificationTime(sender.date)
+        print("sender.date11 \(sender.date)")
+
         if settingViewModel.isSwitchOn {
             settingViewModel.setReservedNotificaion(sender.date)
+            print("sender.date22 \(sender.date)")
+
         }
     }
 }

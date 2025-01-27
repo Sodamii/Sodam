@@ -5,6 +5,7 @@
 //  Created by 박진홍 on 1/26/25.
 //
 
+import Foundation
 import Combine
 
 final class MainViewModel: ObservableObject {
@@ -18,6 +19,9 @@ final class MainViewModel: ObservableObject {
         self.hangdamRepository = repository
         self.name = hangdamRepository.getCurrentHangdam().name
         self.updateMessage() // 초기화 시 메세지 업데이트
+        
+        // 행담이 레벨업 할때마다 특정 메시지를 보여주기 위해 observing
+        NotificationCenter.default.addObserver(self, selector: #selector(updateMessageWhenLevelUp), name: Notification.levelUP, object: nil)
     }
     
     func setGif() {
@@ -45,5 +49,22 @@ final class MainViewModel: ObservableObject {
     
     func getCurrentHangdamID() -> String {
         return hangdamRepository.getCurrentHangdam().id
+    }
+    
+    @objc func updateMessageWhenLevelUp(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let level = userInfo["level"] as? Int
+        else { return }
+        
+        /// 디버깅
+        print("행담이 레벨 \(level)로 성장함")
+        
+        // TODO: 레벨에 따라 다른 메시지 설정
+        // MARK: 레벨에 따라 gif 설정하는 것도 여기서 하면 좋을 듯 (setGif 구현 여기로 옮기기)
+    }
+    
+    /// deinit 시 observing 해제
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }

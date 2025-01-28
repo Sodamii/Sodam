@@ -31,7 +31,7 @@ final class MainViewController: UIViewController {
     }
     
     /// 뷰가 다시 나타날 때 데이터 갱신
-    override func viewIsAppearing(_ animated: Bool) {
+    override func viewWillAppear (_ animated: Bool) {
         viewModel.reloadHanhdam() // ViewModel에서 행담이 데이터를 갱신
     }
     

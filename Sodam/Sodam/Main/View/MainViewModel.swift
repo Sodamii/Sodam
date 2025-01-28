@@ -26,11 +26,13 @@ final class MainViewModel: ObservableObject {
         // 행담이 레벨업 할때마다 특정 메시지를 보여주기 위해 observing
         NotificationCenter.default.addObserver(self, selector: #selector(updateMessageWhenLevelUp), name: Notification.levelUP, object: nil)
     }
+    
     /// 새로운 이름을 현재 행담이에 저장
     func saveNewName(as name: String ) {
         hangdamRepository.nameHangdam(id: hangdam.id, name: name)
-        
+        reloadHanhdam()
     }
+    
     /// 행담이 이름 유무에 따라 화면 메세지를 업데이트 함
     func updateMessage() {
         if let _ = hangdam.name {

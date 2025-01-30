@@ -13,7 +13,7 @@ final class HangdamStorageViewModel: ObservableObject {
     
     private let hangdamRepository: HangdamRepository
     
-    init(hangdamRepository: HangdamRepository = HangdamRepository()) {
+    init(hangdamRepository: HangdamRepository) {
         self.hangdamRepository = hangdamRepository
         self.currentHangdam = hangdamRepository.getCurrentHangdam()
         self.storedHangdamList = hangdamRepository.getSavedHangdams()

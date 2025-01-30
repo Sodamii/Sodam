@@ -12,8 +12,18 @@ final class MainViewController: UIViewController {
     
     //뷰, 뷰모델 연결
     private let mainView: MainView  = MainView()
-    private let viewModel: MainViewModel = MainViewModel()
+    private let viewModel: MainViewModel
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
+    
+    init(viewModel: MainViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        self.viewModel = MainViewModel(repository: HangdamRepository())
+        super.init(nibName: nil, bundle: nil)
+    }
     
     override func loadView() {
         self.view = mainView

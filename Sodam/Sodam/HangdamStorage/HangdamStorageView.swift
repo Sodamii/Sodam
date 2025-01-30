@@ -11,7 +11,7 @@ struct HangdamStorageView: View {
     
     @StateObject private var viewModel: HangdamStorageViewModel
     
-    init(viewModel: HangdamStorageViewModel = HangdamStorageViewModel()) {
+    init(viewModel: HangdamStorageViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
     
@@ -67,5 +67,5 @@ struct HangdamStorageView: View {
 }
 
 #Preview {
-    HangdamStorageView()
+    HangdamStorageView(viewModel: HangdamStorageViewModel(hangdamRepository: HangdamRepository()))
 }

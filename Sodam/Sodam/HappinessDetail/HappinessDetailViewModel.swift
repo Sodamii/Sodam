@@ -23,9 +23,7 @@ final class HappinessDetailViewModel {
     
     func deleteHappiness() {
         // TODO: happiness id가 없을 때 상세 처리 필요함.
-        DispatchQueue.main.async {
-            self.happinessRepository.deleteHappiness(with: self.happiness.id ?? "")
-        }
+        self.happinessRepository.deleteHappiness(with: self.happiness.id ?? "")
     }
     
     func getImage(imagePath: String) -> UIImage? {

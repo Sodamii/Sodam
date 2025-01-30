@@ -49,7 +49,6 @@ struct HappinessDetailView: View {
             Button("취소", role: .cancel) { }
             Button("삭제", role: .destructive) {
                 viewModel.deleteHappiness()
-                print("삭제 메서드 실행 및 뷰 dismiss")
                 dismiss()
             }
         } message: {

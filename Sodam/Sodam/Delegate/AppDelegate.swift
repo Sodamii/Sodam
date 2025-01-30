@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -54,12 +55,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // MARK: - UNUserNotificationCenterDelegate Setting Method
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
-    // foreground 상태인 경우(앱 실행중인상태) 알림이 오면 해당 메서드 호출
+    // Foreground 상태인 경우(앱 실행중인상태) 알림이 오면 해당 메서드 호출
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        print("🔔 Foreground에서 알림 수신: \(notification.request.identifier)") // 로그 추가
+        // 알림 수신 시 뱃지 수를 1씩 증가
+        let currentBadgeCount = UIApplication.shared.applicationIconBadgeNumber
+        UIApplication.shared.applicationIconBadgeNumber = currentBadgeCount + 1
+        
         completionHandler([.banner, .badge, .sound, .list])
     }
     
-    // 사용자가 알림을 탭했을때 해당 메서드 호출
+    // Background에서 알림 클릭 시 처리사용자가 알림을 탭했을때 해당 메서드 호출
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()  // 응답 처리가 완료되었음을 시스템에 알림
     }

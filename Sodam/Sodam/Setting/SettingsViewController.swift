@@ -31,6 +31,12 @@ final class SettingsViewController: UIViewController {
         setupTableView()
         setupScheduledNotification()
     }
+    
+    // 설정화면에 진입한 순간 뱃지 초기화 시키기 위함
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        UIApplication.shared.applicationIconBadgeNumber = 0
+    }
 }
 
 // MARK: - Private Method

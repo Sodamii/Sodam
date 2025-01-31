@@ -30,7 +30,7 @@ final class MainViewModel: ObservableObject {
     
     /// 새로운 이름을 현재 행담이에 저장
     func saveNewName(as name: String ) {
-        hangdamRepository.nameHangdam(id: hangdam.id, name: ngitame)
+        hangdamRepository.nameHangdam(id: hangdam.id, name: name)
         reloadHanhdam()
     }
     

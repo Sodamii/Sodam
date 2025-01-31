@@ -46,12 +46,7 @@ final class SettingViewModel {
     }
         
     func setReservedNotificaion(_ sender: Date) {
-        localNotificationManager.pushReservedNotification(
-            title: "Sodam",
-            body: "소소한 행복을 적어 행담이를 키워주세요.",
-            time: sender,
-            seconds: 0,
-            identifier: "SelectedTimeNotification")
+        localNotificationManager.setReservedNotification(sender)
     }
     
     // URL 열기 메서드

@@ -189,7 +189,7 @@ class WriteView: UIView {
         }
         
         cameraButton.snp.makeConstraints { make in
-            make.top.equalTo(collectionView.snp.bottom).offset(10)
+            make.top.equalTo(collectionView.snp.bottom)
             make.bottom.equalTo(containerView.snp.bottom)
             make.width.equalTo(cameraButton.snp.height)
             make.leading.equalTo(textView.snp.leading)
@@ -199,7 +199,7 @@ class WriteView: UIView {
             make.top.equalTo(cameraButton.snp.top)
             make.centerY.equalTo(cameraButton)
             make.width.equalTo(imageButton.snp.height)
-            make.leading.equalTo(cameraButton.snp.trailing).offset(10)
+            make.leading.equalTo(cameraButton.snp.trailing).offset(12)
         }
         
         submitButton.snp.makeConstraints { make in

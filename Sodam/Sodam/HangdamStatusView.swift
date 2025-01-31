@@ -15,7 +15,8 @@ struct HangdamStatusView: View {
     
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
-            Image(.level1)
+            Image
+                .hangdamImage(level: hangdam.level)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: size.width / 3)

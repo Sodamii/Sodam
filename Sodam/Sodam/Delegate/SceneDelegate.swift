@@ -52,7 +52,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             overlayView.removeFromSuperview() // 오버레이 제거
         })
     }
+    
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        print("✅ 앱이 활성화됨 - 뱃지 초기화")
+        UIApplication.shared.applicationIconBadgeNumber = 0
+    }
 }
-
-
-

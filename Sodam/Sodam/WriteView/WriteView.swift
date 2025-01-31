@@ -18,7 +18,9 @@ class WriteView: UIView {
     // 화면 상단 날짜 레이블
     private let dateLabel: UILabel = {
         let label: UILabel = UILabel()
-        label.text = DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .none)
+        let dateFormatter: DateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        label.text = dateFormatter.string(from: Date())
         label.font = .mapoGoldenPier(20)
         label.textColor = .black
         label.textAlignment = .center

@@ -22,11 +22,20 @@ struct HangdamStorageView: View {
                             .clipShape(.rect(cornerRadius: 15))
                     }
                     
-                    Text("행담이 보관함")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .font(.mapoGoldenPier(27))
-                        .foregroundStyle(Color.textAccent)
-                        .padding(.top)
+                    HStack(alignment: .bottom) {
+                        Text("행담이 보관함")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.mapoGoldenPier(27))
+                            .foregroundStyle(Color.textAccent)
+                            .padding(.top)
+                        
+                        Text("다 자란 행담이 : \($viewModel.storedHangdamList.wrappedValue.count)")
+                            .font(.mapoGoldenPier(15))
+                            .foregroundStyle(Color.white)
+                            .padding(.vertical, 7)
+                            .padding(.horizontal, 12)
+                            .background(Capsule().fill(Color.buttonBackground))
+                    }
                     
                     ScrollView {
                         HangdamGridView(hangdamList: $viewModel.storedHangdamList)

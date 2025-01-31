@@ -14,9 +14,20 @@ final class MainViewController: UIViewController {
     // MARK: - Properties
     
     private let mainView: MainView  = MainView()
-    private let viewModel: MainViewModel = MainViewModel()
+    private let viewModel: MainViewModel
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
+
+    init(viewModel: MainViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        self.viewModel = MainViewModel(repository: HangdamRepository())
+        super.init(nibName: nil, bundle: nil)
+    }
+
     // MARK: - Lifecycle Methods
     
     override func loadView() {

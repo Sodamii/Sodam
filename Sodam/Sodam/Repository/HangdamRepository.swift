@@ -11,7 +11,7 @@ import Foundation
 final class HangdamRepository {
     private let coreDataManager: CoreDataManager
     
-    init(coreDataManager: CoreDataManager = CoreDataManager()) {
+    init(coreDataManager: CoreDataManager = CoreDataManager.shared) {
         self.coreDataManager = coreDataManager
     }
     

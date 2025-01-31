@@ -31,10 +31,15 @@ final class CustomTabBarController: UITabBarController {
     }
     
     private func configureViewController() {
-        let mainViewController = MainViewController()
+        let hangdamRepository: HangdamRepository = HangdamRepository()
+        let mainViewModel: MainViewModel = MainViewModel(repository: hangdamRepository)
+        let storageViewModel: HangdamStorageViewModel = HangdamStorageViewModel(hangdamRepository: hangdamRepository)
+        
+        
+        let mainViewController = MainViewController(viewModel: mainViewModel)
         mainViewController.tabBarItem = UITabBarItem(title: "메인", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
         
-        let storageViewController = UIHostingController(rootView: HangdamStorageView())
+        let storageViewController = UIHostingController(rootView: HangdamStorageView(viewModel: storageViewModel))
         storageViewController.tabBarItem = UITabBarItem(title: "기록", image: UIImage(systemName: "book"), selectedImage: UIImage(systemName: "book.fill"))
         
         let settingViewModel = SettingViewModel()

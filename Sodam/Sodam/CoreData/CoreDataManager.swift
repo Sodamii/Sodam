@@ -10,9 +10,10 @@ import CoreData
 // MARK: - CoreDataManager
 
 final class CoreDataManager {
+    static let shared = CoreDataManager()
     private let persistentContainer: NSPersistentContainer
     
-    init() {
+    private init() {
         persistentContainer = NSPersistentContainer(name: CDKey.container.rawValue)
         persistentContainer.loadPersistentStores { description, error in
             if let error = error {

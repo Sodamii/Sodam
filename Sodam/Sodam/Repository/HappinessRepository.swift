@@ -10,9 +10,12 @@ import Foundation
 /// CoreDataManager와 ViewModel 사이에서 행복한 기억 데이터 처리를 맡는 객체
 final class HappinessRepository {
     private let coreDataManager: CoreDataManager
+    private let imageManager: ImageManager
     
-    init(coreDataManager: CoreDataManager = CoreDataManager.shared) {
+    // 
+    init(coreDataManager: CoreDataManager = CoreDataManager.shared, imageManager: ImageManager = ImageManager()) {
         self.coreDataManager = coreDataManager
+        self.imageManager = imageManager
     }
     
     /// 행복한 기억 생성

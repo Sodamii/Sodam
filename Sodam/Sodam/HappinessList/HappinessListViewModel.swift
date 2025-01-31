@@ -38,5 +38,9 @@ final class HappinessListViewModel: ObservableObject {
         // TODO: Store에 다녀오기 전까지 Repository에서 가져오는 것에도 반영이 안 됨.
         print("reload 완료")
     }
+    
+    func getHappinessRepository() -> HappinessRepository {
+        return self.happinessRepository
+    }
 }
 

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HappinessDetailView: View {
     
-    var viewModel: HappinessDetailViewModel
+    let viewModel: HappinessDetailViewModel
     @State private var isAlertPresented: Bool = false
     @Environment(\.dismiss) private var dismiss
     

@@ -15,7 +15,7 @@ final class HappinessDetailViewModel {
     private let happinessRepository: HappinessRepository
     
     init(happiness: HappinessDTO,
-         happinessRepository: HappinessRepository = HappinessRepository()
+         happinessRepository: HappinessRepository
     ) {
         self.happiness = happiness
         self.happinessRepository = happinessRepository

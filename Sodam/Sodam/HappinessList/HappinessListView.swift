@@ -11,7 +11,7 @@ import Combine
 struct HappinessListView: View {
     
     @StateObject var viewModel: HappinessListViewModel
- 
+    
     private let cornerRadius: CGFloat = 15
     
     init(hangdam: HangdamDTO) {
@@ -38,7 +38,10 @@ struct HappinessListView: View {
                         
                         List {
                             ForEach(happinessList, id: \.self) { happiness in
-                                NavigationLink(destination: HappinessDetailView(viewModel: HappinessDetailViewModel(happiness: happiness))) {
+                                NavigationLink(destination: HappinessDetailView(viewModel: HappinessDetailViewModel(
+                                    happiness: happiness,
+                                    happinessRepository: self.viewModel.getHappinessRepository()
+                                ))) {
                                     HStack {
                                         Rectangle() // 사진 대체용
                                             .frame(width: 90, height: 120)

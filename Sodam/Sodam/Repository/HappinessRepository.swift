@@ -69,10 +69,14 @@ final class HappinessRepository {
     }
     
     /// 기억 삭제
-    func deleteHappiness(with id: String) {
+    func deleteHappiness(with id: String?, path: String?) {
         guard let id = IDConverter.toNSManagedObjectID(from: id, in: coreDataManager.context) else { return }
-        
         coreDataManager.deleteHappiness(with: id)
+        print("[HappinessRepository] deleteHappiness - 행복 삭제 완료")
+        
+        guard let path = path else { return }
+        imageManager.deleteImage(path)
+        print("[HappinessRepository] deleteHappiness - 이미지 삭제 완료")
     }
     
     func getThumbnailImage(from path: String) -> UIImage {

@@ -11,6 +11,7 @@ struct HappinessDetailView: View {
     
     let viewModel: HappinessDetailViewModel
     @State private var isAlertPresented: Bool = false
+    let isCanDelete: Bool
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -60,13 +61,14 @@ struct HappinessDetailView: View {
                     .font(.maruburiot(type: .bold, size: 20))
                     .foregroundStyle(Color.textAccent)
             }
-            
-            ToolbarItem(placement: .topBarTrailing) {
-                Button( action: {
-                    isAlertPresented = true
-                }) {
-                    Image(systemName: "trash")
-                        .foregroundStyle(.gray)
+            if isCanDelete {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button( action: {
+                        isAlertPresented = true
+                    }) {
+                        Image(systemName: "trash")
+                            .foregroundStyle(.gray)
+                    }
                 }
             }
         }
@@ -85,6 +87,5 @@ struct HappinessDetailView: View {
 }
 
 #Preview {
-    HappinessDetailView(viewModel: HappinessDetailViewModel(happiness: HappinessDTO(id: "", content: "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello", date: .now, imagePaths: [], hangdamID: ""), happinessRepository: HappinessRepository()))
 }
 

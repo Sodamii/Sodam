@@ -40,9 +40,11 @@ struct HappinessListView: View {
                         List {
                             ForEach(happinessList, id: \.self) { happiness in
                                 NavigationLink(destination: HappinessDetailView(viewModel: HappinessDetailViewModel(
-                                    happiness: happiness,
-                                    happinessRepository: self.viewModel.getHappinessRepository()
-                                ))) {
+                                                                                    happiness: happiness,
+                                                                                    happinessRepository: self.viewModel.getHappinessRepository()
+                                                                                ), isCanDelete: (self.viewModel.hangdam.endDate == nil ? false : true)
+                                                                               )
+                                ) {
                                     HStack(alignment: .center, spacing: 16) {
                                         if let imagePath = happiness.imagePaths.first { // 추후 이미지가 여럿 생기더라도 여긴 첫 이미지를 사용
                                             Image(uiImage: self.viewModel.getThumnail(from: imagePath))
@@ -90,7 +92,7 @@ struct HappinessListView: View {
                     tabBarController.tabBar.isHidden = true
                 }
                 viewModel.reloadData()
-                print("list 뷰 등장 및 데이터 리로드")
+                print("[HappinessListView] .onAppear - 데이터 리로드")
             }
         }
         .navigationBarBackButtonHidden(true)

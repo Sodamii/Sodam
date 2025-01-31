@@ -42,8 +42,8 @@ fileprivate struct HangdamGrid: View {
                     Text(hangdam.name ?? "이름을 잃었다.")
                         .font(.maruburiot(type: .bold, size: 16))
                         .foregroundStyle(Color(uiColor: .darkGray))
-                    if let startDate = hangdam.startDate {
-                        Text(startDate)
+                    if let startDate = hangdam.startDate, let endDate = hangdam.endDate {
+                        Text("\(startDate) ~ \(endDate)")
                             .font(.maruburiot(type: .regular, size: 14))
                             .foregroundStyle(Color(uiColor: .gray))
                     } else {

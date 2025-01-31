@@ -113,10 +113,11 @@ final class MainView: UIView {
     // 이름 라벨 업데이트
     func updateNameLabel(_ name: String?) {
         if let name = name, !name.isEmpty {
-            nameLabel.text = name
+            nameLabel.text = "\(name)담이"
             nameLabel.isHidden = false
         } else {
-            nameLabel.isHidden = true
+            nameLabel.text = "이름을 지어주세요"
+            nameLabel.isHidden = false
         }
     }
     

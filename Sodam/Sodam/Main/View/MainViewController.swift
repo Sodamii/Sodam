@@ -53,7 +53,7 @@ final class MainViewController: UIViewController {
         viewModel.$hangdam
             .receive(on: RunLoop.main)
             .sink { [weak self] hangdam in
-                self?.mainView.updateNameLabel(hangdam.name ?? "이름을 지어주세요") // 이름 설정
+                self?.mainView.updateNameLabel(hangdam.name) // 이름 설정
                 self?.mainView.updateGif(with: "phase\(hangdam.level)") // 레벨에 따른 GIF 업데이트
             }
             .store(in: &cancellables)
@@ -152,9 +152,9 @@ extension MainViewController: WriteViewControllerDelegate {
 extension MainViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
-        // 현재 텍스트와 새로운 텍스트를 합친 길이가 6글자를 초과하지 않도록 제한
+        // 현재 텍스트와 새로운 텍스트를 합친 길이가 4글자를 초과하지 않도록 제한
         let currentText = textField.text ?? ""
         let newText = (currentText as NSString).replacingCharacters(in: range, with: string)
-        return newText.count <= 6
+        return newText.count <= 4
     }
 }

@@ -56,8 +56,8 @@ final class AlertManager {
             }
             
             // 글자 수 확인
-            if name.count > 6 {
-                viewController.view.showToast(message: "이름은 6글자가 초과되었습니다.")
+            if name.count > 4 {
+                viewController.view.showToast(message: "최대 글자수를 초과했습니다.")
                 return
             }
             

@@ -11,6 +11,7 @@ import Combine
 struct HappinessListView: View {
     
     @StateObject var viewModel: HappinessListViewModel
+    @Environment(\.dismiss) private var dismiss
     
     private let cornerRadius: CGFloat = 15
     
@@ -42,23 +43,24 @@ struct HappinessListView: View {
                                     happiness: happiness,
                                     happinessRepository: self.viewModel.getHappinessRepository()
                                 ))) {
-                                    HStack {
-                                        Rectangle() // 사진 대체용
-                                            .frame(width: 90, height: 120)
-                                            .clipShape(.rect(cornerRadius: cornerRadius))
-                                        
+                                    HStack(alignment: .center, spacing: 16) {
+                                        if let imagePath = happiness.imagePaths.first { // 추후 이미지가 여럿 생기더라도 여긴 첫 이미지를 사용
+                                            Image(uiImage: self.viewModel.getThumnail(from: imagePath))
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .clipShape(.rect(cornerRadius: cornerRadius))
+                                        }
                                         VStack(alignment: .leading) {
                                             Text(happiness.content)
                                                 .font(.mapoGoldenPier(FontSize.body))
                                                 .lineLimit(2)
-                                                .frame(height: 50, alignment: .topLeading)
-                                            
                                             Text(happiness.date.toFormattedString)
                                                 .font(.mapoGoldenPier(FontSize.timeStamp))
                                                 .foregroundStyle(.gray)
                                         }
-                                        .padding(.leading)
                                     }
+                                    .frame(height: 100)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                                 .listRowSeparator(.hidden)
                                 .listRowBackground(
@@ -68,7 +70,7 @@ struct HappinessListView: View {
                             }
                         }
                         .scrollIndicators(.hidden)
-                        .listRowSpacing(20)
+                        .listRowSpacing(16)
                         .listStyle(.plain)
                     } else {
                         Text("아직 가진 기억이 없어요.ㅜ.ㅜ")
@@ -79,7 +81,6 @@ struct HappinessListView: View {
                             .foregroundStyle(Color.textAccent)
                             .padding(.vertical, 8)
                     }
-                    
                 }
             }
             .padding([.top, .horizontal])
@@ -90,6 +91,21 @@ struct HappinessListView: View {
                 }
                 viewModel.reloadData()
                 print("list 뷰 등장 및 데이터 리로드")
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+        .toolbar{
+            ToolbarItem(placement: .topBarLeading) {
+                Button(action: {
+                    dismiss()
+                }) {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("행담이 보관함")
+                            .font(.maruburiot(type: .bold, size: 16))
+                            .foregroundStyle(Color.textAccent)
+                    }
+                }
             }
         }
     }

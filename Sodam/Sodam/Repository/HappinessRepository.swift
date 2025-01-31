@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// CoreDataManager와 ViewModel 사이에서 행복한 기억 데이터 처리를 맡는 객체
 final class HappinessRepository {
@@ -72,6 +73,14 @@ final class HappinessRepository {
         guard let id = IDConverter.toNSManagedObjectID(from: id, in: coreDataManager.context) else { return }
         
         coreDataManager.deleteHappiness(with: id)
+    }
+    
+    func getThumbnailImage(from path: String) -> UIImage {
+        return imageManager.getThumbnailImage(with: path)
+    }
+    
+    func getContentImage(from path: String) -> UIImage? {
+        return imageManager.getImage(with: path)
     }
 }
 

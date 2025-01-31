@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import UIKit
 
 final class HappinessListViewModel: ObservableObject {
     @Published var hangdam: HangdamDTO
@@ -41,6 +42,10 @@ final class HappinessListViewModel: ObservableObject {
     
     func getHappinessRepository() -> HappinessRepository {
         return self.happinessRepository
+    }
+    
+    func getThumnail(from path: String) -> UIImage {
+        return self.happinessRepository.getThumbnailImage(from: path)
     }
 }
 

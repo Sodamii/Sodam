@@ -26,8 +26,12 @@ final class HappinessDetailViewModel {
         self.happinessRepository.deleteHappiness(with: self.happiness.id ?? "")
     }
     
-    func getImage(imagePath: String) -> UIImage? {
-        // TODO: 이미지 반환 받기 메서드로 수정 필요
-        return UIImage(systemName: "person")
+    func getImage(from imagePath: String) -> UIImage {
+        guard let image =  self.happinessRepository.getContentImage(from: imagePath)
+        else {
+            print("[HappinessDetailViewModel] getImage 메서드 동작 실패")
+            return UIImage()
+        }
+        return image
     }
 }

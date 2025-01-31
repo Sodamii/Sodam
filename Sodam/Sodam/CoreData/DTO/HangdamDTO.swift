@@ -24,6 +24,16 @@ struct HangdamDTO {
         default: return 0       // 알담이 : 1개 작성 필요
         }
     }
+    
+    var levelName: String {
+        switch level {
+        case 1: "애기 행담이"
+        case 2: "초딩 행담이"
+        case 3: "중딩 행담이"
+        case 4, 5: "킹담이"
+        default: "알 속 행담이"
+        }
+    }
 }
 
 extension HangdamEntity {

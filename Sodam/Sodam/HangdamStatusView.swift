@@ -25,9 +25,9 @@ struct HangdamStatusView: View {
             
             VStack(alignment: .leading, spacing: 10) {
                 Text(hangdam.name ?? "이름을 지어주세요!")
-                    .font(.maruburiot(type: .bold, size: 25))
-                Text("Lv.\(hangdam.level) 애기 행담이")
-                    .font(.maruburiot(type: .semiBold, size: 18))
+                    .font(.maruburiot(type: .bold, size: hangdam.name == nil ? 18 : 25))
+                Text("Lv.\(hangdam.level) \(hangdam.levelName)")
+                    .font(.maruburiot(type: .semiBold, size: 17))
                 if let startDate = hangdam.startDate {
                     Text("\(startDate) ~")
                         .font(.maruburiot(type: .regular, size: 16))

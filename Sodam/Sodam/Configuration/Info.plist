@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>SejongGeulggot.otf</string>
+		<string>MapoGoldenPier.otf</string>
+		<string>MaruBuriot-Bold.otf</string>
+		<string>MaruBuriot-Regular.otf</string>
+		<string>MaruBuriot-SemiBold.otf</string>
+		<string>NanumSquareNeoOTF-Bd.otf</string>
+		<string>NanumSquareNeoOTF-Lt.otf</string>
+		<string>NanumSquareNeoOTF-Rg.otf</string>
+		<string>J개구쟁이-Bold.otf</string>
+		<string>J개구쟁이-Light.otf</string>
+		<string>J개구쟁이-Medium.otf</string>
+		<string>경기천년바탕OTF_Bold.otf</string>
+		<string>경기천년바탕OTF_Regular.otf</string>
+	</array>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+</dict>
+</plist>

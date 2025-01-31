@@ -55,6 +55,18 @@ final class MainViewModel: ObservableObject {
         return hangdamRepository.getCurrentHangdam().id
     }
     
+    /// 오늘 작성했는지 확인하는 메서드
+    func hasAlreadyWrittenToday() -> Bool {
+        let lastWrittenDate = UserDefaults.standard.object(forKey: "lastWrittenDate") as? Date ?? Date.distantPast
+        let calendar = Calendar.current
+        return calendar.isDateInToday(lastWrittenDate)
+    }
+    
+    /// 오늘 작성했다고 UserDefaults에 lastWrittenDate라는 키로 저장
+    func markAsWrittenToday() {
+        UserDefaults.standard.set(Date(), forKey: "lastWrittenDate")
+    }
+    
     /// 행담이가 레벨업 할 때 메세지를 업데이트 함
     /// `levelUP` 알림(Notification)을 통해 호출됨
     @objc func updateMessageWhenLevelUp(notification: Notification) {

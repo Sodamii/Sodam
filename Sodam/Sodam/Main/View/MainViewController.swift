@@ -17,7 +17,7 @@ final class MainViewController: UIViewController {
     private let viewModel: MainViewModel
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
-
+    
     init(viewModel: MainViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -27,7 +27,7 @@ final class MainViewController: UIViewController {
         self.viewModel = MainViewModel(repository: HangdamRepository())
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     // MARK: - Lifecycle Methods
     
     override func loadView() {
@@ -44,6 +44,7 @@ final class MainViewController: UIViewController {
     /// 뷰가 다시 나타날 때 데이터 갱신
     override func viewWillAppear (_ animated: Bool) {
         viewModel.reloadHanhdam() // ViewModel에서 행담이 데이터를 갱신
+        updateButtonState()
     }
     
     // MARK: - bind view model for update view
@@ -65,6 +66,13 @@ final class MainViewController: UIViewController {
                 self?.mainView.updateMessage(message)
             }
             .store(in: &cancellables)
+    }
+    
+    // 버튼 상태 갱신 메서드 추가
+    private func updateButtonState() {
+        let hasWritten = viewModel.hasAlreadyWrittenToday()
+        mainView.createbutton.isEnabled = true
+        mainView.createbutton.alpha = hasWritten ? 0.5 : 1.0
     }
     
     // MARK: - setup button action
@@ -101,10 +109,20 @@ final class MainViewController: UIViewController {
     
     /// 작성 버튼 클릭 시 호출
     @objc private func createButtonTapped() {
+        if viewModel.hasAlreadyWrittenToday() {
+            // 오늘 작성한 경우 경고 메시지 출력
+            let alert = UIAlertController(title: "오늘의 소확행 작성 완료!",
+                                          message: "내일 또 당신의 소소한 행복을 작성해주세요",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+            return
+        }
         if let name = viewModel.hangdam.name {
             // 이미 저장된 이름이 있는 경우에 바로 작성화면으로 이동
             print("저장된 이름으로 작성화면 이동함: \(name)")
             modalWriteViewController(with: name)
+            proceedWithWriting(name: name)
         } else {
             // 저장된 이름이 없는 경우 알림창 표시
             AlertManager.showAlert(on: self) { [weak self] name in
@@ -118,8 +136,16 @@ final class MainViewController: UIViewController {
                 viewModel.saveNewName(as: name) // 새 이름 저장
                 print("입력 된 이름: \(name)")
                 self.modalWriteViewController(with: name) // 작성 화면으로 이동
+                self.proceedWithWriting(name: name)
             }
         }
+    }
+    
+    /// 작성화면으로 이동 후 작성완료 상태를 저장하고 버튼 상태를 갱신하는 메서드
+    private func proceedWithWriting(name: String) {
+        modalWriteViewController(with: name)         // 작성화면으로 이동
+        viewModel.markAsWrittenToday()               // 오늘 작성 했음을 기록
+        updateButtonState()                          // 버튼 상태 갱신(작성 완료 시 비활성화됨)
     }
     
     // MARK: - Gesture Actions

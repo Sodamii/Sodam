@@ -69,7 +69,22 @@ final class ImageManager {
         
         return thumbnail
     }
-}
+    
+    /// 이미지 삭제하는 함수
+    func deleteImage(_ imagePath: String) {
+        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appending(path: "\(imagePath).jpeg") else {
+            print(FileError.imageSearchFailed)
+            return
+        }
+        
+        do {
+            try FileManager.default.removeItem(at: url)
+            print("[ImageManager] 이미지 삭제 완료")
+        } catch {
+            print(FileError.imageDeleteFailed)
+        }
+    }
+ }
 
 // 내부 호출 함수 모음
 extension ImageManager {

@@ -13,9 +13,6 @@ struct HappinessDetailView: View {
     @State private var isAlertPresented: Bool = false
     @Environment(\.dismiss) private var dismiss
     
-    init(viewModel: HappinessDetailViewModel) {
-        self.viewModel = viewModel
-    }
     var body: some View {
         ScrollView {
             VStack {

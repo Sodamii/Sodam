@@ -9,11 +9,7 @@ import SwiftUI
 
 struct HangdamStorageView: View {
     
-    @StateObject private var viewModel: HangdamStorageViewModel
-    
-    init(viewModel: HangdamStorageViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-    }
+    @ObservedObject var viewModel: HangdamStorageViewModel
     
     var body: some View {
         NavigationStack {

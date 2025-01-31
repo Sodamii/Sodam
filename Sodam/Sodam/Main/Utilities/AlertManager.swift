@@ -26,15 +26,26 @@ final class AlertManager {
     ) {
         let alartController = UIAlertController(
             title: "이름 짓기",
-            message: "이름을 6글자 이내로 적어주세요",
+            message: "4글자 이내로 적어주세요",
             preferredStyle: .alert
         )
         
         // 알럿 안에 텍스트 필드
-        alartController.addTextField { TextField in
-            TextField.placeholder = "행담이 이름을 적어주세요"
+        alartController.addTextField { textField in
+            textField.placeholder = "이름을 입력하세요"
             // 텍스트 필드 델리게이트
-            TextField.delegate = viewController as? UITextFieldDelegate
+            textField.delegate = viewController as? UITextFieldDelegate
+            
+            // 텍스트필드 옆에 Label추가
+            let rightLabel = UILabel()
+            rightLabel.text = "담이"
+            rightLabel.font = .mapoGoldenPier(14)
+            rightLabel.textColor = .gray
+            rightLabel.sizeToFit()
+            
+            // Label을 rightView로 설정
+            textField.rightView = rightLabel
+            textField.rightViewMode = .always
         }
         
         // 확인 버튼

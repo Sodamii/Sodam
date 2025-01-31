@@ -8,37 +8,35 @@
 import Foundation
 import Combine
 
+/// MainView의 상태와 로직을 관리하는 ViewModel.
+/// HangdamRepository와 상호작용해서 데이터를 관리하고 Published 속성을 통해서 UI를 업데이트 함.
 final class MainViewModel: ObservableObject {
-    @Published var name: String?
-    @Published var message: String = "" // 화면 메시지
-    @Published var gifName: String = "phase0" // gif name
+    @Published var hangdam: HangdamDTO // 현재 관리할 행담이 데이터
+    @Published var message: String = "" // 화면에 표시할 메시지
     
+    // 행담이 데이터 저장 및 불러오는 레포지토리
     private let hangdamRepository: HangdamRepository
     
+
     init(repository: HangdamRepository) {
+    /// 뷰모델 초기화 메서드
         self.hangdamRepository = repository
-        self.name = hangdamRepository.getCurrentHangdam().name
+        self.hangdam = repository.getCurrentHangdam() // 현재 행담이 데이터를 레포지토리에서 가져옴
         self.updateMessage() // 초기화 시 메세지 업데이트
         
         // 행담이 레벨업 할때마다 특정 메시지를 보여주기 위해 observing
         NotificationCenter.default.addObserver(self, selector: #selector(updateMessageWhenLevelUp), name: Notification.levelUP, object: nil)
     }
     
-    func setGif() {
-        self.name = hangdamRepository.getCurrentHangdam().name
-        if name != nil {
-            gifName = "phase\(hangdamRepository.getCurrentHangdam().level)"
-        } // TODO: 이름이 없는 경우 레벨이 0으로 고정이라면 if let 자체가 필요없을 듯
-    }
-    
+    /// 새로운 이름을 현재 행담이에 저장
     func saveNewName(as name: String ) {
-        let currentHangdamID: String = hangdamRepository.getCurrentHangdam().id
-        hangdamRepository.nameHangdam(id: currentHangdamID, name: name)
-        setGif()
+        hangdamRepository.nameHangdam(id: hangdam.id, name: ngitame)
+        reloadHanhdam()
     }
     
+    /// 행담이 이름 유무에 따라 화면 메세지를 업데이트 함
     func updateMessage() {
-        if let _ = name {
+        if let _ = hangdam.name {
             message = MainMessages.getRandomMessage()
             print("이름이 지어졌음. 랜덤 메시지 표시")
         } else {
@@ -47,20 +45,28 @@ final class MainViewModel: ObservableObject {
         }
     }
     
+    /// 레포지토리에서 현재 행담이 데이터를 다시 불러옴
+    func reloadHanhdam() {
+        self.hangdam = hangdamRepository.getCurrentHangdam()
+    }
+    
+    /// 현재 행담이의 ID를 반환함
     func getCurrentHangdamID() -> String {
         return hangdamRepository.getCurrentHangdam().id
     }
     
+    /// 행담이가 레벨업 할 때 메세지를 업데이트 함
+    /// `levelUP` 알림(Notification)을 통해 호출됨
     @objc func updateMessageWhenLevelUp(notification: Notification) {
         guard let userInfo = notification.userInfo,
               let level = userInfo["level"] as? Int
         else { return }
         
-        /// 디버깅
+        // 디버깅
         print("행담이 레벨 \(level)로 성장함")
         
-        // TODO: 레벨에 따라 다른 메시지 설정
-        // MARK: 레벨에 따라 gif 설정하는 것도 여기서 하면 좋을 듯 (setGif 구현 여기로 옮기기)
+        // 레벨에 따른 메세지를 업데이트
+        message = MainMessages.messageForLevel(level, name: hangdam.name ?? "")
     }
     
     /// deinit 시 observing 해제

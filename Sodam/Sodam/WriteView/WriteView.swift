@@ -231,6 +231,12 @@ class WriteView: UIView {
         textView.text = text
         updatePlaceholderVisibility() // 텍스트 변경 시 Placeholder 업데이트
     }
+    
+    // 텍스트뷰 내용 접근 메서드
+    func getTextViewText() -> String {
+        return textView.text
+    }
+    
     // placeholder 숨김처리 메서드
     private func updatePlaceholderVisibility() {
         placeholderLabel.isHidden = !textView.text.isEmpty

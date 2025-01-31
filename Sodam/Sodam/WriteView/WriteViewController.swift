@@ -199,6 +199,15 @@ final class WriteViewController: UIViewController {
     
     // 작성완료 버튼 탭할 때 호출되는 메서드
     @objc private func submitText() {
+        guard !writeView.getTextViewText().trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            // 경고 메시지 표시
+            let alert = UIAlertController(title: "행복 기록이 없습니다", message: "내용을 입력해주세요!", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+            alert.addAction(okAction)
+            present(alert, animated: true, completion: nil)
+            return
+        }
+        
         // 작성 완료 알림 표시
         showCompletionAlert {
             // WriteViewModel에 작성 완료 이벤트 전달

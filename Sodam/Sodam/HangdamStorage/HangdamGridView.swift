@@ -44,7 +44,7 @@ fileprivate struct HangdamGrid: View {
                         .foregroundStyle(Color(uiColor: .darkGray))
                     if let startDate = hangdam.startDate, let endDate = hangdam.endDate {
                         Text("\(startDate) ~ \(endDate)")
-                            .font(.maruburiot(type: .regular, size: 14))
+                            .font(.maruburiot(type: .regular, size: 13))
                             .foregroundStyle(Color(uiColor: .gray))
                     } else {
                         Text("")

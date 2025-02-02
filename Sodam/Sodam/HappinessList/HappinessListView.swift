@@ -28,7 +28,7 @@ struct HappinessListView: View {
                     
                     if let happinessList = $viewModel.happinessList.wrappedValue,
                        !happinessList.isEmpty {
-                        Text("\($viewModel.hangdam.wrappedValue.name ?? "이름없는 ")담이가 먹은 기억들")
+                        Text("\($viewModel.hangdam.wrappedValue.name ?? "이름없는 ")가 먹은 기억들")
                             .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
                             .font(.mapoGoldenPier(FontSize.title2))
                             .lineLimit(1)

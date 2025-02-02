@@ -35,15 +35,15 @@ enum MainMessages: String, CaseIterable {
     static func messageForLevel(_ level: Int, name: String) -> String {
         switch level {
         case 1:
-            return "드디어 알을 깨고 아기 \(name)담이가 눈을 마주치네요!"
+            return "드디어 알을 깨고 아기 \(name)가 눈을 마주치네요!"
         case 2:
-            return "하트 윙크 발사하는 사랑스러운 \(name)담이로 성장했네요!"
+            return "하트 윙크 발사하는 사랑스러운 \(name)로 성장했네요!"
         case 3:
-            return "어른스러운 \(name)담이로 성장 완료!"
+            return "어른스러운 \(name)로 성장 완료!"
         case 4:
-            return "소확행을 좋아하는 \(name)담이에게 행복한 기억을 더 줘볼까요?"
+            return "소확행을 좋아하는 \(name)에게 행복한 기억을 더 줘볼까요?"
         case 5:
-            return "\(name)담이가 당신의 소확행을 배부르게 먹고 보관되었습니다. 다음엔 누가 나올까요?"
+            return "\(name)가 당신의 소확행을 배부르게 먹고 보관되었습니다. 다음엔 누가 나올까요?"
         default:
             return "행복의 새로운 단계를 향해 나아가고 있어요!"
         }

@@ -114,7 +114,6 @@ final class MainView: UIView {
     func updateNameLabel(_ name: String?) {
         if let name = name, !name.isEmpty {
             nameLabel.text = name
-            nameLabel.text = "\(name)담이"
             nameLabel.isHidden = false
         } else {
             nameLabel.isHidden = true

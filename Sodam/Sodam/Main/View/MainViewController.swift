@@ -162,7 +162,8 @@ final class MainViewController: UIViewController {
 extension MainViewController: WriteViewControllerDelegate {
     func writeViewControllerDiddismiss() {
         print("WriteViewController 모달이 닫혔습니다.")
-        viewModel.reloadHangdam() // 데이터 갱신
+        viewModel.reloadHangdam()   // 데이터 갱신
+        viewModel.updateMessage()   // 메시지 업데이트
     }
 }
 /// 텍스트 입력 제한을 위해 UITextFieldDelegate 구현.

@@ -78,7 +78,7 @@ final class CoreDataManager {
         
         switch updateCase {
         case .name(let name):
-            entity.name = name.hasSuffix("담이") ? name : "\(name)담이"
+            entity.name = name
         case .startDate(let date):
             entity.startDate = date
         case .endDate(let date):

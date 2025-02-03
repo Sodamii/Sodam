@@ -26,17 +26,16 @@ struct HappinessListView: View {
                 VStack(alignment: .center) {
                     HangdamStatusView(size: geometry.size, hangdam: $viewModel.hangdam)
                         .clipShape(.rect(cornerRadius: cornerRadius))
+                    Text("\($viewModel.hangdam.wrappedValue.name ?? "행담이")가 먹은 기억들")
+                        .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
+                        .font(.mapoGoldenPier(FontSize.title2))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                        .foregroundStyle(Color.textAccent)
+                        .padding(.vertical, 8)
                     
                     if let happinessList = $viewModel.happinessList.wrappedValue,
                        !happinessList.isEmpty {
-                        Text("\($viewModel.hangdam.wrappedValue.name ?? "이름없는 ")담이가 먹은 기억들")
-                            .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
-                            .font(.mapoGoldenPier(FontSize.title2))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
-                            .foregroundStyle(Color.textAccent)
-                            .padding(.vertical, 8)
-                        
                         List {
                             ForEach(happinessList, id: \.self) { happiness in
                                 NavigationLink(destination: HappinessDetailView(viewModel: HappinessDetailViewModel(
@@ -56,6 +55,7 @@ struct HappinessListView: View {
                                             Text(happiness.content)
                                                 .font(.mapoGoldenPier(FontSize.body))
                                                 .lineLimit(2)
+                                                .padding(.bottom, 8)
                                             Text(happiness.date.toFormattedString)
                                                 .font(.mapoGoldenPier(FontSize.timeStamp))
                                                 .foregroundStyle(.gray)
@@ -69,19 +69,24 @@ struct HappinessListView: View {
                                     RoundedRectangle(cornerRadius: cornerRadius)
                                         .foregroundStyle(Color.cellBackground)
                                 )
+                                .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
                             }
                         }
                         .scrollIndicators(.hidden)
                         .listRowSpacing(16)
                         .listStyle(.plain)
                     } else {
-                        Text("아직 가진 기억이 없어요.ㅜ.ㅜ")
-                            .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
-                            .font(.mapoGoldenPier(FontSize.title2))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
-                            .foregroundStyle(Color.textAccent)
-                            .padding(.vertical, 8)
+                        VStack(alignment:.center) {
+                            Spacer()
+                            Text("아직 가진 기억이 없어요.😢")
+                                .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
+                                .font(.mapoGoldenPier(FontSize.title2))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
+                                .foregroundStyle(Color.gray)
+                                .padding(.vertical, 8)
+                            Spacer()
+                        }
                     }
                 }
             }

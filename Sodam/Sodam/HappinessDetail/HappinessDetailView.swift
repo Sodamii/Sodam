@@ -25,11 +25,13 @@ struct HappinessDetailView: View {
                             .clipShape(.rect(cornerRadius: 15))
                             .padding()
                             .background(RoundedRectangle(cornerRadius: 15).foregroundStyle(Color.cellBackground))
+                            .padding(.bottom)
                     }
                     HStack(alignment: .top) {
                         Text(viewModel.happiness.content)
                             .font(.maruburiot(type: .regular, size: 16))
                             .multilineTextAlignment(.leading)
+                            .padding(.horizontal, 16)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -45,7 +47,7 @@ struct HappinessDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
-                    dismiss() 
+                    dismiss()
                 }) {
                     HStack {
                         Image(systemName: "chevron.left")

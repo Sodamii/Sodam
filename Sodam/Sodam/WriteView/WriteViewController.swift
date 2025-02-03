@@ -15,7 +15,6 @@ protocol WriteViewControllerDelegate: AnyObject {
 final class WriteViewController: UIViewController {
     
     weak var delegate: WriteViewControllerDelegate?
-    var hangdamName: String?
     
     private let writeViewModel: WriteViewModel
     private let writeView = WriteView()

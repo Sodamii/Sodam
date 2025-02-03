@@ -144,15 +144,6 @@ class WriteView: UIView {
             topBar
         ].forEach { addSubview($0) }
         
-//        dateLabel.layer.borderWidth = 1
-//        textView.layer.borderWidth = 1
-//        collectionView.layer.borderWidth = 1
-//        cameraButton.layer.borderWidth = 1
-//        imageButton.layer.borderWidth = 1
-//        dismisslButton.layer.borderWidth = 1
-//        submitButton.layer.borderWidth = 1
-//        containerView.layer.borderWidth = 1
-        
         // 바 제약 조건 설정
         topBar.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(20)

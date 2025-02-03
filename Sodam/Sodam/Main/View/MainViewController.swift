@@ -88,16 +88,11 @@ final class MainViewController: UIViewController {
         mainView.circularImageView.isUserInteractionEnabled = true
     }
     
-    // MARK: - Lazy Properties
-    
-    /// 작성 화면을 위한 ViewModel 생성. (행담이 ID와 함께 초기화)
-    private lazy var writeViewModel: WriteViewModel = .init(writeModel: WriteModel(), hangdamID: viewModel.hangdam.id)
-    
     // MARK: - Modal Handling
     
     // 작성화면 모달 띄우는 메서드
     private func modalWriteViewController(with name: String) {
-        let writeViewController = WriteViewController(writeViewModel: writeViewModel)
+        let writeViewController = WriteViewController(writeViewModel: .init(currentHangdamID: viewModel.hangdam.id))
         writeViewController.delegate = self                                     // Delegate 연결
         writeViewController.modalTransitionStyle = .coverVertical               // 모달 스타일 설정
         present(writeViewController, animated: true)                            // 모달 표시

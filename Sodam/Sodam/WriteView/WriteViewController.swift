@@ -108,6 +108,12 @@ final class WriteViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
+    // 키보드 내리기 구현
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        self.view.endEditing(true) // 키보드 내리기
+    }
+    
     // 키보드 나타날 때 호출되는 메서드
     @objc private func keyboardWillShow(_ notification: Notification) {
         guard let userInfo = notification.userInfo, // 키보드가 나타날 때 프레임 및 애니메이션 시간 정보 저장
@@ -116,12 +122,12 @@ final class WriteViewController: UIViewController {
             return
         }
         
-        // 화면 높이 기준으로 키보드 높이 비율 계산
-        let screenHeight = view.bounds.height
-        let keyboardHeightRatio = keyboardFrame.height / screenHeight
+        // 키보드 높이를 기준으로 inset 설정
+        let keyboardHeight = keyboardFrame.height
+        let safeAreaBottomInset = view.safeAreaInsets.bottom
 
         // 동적으로 계산된 inset 적용
-        let inset = view.safeAreaLayoutGuide.layoutFrame.height * keyboardHeightRatio
+        let inset = keyboardHeight - safeAreaBottomInset
         writeView.updateContainerBottomConstraint(inset: inset)
         
         // 업데이트 된 레이아웃 반영

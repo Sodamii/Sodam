@@ -42,7 +42,7 @@ final class MainViewController: UIViewController {
     
     /// 뷰가 다시 나타날 때 데이터 갱신
     override func viewWillAppear (_ animated: Bool) {
-        viewModel.reloadHanhdam() // ViewModel에서 행담이 데이터를 갱신
+        viewModel.reloadHangdam() // ViewModel에서 행담이 데이터를 갱신
 //        updateButtonState()
     }
     
@@ -170,7 +170,7 @@ final class MainViewController: UIViewController {
 extension MainViewController: WriteViewControllerDelegate {
     func writeViewControllerDiddismiss() {
         print("WriteViewController 모달이 닫혔습니다.")
-        viewModel.reloadHanhdam() // 데이터 갱신
+        viewModel.reloadHangdam() // 데이터 갱신
     }
 }
 /// 텍스트 입력 제한을 위해 UITextFieldDelegate 구현.

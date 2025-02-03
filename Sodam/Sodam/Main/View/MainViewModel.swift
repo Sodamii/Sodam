@@ -17,7 +17,6 @@ final class MainViewModel: ObservableObject {
     // 행담이 데이터 저장 및 불러오는 레포지토리
     private let hangdamRepository: HangdamRepository
     
-
     init(repository: HangdamRepository) {
     /// 뷰모델 초기화 메서드
         self.hangdamRepository = repository
@@ -29,9 +28,9 @@ final class MainViewModel: ObservableObject {
     }
     
     /// 새로운 이름을 현재 행담이에 저장
-    func saveNewName(as name: String ) {
+    func saveNewName(as name: String) {
         hangdamRepository.nameHangdam(id: hangdam.id, name: name)
-        reloadHanhdam()
+        reloadHangdam()
     }
     
     /// 행담이 이름 유무에 따라 화면 메세지를 업데이트 함
@@ -46,7 +45,7 @@ final class MainViewModel: ObservableObject {
     }
     
     /// 레포지토리에서 현재 행담이 데이터를 다시 불러옴
-    func reloadHanhdam() {
+    func reloadHangdam() {
         self.hangdam = hangdamRepository.getCurrentHangdam()
     }
     

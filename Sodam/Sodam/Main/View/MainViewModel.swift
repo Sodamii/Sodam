@@ -49,11 +49,6 @@ final class MainViewModel: ObservableObject {
         self.hangdam = hangdamRepository.getCurrentHangdam()
     }
     
-    /// 현재 행담이의 ID를 반환함
-    func getCurrentHangdamID() -> String {
-        return hangdamRepository.getCurrentHangdam().id
-    }
-    
     // MARK: - TodayWriteUserDefaults(테스트 하는 동안 주석처리)
     
     /// 오늘 작성했는지 확인하는 메서드

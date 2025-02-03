@@ -91,7 +91,7 @@ final class MainViewController: UIViewController {
     // MARK: - Lazy Properties
     
     /// 작성 화면을 위한 ViewModel 생성. (행담이 ID와 함께 초기화)
-    private lazy var writeViewModel: WriteViewModel = .init(writeModel: WriteModel(), hangdamID: viewModel.getCurrentHangdamID())
+    private lazy var writeViewModel: WriteViewModel = .init(writeModel: WriteModel(), hangdamID: viewModel.hangdam.id)
     
     // MARK: - Modal Handling
     

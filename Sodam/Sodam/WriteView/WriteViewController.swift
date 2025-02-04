@@ -15,7 +15,6 @@ protocol WriteViewControllerDelegate: AnyObject {
 final class WriteViewController: UIViewController {
     
     weak var delegate: WriteViewControllerDelegate?
-    var hangdamName: String?
     
     private let writeViewModel: WriteViewModel
     private let writeView = WriteView()
@@ -27,9 +26,7 @@ final class WriteViewController: UIViewController {
     }
     
     required init?(coder: NSCoder) {
-        let writeModel = WriteModel()
-        self.writeViewModel = WriteViewModel(writeModel: writeModel, hangdamID: "")
-        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - 뷰 생명주기

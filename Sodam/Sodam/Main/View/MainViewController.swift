@@ -42,7 +42,7 @@ final class MainViewController: UIViewController {
     
     /// 뷰가 다시 나타날 때 데이터 갱신
     override func viewWillAppear (_ animated: Bool) {
-        viewModel.reloadHanhdam() // ViewModel에서 행담이 데이터를 갱신
+        viewModel.reloadHangdam() // ViewModel에서 행담이 데이터를 갱신
 //        updateButtonState()
     }
     
@@ -88,17 +88,11 @@ final class MainViewController: UIViewController {
         mainView.circularImageView.isUserInteractionEnabled = true
     }
     
-    // MARK: - Lazy Properties
-    
-    /// 작성 화면을 위한 ViewModel 생성. (행담이 ID와 함께 초기화)
-    private lazy var writeViewModel: WriteViewModel = .init(writeModel: WriteModel(), hangdamID: viewModel.getCurrentHangdamID())
-    
     // MARK: - Modal Handling
     
     // 작성화면 모달 띄우는 메서드
     private func modalWriteViewController(with name: String) {
-        let writeViewController = WriteViewController(writeViewModel: writeViewModel)
-        writeViewController.hangdamName = name                                  // 지어진 이름 작성화면으로 전달
+        let writeViewController = WriteViewController(writeViewModel: .init(currentHangdamID: viewModel.hangdam.id))
         writeViewController.delegate = self                                     // Delegate 연결
         writeViewController.modalTransitionStyle = .coverVertical               // 모달 스타일 설정
         present(writeViewController, animated: true)                            // 모달 표시
@@ -120,7 +114,6 @@ final class MainViewController: UIViewController {
         if let name = viewModel.hangdam.name {
             // 이미 저장된 이름이 있는 경우에 바로 작성화면으로 이동
             print("저장된 이름으로 작성화면 이동함: \(name)")
-            modalWriteViewController(with: name)
             proceedWithWriting(name: name)
         } else {
             // 저장된 이름이 없는 경우 알림창 표시
@@ -134,7 +127,6 @@ final class MainViewController: UIViewController {
                 }
                 viewModel.saveNewName(as: name) // 새 이름 저장
                 print("입력 된 이름: \(name)")
-                self.modalWriteViewController(with: name) // 작성 화면으로 이동
                 self.proceedWithWriting(name: name)
             }
         }
@@ -170,7 +162,8 @@ final class MainViewController: UIViewController {
 extension MainViewController: WriteViewControllerDelegate {
     func writeViewControllerDiddismiss() {
         print("WriteViewController 모달이 닫혔습니다.")
-        viewModel.reloadHanhdam() // 데이터 갱신
+        viewModel.reloadHangdam()   // 데이터 갱신
+        viewModel.updateMessage()   // 메시지 업데이트
     }
 }
 /// 텍스트 입력 제한을 위해 UITextFieldDelegate 구현.

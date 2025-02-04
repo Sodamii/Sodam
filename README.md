@@ -8,13 +8,13 @@
 # <img src="https://github.com/user-attachments/assets/d9a357a2-ce93-4b53-9eba-054461a405a7" width="40"> 소담 (Sodam)
 
 ![iOS](https://img.shields.io/badge/iOS-16.6+-blue.svg)
-![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg)
+![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)
 ![UIKit](https://img.shields.io/badge/UIKit-Programmatic-blue.svg)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-Enabled-green.svg)
 ![MVVM](https://img.shields.io/badge/Architecture-MVVM-green.svg)
 
 > **소담**은 순우리말로 ‘작지만 정겹고 아름답다’는 뜻을 지니며, **소소한 행복을 담다** 라는 의미도 담고 있습니다.<br>
-> 매일 소소한 행복을 기록할수록, 귀여운 캐릭터가 함께 성장하는 특별한 **행복 다이어리 앱! 🌱💛** 입니다.
+> 매일 소소한 행복을 기록할수록, 귀여운 캐릭터가 함께 성장하는 특별한 **행복 기록 앱! 🌱💛** 입니다.
 
 - 캐릭터 이름을 직접 설정할 수 있어요. 
 - 기록 횟수에 따라 점점 성장하는 캐릭터를 키우는 재미가 있어요.
@@ -45,6 +45,10 @@
 ✅ **Core Data**  
 - Core Data를 활용해 지난 행복한 기록을 저장하고 확인할 수 있어요.
 
+✅ **커스텀 폰트**
+
+- 캐릭터와 어울리도록 커스텀 폰트를 적용하여 더욱 귀여운 느낌을 줄 수 있어요.
+
 ---
 
 ## 📌 기술 스택  
@@ -54,7 +58,7 @@
 | **언어** | Swift 6.0.2 |
 | **프레임워크** | UIKit, SwiftUI |
 | **아키텍처** | MVVM |
-| **데이터 저장소** | Core Data, UserDefaults |
+| **데이터 저장소** | Core Data, UserDefaults, fileManager |
 | **디자인 시스템** | AutoLayout (SnapKit) |
 | **의존성 관리** | Swift Package Manager (SPM) |
 | **버전 관리** | GitHub Projects |

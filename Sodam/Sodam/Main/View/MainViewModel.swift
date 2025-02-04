@@ -14,10 +14,13 @@ final class MainViewModel: ObservableObject {
     @Published var hangdam: HangdamDTO // 현재 관리할 행담이 데이터
     @Published var message: String = "" // 화면에 표시할 메시지
     
+    /// 메시지 분기를 위한 플래그 변수
+    private var showLevel5Message: Bool = false
+    private var blockRandomMessage: Bool = false
+    
     // 행담이 데이터 저장 및 불러오는 레포지토리
     private let hangdamRepository: HangdamRepository
     
-
     init(repository: HangdamRepository) {
     /// 뷰모델 초기화 메서드
         self.hangdamRepository = repository
@@ -29,30 +32,27 @@ final class MainViewModel: ObservableObject {
     }
     
     /// 새로운 이름을 현재 행담이에 저장
-    func saveNewName(as name: String ) {
+    func saveNewName(as name: String) {
         hangdamRepository.nameHangdam(id: hangdam.id, name: name)
-        reloadHanhdam()
+        reloadHangdam()
     }
     
-    /// 행담이 이름 유무에 따라 화면 메세지를 업데이트 함
+    /// 플래그 변수와 이름이 없는 경우를 검사 후 메시지 업데이트
     func updateMessage() {
-        if let _ = hangdam.name {
-            message = MainMessages.getRandomMessage()
-            print("이름이 지어졌음. 랜덤 메시지 표시")
-        } else {
+        if showLevel5Message {
+            showLevel5Message = false
+        } else if hangdam.name == nil {
             message = MainMessages.firstMessage
-            print("이름이 없음. 부화 메시지 표시")
+        } else if blockRandomMessage {
+            blockRandomMessage = false
+        } else {
+            message = MainMessages.getRandomMessage()
         }
     }
     
     /// 레포지토리에서 현재 행담이 데이터를 다시 불러옴
-    func reloadHanhdam() {
+    func reloadHangdam() {
         self.hangdam = hangdamRepository.getCurrentHangdam()
-    }
-    
-    /// 현재 행담이의 ID를 반환함
-    func getCurrentHangdamID() -> String {
-        return hangdamRepository.getCurrentHangdam().id
     }
     
     // MARK: - TodayWriteUserDefaults(테스트 하는 동안 주석처리)
@@ -81,8 +81,14 @@ final class MainViewModel: ObservableObject {
         // 디버깅
         print("행담이 레벨 \(level)로 성장함")
         
-        // 레벨에 따른 메세지를 업데이트
-        message = MainMessages.messageForLevel(level, name: hangdam.name ?? "")
+        // message update
+        message = MainMessages.messageForLevel(level, name: hangdam.name ?? "행담이")
+        
+        // write view modal이 닫히면서 random message로 덮이지 않도록 플래그 처리
+        blockRandomMessage = true
+        if level == 5 {
+            showLevel5Message = true
+        }
     }
     
     /// deinit 시 observing 해제

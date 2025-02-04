@@ -39,7 +39,7 @@ enum MainMessages: String, CaseIterable {
         case 2:
             return "하트 윙크 발사하는 사랑스러운 \(name)로 성장했네요!"
         case 3:
-            return "어른스러운 \(name)로 성장 완료!"
+            return "어엿한 \(name)로 성장 완료!"
         case 4:
             return "소확행을 좋아하는 \(name)에게 행복한 기억을 더 줘볼까요?"
         case 5:

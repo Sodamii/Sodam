@@ -19,6 +19,7 @@ final class UserDefaultsManager {
         static let isToggleNotification = "isToggleNotification"
         static let content = "content"
         static let imagePath = "imagePath"
+        static let isAuthorization = "isAuthorization"  // 앱 첫 진입시 권한 허용저장
     }
     
     // MARK: - UserDefaults에 저장
@@ -39,6 +40,10 @@ final class UserDefaultsManager {
         userDefaults.set(imagePath, forKey: Keys.imagePath)
     }
     
+    func saveIsAuthorization(_ isAuthorization: Bool) {
+        userDefaults.set(isAuthorization, forKey: Keys.isAuthorization)
+    }
+
     // MARK: - UserDefaults에 저장된 값 얻어오기
     
     func getNotificationTime() -> Date? {
@@ -63,4 +68,7 @@ final class UserDefaultsManager {
         userDefaults.removeObject(forKey: Keys.imagePath)
     }
     
+    func getIsAuthorization() -> Bool {
+        return userDefaults.bool(forKey: Keys.isAuthorization)
+    }
 }

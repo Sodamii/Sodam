@@ -54,6 +54,7 @@ struct HappinessListView: View {
                                         VStack(alignment: .leading) {
                                             Text(happiness.content)
                                                 .font(.mapoGoldenPier(FontSize.body))
+                                                .foregroundStyle(Color(UIColor.darkGray))
                                                 .lineLimit(2)
                                                 .padding(.bottom, 8)
                                             Text(happiness.date.toFormattedString)

@@ -33,7 +33,7 @@ struct HappinessCell: View {
                 VStack(alignment: .leading) {
                     Text(happiness.content)
                         .font(.mapoGoldenPier(FontSize.body))
-                        .foregroundStyle(Color(UIColor.darkGray))
+                        .foregroundStyle(.black)
                         .lineLimit(2)
                         .padding(.bottom, 8)
                     Text(happiness.date.toFormattedString)

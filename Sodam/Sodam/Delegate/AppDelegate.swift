@@ -19,20 +19,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // 권한 요청 메서드(꼭 이곳이 아니어도 원할때 권한을 받을 수 있다.)
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound] // 필요한 알림 권한을 설정
         center.requestAuthorization(options: authOptions) { success, error in
-            if let error = error {
-                print("알림 권한 요청 중 에러 발생: \(error.localizedDescription)")
-                return
+                DispatchQueue.main.async { // UI 변경은 반드시 메인 스레드에서 실행
+                    if let error = error {
+                        print("알림 권한 요청 중 에러 발생: \(error.localizedDescription)")
+                        return
+                    }
+                    
+                    if success {
+                        print("알림 권한이 허용되었습니다.")
+                        // 1초 후에 토스트 메시지 띄우기
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                            UIApplication.shared.windows.first?.rootViewController?.view.showToast(message: "알림 시간 설정이 가능합니다.")
+                        }
+                    } else {
+                        print("알림 권한이 거부되었습니다.")
+                        // ✅ 현재 최상위 윈도우의 rootViewController의 view에서 토스트 표시(화면전환될때도 토스트 유지)
+                        // 1초 후에 토스트 메시지 띄우기
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                            UIApplication.shared.windows.first?.rootViewController?.view.showToast(message: "알림 권한이 거부되었습니다.")
+                        }
+                    }
+                }
             }
-            
-            if success {
-                // TODO: - 권한이 허용되었을 경우
-                print("알림 권한이 허용되었습니다.")
-            } else {
-                // TODO: - 권한이 거부되었을 경우
-                print("알림 권한이 거부되었습니다.")
-                // 사용자에게 알림 권한을 요청할 수 있는 방법 안내 혹은 UI 처리
-            }
-        }
         
         return true
     }

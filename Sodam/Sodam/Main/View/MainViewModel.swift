@@ -58,18 +58,18 @@ final class MainViewModel: ObservableObject {
     // MARK: - TodayWriteUserDefaults(테스트 하는 동안 주석처리)
     
     /// 오늘 작성했는지 확인하는 메서드
-    func hasAlreadyWrittenToday() -> Bool {
-        let lastWrittenDate = UserDefaults.standard.object(forKey: "lastWrittenDate") as? Date ?? Date.distantPast
-        let calendar = Calendar.current
-        return calendar.isDateInToday(lastWrittenDate) // UserDefaults에서 읽어옴
-    }
-    
-    /// 오늘 작성했다고 UserDefaults에 lastWrittenDate라는 키로 저장
-    func markAsWrittenToday() {
-        let today = Calendar.current.startOfDay(for: Date())  // 시간을 00:00:00으로 초기화
-        UserDefaults.standard.set(today, forKey: "lastWrittenDate") // UserDefaults에 저장
-        print("오늘 작성 기록 저장됨: \(today)")
-    }
+//    func hasAlreadyWrittenToday() -> Bool {
+//        let lastWrittenDate = UserDefaults.standard.object(forKey: "lastWrittenDate") as? Date ?? Date.distantPast
+//        let calendar = Calendar.current
+//        return calendar.isDateInToday(lastWrittenDate) // UserDefaults에서 읽어옴
+//    }
+//    
+//    /// 오늘 작성했다고 UserDefaults에 lastWrittenDate라는 키로 저장
+//    func markAsWrittenToday() {
+//        let today = Calendar.current.startOfDay(for: Date())  // 시간을 00:00:00으로 초기화
+//        UserDefaults.standard.set(today, forKey: "lastWrittenDate") // UserDefaults에 저장
+//        print("오늘 작성 기록 저장됨: \(today)")
+//    }
     
     /// 행담이가 레벨업 할 때 메세지를 업데이트 함
     /// `levelUP` 알림(Notification)을 통해 호출됨

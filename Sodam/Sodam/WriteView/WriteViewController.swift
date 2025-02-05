@@ -170,7 +170,7 @@ final class WriteViewController: UIViewController {
                 }
             } else {
                 // 권한이 거부된 경우 설정 화면으로 이동하는 알림 표시
-                self?.showAlertGoToSetting()
+                self?.showAlertGoToSetting(buttonType: .camera)
             }
         }
     }
@@ -192,7 +192,7 @@ final class WriteViewController: UIViewController {
                 }
             } else {
                 // 권한이 거부된 경우 설정 화면으로 이동하는 알림 표시
-                self?.showAlertGoToSetting()
+                self?.showAlertGoToSetting(buttonType: .image)
             }
         }
     }
@@ -229,9 +229,18 @@ final class WriteViewController: UIViewController {
     }
 
     // 카메라 권한이 없는 경우 설정 화면으로 이동하는 Alert 표시
-    private func showAlertGoToSetting() {
+    private func showAlertGoToSetting(buttonType: ButtonTapType) {
+        let title: String
+        
+        switch buttonType {
+        case .camera:
+            title = "현재 카메라 사용에 대한 접근 권한이 없습니다."
+        case .image:
+            title = "현재 사진 라이브러리 접근에 대한 권한이 없습니다."
+        }
+        
         let alertControlelr  = UIAlertController(
-            title: "현재 카메라 사용에 대한 접근 권한이 없습니다.",
+            title: title,
             message: "설정 > Sodam 탭에서 접근 권한을 활성화 해주세요.",
             preferredStyle: .alert
         )
@@ -326,4 +335,10 @@ extension WriteViewController: UITextViewDelegate {
         // 텍스트가 변경될 때마다 뷰모델에 전달
         writeViewModel.updateText(textView.text)
     }
+}
+
+// MARK: - 알럿 케이스
+private enum ButtonTapType {
+    case camera
+    case image
 }

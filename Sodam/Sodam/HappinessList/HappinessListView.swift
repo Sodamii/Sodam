@@ -38,40 +38,14 @@ struct HappinessListView: View {
                        !happinessList.isEmpty {
                         List {
                             ForEach(happinessList, id: \.self) { happiness in
-                                NavigationLink(destination: HappinessDetailView(viewModel: HappinessDetailViewModel(
-                                                                                    happiness: happiness,
-                                                                                    happinessRepository: self.viewModel.getHappinessRepository()
-                                                                                ), isCanDelete: (self.viewModel.hangdam.endDate == nil ? false : true)
-                                                                               )
-                                ) {
-                                    HStack(alignment: .center, spacing: 16) {
-                                        if let imagePath = happiness.imagePaths.first { // 추후 이미지가 여럿 생기더라도 여긴 첫 이미지를 사용
-                                            Image(uiImage: self.viewModel.getThumnail(from: imagePath))
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .clipShape(.rect(cornerRadius: cornerRadius))
-                                        }
-                                        VStack(alignment: .leading) {
-                                            Text(happiness.content)
-                                                .font(.mapoGoldenPier(FontSize.body))
-                                                .foregroundStyle(Color(UIColor.darkGray))
-                                                .lineLimit(2)
-                                                .padding(.bottom, 8)
-                                            Text(happiness.date.toFormattedString)
-                                                .font(.mapoGoldenPier(FontSize.timeStamp))
-                                                .foregroundStyle(.gray)
-                                        }
-                                    }
-                                    .frame(height: 100)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                                .listRowSeparator(.hidden)
-                                .listRowBackground(
-                                    RoundedRectangle(cornerRadius: cornerRadius)
-                                        .foregroundStyle(Color.cellBackground)
-                                )
-                                .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
+                                HappinessCell(happiness: happiness, happinessRepository: viewModel.getHappinessRepository(), isCanDelete: viewModel.hangdam.endDate == nil ? false : true, image: viewModel.getThumnail(from: happiness.imagePaths.first ?? ""))
                             }
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(
+                                RoundedRectangle(cornerRadius: cornerRadius)
+                                    .foregroundStyle(Color.cellBackground)
+                            )
+                            .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
                         }
                         .scrollIndicators(.hidden)
                         .listRowSpacing(16)
@@ -129,17 +103,11 @@ struct HappinessListView: View {
     }
 }
 
-extension HappinessListView {
-    enum FontSize{
-        static let title: CGFloat = 27
-        static let title2: CGFloat = 24
-        static let body: CGFloat = 16
-        static let timeStamp: CGFloat = 14
-    }
-}
-
-extension HappinessListView {
-    
+enum FontSize {
+    static let title: CGFloat = 27
+    static let title2: CGFloat = 24
+    static let body: CGFloat = 16
+    static let timeStamp: CGFloat = 14
 }
 
 #Preview {

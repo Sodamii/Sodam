@@ -16,25 +16,18 @@ final class CustomTabBarController: UITabBarController {
         configureViewController()
         setupTabBarAppearance()
         
-        selectedIndex = 1                 // 초기 화면을 mainVC로 설정 배열에서 mainVC 인덱스 넣으면 됨
-        
+        selectedIndex = 1 // 초기 화면을 mainVC로 설정
     }
     
     private func setupTabBar() {
-        // Custom TabBar 설정
         let customTabBar = CustomTabBar()
         setValue(customTabBar, forKey: "tabBar")
-        
-        tabBar.tintColor = .textAccent                       // 선택된 탭의 색
-        tabBar.unselectedItemTintColor = .imageBackground    // 선택되지 않은 탭의 색
-        tabBar.backgroundColor = .tabBackground
     }
     
     private func configureViewController() {
         let hangdamRepository: HangdamRepository = HangdamRepository()
         let mainViewModel: MainViewModel = MainViewModel(repository: hangdamRepository)
         let storageViewModel: HangdamStorageViewModel = HangdamStorageViewModel(hangdamRepository: hangdamRepository)
-        
         
         let mainViewController = MainViewController(viewModel: mainViewModel)
         mainViewController.tabBarItem = UITabBarItem(title: "메인", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
@@ -46,14 +39,27 @@ final class CustomTabBarController: UITabBarController {
         let settingsViewController = SettingsViewController(settingViewModel: settingViewModel)
         settingsViewController.tabBarItem = UITabBarItem(title: "설정", image: UIImage(systemName: "gear"), selectedImage: UIImage(systemName: "gear.fill"))
         
-        viewControllers = [storageViewController, mainViewController, settingsViewController ]
+        viewControllers = [storageViewController, mainViewController, settingsViewController]
     }
     
     private func setupTabBarAppearance() {
         let appearance = UITabBarAppearance()
-        
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .tabBackground
+        
+        // 선택되지 않은 상태의 색상과 폰트 설정
+        appearance.stackedLayoutAppearance.normal.iconColor = .viewBackground
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: UIColor.viewBackground,
+            .font: UIFont.systemFont(ofSize: 10)
+        ]
+        
+        // 선택된 상태의 색상과 Bold 폰트 설정
+        appearance.stackedLayoutAppearance.selected.iconColor = .textAccent
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: UIColor.textAccent,
+            .font: UIFont.boldSystemFont(ofSize: 11)  // Bold 폰트 지정
+        ]
         
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance

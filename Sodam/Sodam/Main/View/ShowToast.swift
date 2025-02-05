@@ -28,7 +28,7 @@ extension UIView {
         // 제약 조건
         label.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(self.safeAreaLayoutGuide.snp.top).offset(40)
+            $0.bottom.equalTo(self.safeAreaLayoutGuide.snp.bottom).inset(170)
             $0.width.equalToSuperview().multipliedBy(0.6)
             $0.height.equalTo(35)
         }

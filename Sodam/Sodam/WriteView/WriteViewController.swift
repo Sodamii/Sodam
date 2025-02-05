@@ -39,8 +39,6 @@ final class WriteViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        print("viewDidAppear 동작함")
-        
         // 임시 저장글 있는지 확인하고 로드
         writeViewModel.loadTemporaryPost()
     }
@@ -68,7 +66,6 @@ final class WriteViewController: UIViewController {
     // 모달 dismiss 될 때 호출될 메서드
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        print("viewWillDisappear 동작함")
         
         // 현재 텍스트 저장
         writeViewModel.saveTemporaryPost()
@@ -76,11 +73,11 @@ final class WriteViewController: UIViewController {
         // 뷰가 닫힐 때 delegate 호출하기
         if self.isBeingDismissed {
             if writeViewModel.isPostSubmitted {
-                print("[viewWillDisappear] CoreData에 저장됨.")
+                print("[WriteView] content가 CoreData에 영구저장됨.")
                 // 작성 완료시 UserDefaults에 임시 저장된 글 삭제
                 UserDefaultsManager.shared.deleteTemporaryPost()
             } else {
-                print("[viewWillDisappear] UserDefaults에 저장됨.")
+                print("[WriteView] content가 UserDefaults에 임시저장됨.")
                 // 작성 취소 시 임시 저장
                 writeViewModel.saveTemporaryPost()
             }

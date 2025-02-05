@@ -58,7 +58,7 @@ final class UserDefaultsManager {
     }
     
     func deleteTemporaryPost() {
-        print("deleteTemporaryPost 호출")
+        print("[WriteView] 임시저장 됐던 content와 imagePath 삭제")
         userDefaults.removeObject(forKey: Keys.content)
         userDefaults.removeObject(forKey: Keys.imagePath)
     }

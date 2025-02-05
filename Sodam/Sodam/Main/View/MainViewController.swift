@@ -172,7 +172,6 @@ final class MainViewController: UIViewController {
 /// 작성화면 모달이 닫힐 때 처리.
 extension MainViewController: WriteViewControllerDelegate {
     func writeViewControllerDiddismiss() {
-        print("WriteViewController 모달이 닫혔습니다.")
         viewModel.reloadHangdam()   // 데이터 갱신
         viewModel.updateMessage()   // 메시지 업데이트
     }

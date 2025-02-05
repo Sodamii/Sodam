@@ -31,7 +31,7 @@ final class HappinessListViewModel: ObservableObject {
         return self.happinessRepository
     }
     
-    func getThumnail(from path: String) -> UIImage {
+    func getThumnail(from path: String) -> UIImage? {
         return self.happinessRepository.getThumbnailImage(from: path)
     }
 }

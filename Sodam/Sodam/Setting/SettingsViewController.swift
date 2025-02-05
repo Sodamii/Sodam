@@ -143,8 +143,8 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         switch sectionType {
         case .develop:
             if indexPath.row == 0 {
-                // TODO: - 리뷰 남기기 링크로 변경 필요
-                settingViewModel.openURL("https://www.naver.com")
+                // TODO: - 앱 배포전 링크로 배포전 이동 안되는게 맞음
+                settingViewModel.openURL("https://apps.apple.com/us/app/sodam/id6741320265")
             }
         default:
             break

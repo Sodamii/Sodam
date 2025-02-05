@@ -213,7 +213,7 @@ final class WriteViewController: UIViewController {
             // WriteViewModel에 작성 완료 이벤트 전달
             self.writeViewModel.submitPost {
                 // 글이 정상적으로 작성된 경우에만 기록 저장
-                NotificationCenter.default.post(name: Notification.Name("DidWriteToday"), object: nil)
+                NotificationCenter.default.post(name: Notification.didWriteToday, object: nil)
                 // 모달 닫기
                 self.dismiss(animated: true, completion: nil)
             }

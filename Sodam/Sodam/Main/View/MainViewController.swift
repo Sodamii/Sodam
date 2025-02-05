@@ -40,7 +40,7 @@ final class MainViewController: UIViewController {
         addGesture()               // 이미지 탭 제스처 설정
         
         // 작성 완료 알림 감지하여 버튼 상태 갱신
-//        NotificationCenter.default.addObserver(self, selector: #selector(didWriteToday), name: Notification.Name("DidWriteToday"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(didWriteToday), name: Notification.didWriteToday, object: nil)
     }
     
     /// 뷰가 다시 나타날 때 데이터 갱신

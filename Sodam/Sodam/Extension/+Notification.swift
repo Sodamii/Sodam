@@ -9,4 +9,5 @@ import Foundation
 
 extension Notification {
     static let levelUP = Notification.Name("levelUP")
+    static let didWriteToday = Notification.Name("DidWriteToday")
 }

@@ -61,13 +61,13 @@ final class MainViewModel: ObservableObject {
 //    func hasAlreadyWrittenToday() -> Bool {
 //        let lastWrittenDate = UserDefaults.standard.object(forKey: "lastWrittenDate") as? Date ?? Date.distantPast
 //        let calendar = Calendar.current
-//        return calendar.isDateInToday(lastWrittenDate)
+//        return calendar.isDateInToday(lastWrittenDate) // UserDefaults에서 읽어옴
 //    }
 //    
 //    /// 오늘 작성했다고 UserDefaults에 lastWrittenDate라는 키로 저장
 //    func markAsWrittenToday() {
 //        let today = Calendar.current.startOfDay(for: Date())  // 시간을 00:00:00으로 초기화
-//        UserDefaults.standard.set(today, forKey: "lastWrittenDate")
+//        UserDefaults.standard.set(today, forKey: "lastWrittenDate") // UserDefaults에 저장
 //        print("오늘 작성 기록 저장됨: \(today)")
 //    }
     

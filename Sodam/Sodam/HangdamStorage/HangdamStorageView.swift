@@ -40,8 +40,8 @@ struct HangdamStorageView: View {
                         VStack(alignment: .center) {
                             Spacer()
                             Text("행담이에게 행복을 주고 성장시켜보세요!")
-                                .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
-                                .font(.mapoGoldenPier(24))
+                                .frame(maxWidth: .infinity, maxHeight: 35, alignment: .center)
+                                .font(.mapoGoldenPier(20))
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.5)
                                 .foregroundStyle(Color.gray)

@@ -78,9 +78,9 @@ struct HappinessListView: View {
                     } else {
                         VStack(alignment:.center) {
                             Spacer()
-                            Text("아직 가진 기억이 없어요.😢")
-                                .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
-                                .font(.mapoGoldenPier(FontSize.title2))
+                            Text("아직 가진 기억이 없어요😢")
+                                .frame(maxWidth: .infinity, maxHeight: 35, alignment: .center)
+                                .font(.mapoGoldenPier(20))
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.5)
                                 .foregroundStyle(Color.gray)

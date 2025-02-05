@@ -2,7 +2,7 @@
 //  SettingsViewController.swift
 //  Sodam
 //
-//  Created by 손겸 on 1/21/25.
+//  Created by 박시연 on 1/21/25.
 //
 
 import UIKit
@@ -152,10 +152,65 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     @objc func didToggleSwitch(_ sender: UISwitch) {
-        settingViewModel.isSwitchOn = sender.isOn
-        settingViewModel.saveIsToggleNotification(sender.isOn)
+        // 현재 알림 권한 상태 확인
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                if settings.authorizationStatus != .authorized {
+                    // 권한이 허용되지 않은 경우
+                    sender.isOn = false // 토글을 다시 OFF 상태로 변경
+                    self.showNotificationPermissionAlert()
+                } else {
+                    // 권한이 허용된 경우 알림 울리도록 설정
+                    self.handleNotificationToggle(isOn: sender.isOn)
+                }
+            }
+        }
+    }
+    
+    // 사용자가 선택한 알림 시간 UserDefaultsManager에 저장
+    @objc func userScheduleNotification(_ sender: UIDatePicker) {
+        settingViewModel.saveNotificationTime(sender.date)
+        print("sender.date11 \(sender.date)")
+
+        if settingViewModel.isSwitchOn {
+            settingViewModel.setReservedNotificaion(sender.date)
+            print("sender.date22 \(sender.date)")
+
+        }
+    }
+    
+    // 알림 권한이 없을 때 경고창 띄우기
+    private func showNotificationPermissionAlert() {
+        let alertController = UIAlertController(
+            title: "알림 권한 필요",
+            message: "앱의 알림을 받으려면 설정에서 알림을 허용해주세요.",
+            preferredStyle: .alert
+        )
         
-        if sender.isOn {
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+            // 해당 앱 설정으로 이동
+            if let url = URL(string: UIApplication.openSettingsURLString),
+               UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(settingsAction)
+        
+        // 메인 스레드에서 표시
+        DispatchQueue.main.async {
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    // 권한이 허용된 경우 알림 울리도록 설정 (토글이 켜졌을 때 실행)
+    private func handleNotificationToggle(isOn: Bool) {
+        settingViewModel.isSwitchOn = isOn
+        settingViewModel.saveIsToggleNotification(isOn)
+        
+        if isOn {
             if let savedTime = settingViewModel.getNotificationTime() {
                 settingViewModel.setReservedNotificaion(savedTime)
             } else {
@@ -169,17 +224,5 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         }
         
         settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-    }
-    
-    // 사용자가 선택한 알림 시간 UserDefaultsManager에 저장
-    @objc func userScheduleNotification(_ sender: UIDatePicker) {
-        settingViewModel.saveNotificationTime(sender.date)
-        print("sender.date11 \(sender.date)")
-
-        if settingViewModel.isSwitchOn {
-            settingViewModel.setReservedNotificaion(sender.date)
-            print("sender.date22 \(sender.date)")
-
-        }
     }
 }

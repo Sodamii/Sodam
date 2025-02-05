@@ -123,13 +123,13 @@ final class CoreDataManager {
     
     /// 행복한 기억을 행담이에 추가하는 메소드 - 내부 호출
     private func appendHappiness(_ entity: HappinessEntity, to hangamID: NSManagedObjectID) {
-        guard let hangdam = searchHangdam(with: hangamID) else { return}
+        guard let hangdam = searchHangdam(with: hangamID) else { return }
         hangdam.addToHappinesses(entity)
     }
     
     /// 행담이가 갖고 있는 행복한 기억들 호출
     func getHappinesses(of hangdamID: NSManagedObjectID) -> [HappinessEntity]? {
-        guard let hangdam = searchHangdam(with: hangdamID) else { return nil}
+        guard let hangdam = searchHangdam(with: hangdamID) else { return nil }
         return hangdam.happinesses?.array as? [HappinessEntity]
     }
     

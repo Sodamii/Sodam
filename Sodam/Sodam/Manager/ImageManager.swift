@@ -42,9 +42,9 @@ final class ImageManager {
     }
     
     /// 썸네일 이미지 만드는 함수 : 리사이징 목표치 기본값 150
-    func getThumbnailImage(with imagePath: String, size: CGFloat = 150) -> UIImage {
+    func getThumbnailImage(with imagePath: String, size: CGFloat = 150) -> UIImage? {
         guard let image = getImage(with: imagePath) else {
-            return UIImage(resource: .kingdam3)
+            return nil
         }
         
         /// 이미지 크기

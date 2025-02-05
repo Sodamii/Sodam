@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         print("알림 권한이 허용되었습니다.")
                         // 1초 후에 토스트 메시지 띄우기
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                            UIApplication.shared.windows.first?.rootViewController?.view.showToast(message: "알림 시간을 설정이 가능합니다.")
+                            UIApplication.shared.windows.first?.rootViewController?.view.showToast(message: "알림 시간 설정이 가능합니다.")
                         }
                     } else {
                         print("알림 권한이 거부되었습니다.")

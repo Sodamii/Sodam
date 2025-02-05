@@ -91,7 +91,7 @@ final class MainViewController: UIViewController {
     // MARK: - Modal Handling
     
     // 작성화면 모달 띄우는 메서드
-    private func modalWriteViewController(with name: String) {
+    private func modalWriteViewController() {
         let writeViewController = WriteViewController(writeViewModel: .init(currentHangdamID: viewModel.hangdam.id))
         writeViewController.delegate = self                                     // Delegate 연결
         writeViewController.modalTransitionStyle = .coverVertical               // 모달 스타일 설정
@@ -113,8 +113,8 @@ final class MainViewController: UIViewController {
 //        }
         if let name = viewModel.hangdam.name {
             // 이미 저장된 이름이 있는 경우에 바로 작성화면으로 이동
-            print("저장된 이름으로 작성화면 이동함: \(name)")
-            proceedWithWriting(name: name)
+            print("이미 저장된 이름 있음: \(name)")
+            proceedWithWriting()
         } else {
             // 저장된 이름이 없는 경우 알림창 표시
             AlertManager.showAlert(on: self) { [weak self] name in
@@ -127,16 +127,16 @@ final class MainViewController: UIViewController {
                 }
                 viewModel.saveNewName(as: name) // 새 이름 저장
                 print("입력 된 이름: \(name)")
-                self.proceedWithWriting(name: name)
+                self.proceedWithWriting()
             }
         }
     }
     
     /// 작성화면으로 이동 후 작성완료 상태를 저장하고 버튼 상태를 갱신하는 메서드
-    private func proceedWithWriting(name: String) {
-        modalWriteViewController(with: name)         // 작성화면으로 이동
-//        viewModel.markAsWrittenToday()               // 오늘 작성 했음을 기록
-//        updateButtonState()                          // 버튼 상태 갱신(작성 완료 시 비활성화됨)
+    private func proceedWithWriting() {
+        modalWriteViewController()      // 작성화면으로 이동
+//        viewModel.markAsWrittenToday()  // 오늘 작성 했음을 기록
+//        updateButtonState()             // 버튼 상태 갱신(작성 완료 시 비활성화됨)
     }
     
     // MARK: - Gesture Actions

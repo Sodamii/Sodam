@@ -13,7 +13,6 @@ final class HappinessRepository {
     private let coreDataManager: CoreDataManager
     private let imageManager: ImageManager
     
-    // 
     init(coreDataManager: CoreDataManager = CoreDataManager.shared, imageManager: ImageManager = ImageManager()) {
         self.coreDataManager = coreDataManager
         self.imageManager = imageManager
@@ -63,14 +62,22 @@ final class HappinessRepository {
     
     /// 행담이가 가진 기억들 호출
     func getHappinesses(of hangdamID: String) -> [HappinessDTO]? {
-        guard let id = IDConverter.toNSManagedObjectID(from: hangdamID, in: coreDataManager.context) else { return nil }
+        guard let id = IDConverter.toNSManagedObjectID(from: hangdamID, in: coreDataManager.context)
+        else {
+            print(DataError.convertIDFailed.localizedDescription)
+            return nil
+        }
         
         return coreDataManager.getHappinesses(of: id)?.compactMap { $0.toDTO }
     }
     
     /// 기억 삭제
     func deleteHappiness(with id: String?, path: String?) {
-        guard let id = IDConverter.toNSManagedObjectID(from: id, in: coreDataManager.context) else { return }
+        guard let id = IDConverter.toNSManagedObjectID(from: id, in: coreDataManager.context)
+        else {
+            print(DataError.convertIDFailed.localizedDescription)
+            return
+        }
         coreDataManager.deleteHappiness(with: id)
         print("[HappinessRepository] deleteHappiness - 행복 삭제 완료")
         

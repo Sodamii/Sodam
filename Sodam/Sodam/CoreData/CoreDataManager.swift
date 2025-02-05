@@ -35,7 +35,7 @@ final class CoreDataManager {
         
         do {
             try context.save()
-            print("컨텍스트 변경사항 저장 완료")
+            print("[CoreData] context 변경사항 저장 완료")
         } catch let error {
             print(DataError.contextSaveFailed.localizedDescription)
             print(error.localizedDescription)
@@ -123,33 +123,20 @@ final class CoreDataManager {
     
     /// 행복한 기억을 행담이에 추가하는 메소드 - 내부 호출
     private func appendHappiness(_ entity: HappinessEntity, to hangamID: NSManagedObjectID) {
-        guard let hangdam = searchHangdam(with: hangamID)
-        else {
-            print(DataError.searchEntityFailed.localizedDescription)
-            return
-        }
-        
+        guard let hangdam = searchHangdam(with: hangamID) else { return }
         hangdam.addToHappinesses(entity)
     }
     
     /// 행담이가 갖고 있는 행복한 기억들 호출
     func getHappinesses(of hangdamID: NSManagedObjectID) -> [HappinessEntity]? {
-        guard let hangdam = searchHangdam(with: hangdamID)
-        else {
-            print(DataError.searchEntityFailed.localizedDescription)
-            return nil
-        }
-        
+        guard let hangdam = searchHangdam(with: hangdamID) else { return nil }
         return hangdam.happinesses?.array as? [HappinessEntity]
     }
     
     /// 행복한 기억 단일 삭제
     func deleteHappiness(with id: NSManagedObjectID) {
-//        guard let entity = searchHappiness(with: id) else { return }
-//        context.delete(entity)
-        // TODO: 기존 메서드 방식으로는 context에 변경사항이 안 생겨서 save 메서드 또한 실행이 안 되길래 제가 쓰는 방식으로 바꾸었습니다.
-        let happiness = context.object(with: id)
-        context.delete(happiness)
+        guard let entity = searchHappiness(with: id) else { return }
+        context.delete(entity)
        
         print("[CoreData] 행복 삭제 완료")
         saveContext()
@@ -168,7 +155,6 @@ final class CoreDataManager {
     }
     
     /// 행담이가 가진 현재 기억 개수 체크 - startDate, endDate 업데이트 기준으로 사용
-    // MARK: level up event 처리를 할 거라면, 이 값에 대한 observing 필요
     func checkHappinessCount(with hangdamID: NSManagedObjectID) -> Int? {
         guard let hangdam = searchHangdam(with: hangdamID) else { return nil }
         return hangdam.happinesses?.count

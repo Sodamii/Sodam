@@ -1,5 +1,5 @@
 //
-//  Enum.swift
+//  Setting.swift
 //  Sodam
 //
 //  Created by 박시연 on 1/21/25.

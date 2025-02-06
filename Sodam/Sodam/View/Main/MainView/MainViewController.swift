@@ -13,7 +13,7 @@ final class MainViewController: UIViewController {
     
     // MARK: - Properties
     
-    private let mainView: MainView  = MainView()
+    private let mainView: MainView = MainView()
     private let viewModel: MainViewModel
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     

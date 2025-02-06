@@ -13,7 +13,7 @@ final class MainViewController: UIViewController {
     
     // MARK: - Properties
     
-    private let mainView: MainView  = MainView()
+    private let mainView: MainView = MainView()
     private let viewModel: MainViewModel
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
@@ -40,13 +40,13 @@ final class MainViewController: UIViewController {
         addGesture()               // 이미지 탭 제스처 설정
         
         // 작성 완료 알림 감지하여 버튼 상태 갱신
-//        NotificationCenter.default.addObserver(self, selector: #selector(didWriteToday), name: Notification.didWriteToday, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didWriteToday), name: Notification.didWriteToday, object: nil)
     }
     
     /// 뷰가 다시 나타날 때 데이터 갱신
     override func viewWillAppear (_ animated: Bool) {
         viewModel.reloadHangdam() // ViewModel에서 행담이 데이터를 갱신
-//        updateButtonState()       // 화면이 다시 나타날 때 버튼 상태 갱신
+        updateButtonState()       // 화면이 다시 나타날 때 버튼 상태 갱신
     }
     
     // MARK: - bind view model for update view
@@ -70,18 +70,18 @@ final class MainViewController: UIViewController {
             .store(in: &cancellables)
     }
     
-//    /// 버튼 상태 갱신 메서드 추가
-//    private func updateButtonState() {
-//        let hasWritten = viewModel.hasAlreadyWrittenToday()
-//        mainView.createbutton.isEnabled = true
-//        mainView.createbutton.alpha = hasWritten ? 0.5 : 1.0
-//    }
-//    
-//    /// 오늘 작성이 완료되었을 때 호출되는 메서드
-//    @objc private func didWriteToday() {
-//        viewModel.markAsWrittenToday()
-//        updateButtonState()
-//    }
+    /// 버튼 상태 갱신 메서드 추가
+    private func updateButtonState() {
+        let hasWritten = viewModel.hasAlreadyWrittenToday()
+        mainView.createbutton.isEnabled = true
+        mainView.createbutton.alpha = hasWritten ? 0.5 : 1.0
+    }
+    
+    /// 오늘 작성이 완료되었을 때 호출되는 메서드
+    @objc private func didWriteToday() {
+        viewModel.markAsWrittenToday()
+        updateButtonState()
+    }
     
     // MARK: - setup button action
     
@@ -111,15 +111,15 @@ final class MainViewController: UIViewController {
     
     /// 작성 버튼 클릭 시 호출
     @objc private func createButtonTapped() {
-//        if viewModel.hasAlreadyWrittenToday() {
-//            // 오늘 작성한 경우 경고 메시지 출력
-//            let alert = UIAlertController(title: "오늘의 소확행 작성 완료!",
-//                                          message: "내일 또 당신의 소소한 행복을 작성해주세요",
-//                                          preferredStyle: .alert)
-//            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-//            present(alert, animated: true, completion: nil)
-//            return
-//        }
+        if viewModel.hasAlreadyWrittenToday() {
+            // 오늘 작성한 경우 경고 메시지 출력
+            let alert = UIAlertController(title: "오늘의 소확행 작성 완료!",
+                                          message: "내일 또 당신의 소소한 행복을 작성해주세요",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+            return
+        }
         if let name = viewModel.hangdam.name {
             // 이미 저장된 이름이 있는 경우에 바로 작성화면으로 이동
             print("이미 저장된 이름 있음: \(name)")
@@ -146,8 +146,8 @@ final class MainViewController: UIViewController {
     /// 작성화면으로 이동 후 작성완료 상태를 저장하고 버튼 상태를 갱신하는 메서드
     private func proceedWithWriting() {
         modalWriteViewController()      // 작성화면으로 이동
-//        viewModel.markAsWrittenToday()  // 오늘 작성 했음을 기록
-//        updateButtonState()             // 버튼 상태 갱신(작성 완료 시 비활성화됨)
+        viewModel.markAsWrittenToday()  // 오늘 작성 했음을 기록
+        updateButtonState()             // 버튼 상태 갱신(작성 완료 시 비활성화됨)
     }
     
     // MARK: - Gesture Actions

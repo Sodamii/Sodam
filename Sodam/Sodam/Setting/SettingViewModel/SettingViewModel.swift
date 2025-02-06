@@ -26,7 +26,7 @@ final class SettingViewModel {
     // MARK: - Initializer
     init() {
         // 앱 시작 시 UserDefaults에서 값 로드
-        self.isSwitchOn = userDefaultsManager.getAuthorizationStatus()
+        self.isSwitchOn = userDefaultsManager.getNotificaionAuthorizationStatus()
     }
     
     func saveNotificationTime(_ sender: Date) {
@@ -34,11 +34,11 @@ final class SettingViewModel {
     }
     
     func saveIsToggleNotification(_ sender: Bool) {
-        userDefaultsManager.saveToggleState(sender)
+        userDefaultsManager.saveNotificationToggleState(sender)
     }
     
     func getIsToggle() -> Bool {
-        userDefaultsManager.getToggleState()
+        userDefaultsManager.getNotificationToggleState()
     }
     
     func getNotificationTime() -> Date? {

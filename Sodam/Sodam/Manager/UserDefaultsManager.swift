@@ -16,10 +16,10 @@ final class UserDefaultsManager {
     // 이름 충돌 방지 및 재사용성 증가
     private enum Keys {
         static let notificationTime = "time"  // 앱 알림 시간
-        static let toggleState = "toggleState"  // 앱 알림 토글 상태
+        static let notificationToggleState = "notificationToggleState"  // 앱 알림 토글 상태
         static let content = "content"  // 작성 내용
         static let imagePath = "imagePath"  // 작성시 등록 이미지
-        static let authorizationStatus = "authorizationStatus"  // 앱 첫 진입시 알림 권한 허용 여부 상태
+        static let notificationAuthorizationStatus = "notificationAuthorizationStatus"  // 앱 첫 진입시 알림 권한 허용 여부 상태
     }
     
     // MARK: - UserDefaults에 저장
@@ -28,8 +28,8 @@ final class UserDefaultsManager {
         userDefaults.set(time, forKey: Keys.notificationTime)
     }
     
-    func saveToggleState(_ isOn: Bool) {
-        userDefaults.set(isOn, forKey: Keys.toggleState)
+    func saveNotificationToggleState(_ isOn: Bool) {
+        userDefaults.set(isOn, forKey: Keys.notificationToggleState)
     }
     
     func saveContent(_ content: String) {
@@ -40,8 +40,8 @@ final class UserDefaultsManager {
         userDefaults.set(imagePath, forKey: Keys.imagePath)
     }
     
-    func saveAuthorizationStatus(_ isAuthorized: Bool) {
-        userDefaults.set(isAuthorized, forKey: Keys.authorizationStatus)
+    func saveNotificaionAuthorizationStatus(_ isAuthorized: Bool) {
+        userDefaults.set(isAuthorized, forKey: Keys.notificationAuthorizationStatus)
     }
 
     // MARK: - UserDefaults에 저장된 값 얻어오기
@@ -50,8 +50,8 @@ final class UserDefaultsManager {
         userDefaults.object(forKey: Keys.notificationTime) as? Date
     }
     
-    func getToggleState() -> Bool {
-        userDefaults.bool(forKey: Keys.toggleState)
+    func getNotificationToggleState() -> Bool {
+        userDefaults.bool(forKey: Keys.notificationToggleState)
     }
     
     func getContent() -> String? {
@@ -68,7 +68,7 @@ final class UserDefaultsManager {
         userDefaults.removeObject(forKey: Keys.imagePath)
     }
     
-    func getAuthorizationStatus() -> Bool {
-        return userDefaults.bool(forKey: Keys.authorizationStatus)
+    func getNotificaionAuthorizationStatus() -> Bool {
+        return userDefaults.bool(forKey: Keys.notificationAuthorizationStatus)
     }
 }

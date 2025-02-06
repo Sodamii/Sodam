@@ -25,14 +25,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     self.requestNotificationAuthorization()
                 case .denied:
                     // 권한 허용 거부된 경우 → UserDefaultsManager로 중복 표시 방지
-                    if !UserDefaultsManager.shared.getIsAuthorization() {
+                    if !UserDefaultsManager.shared.getAuthorizationStatus() {
                         self.showToast(message: "알림 권한이 거부되었습니다.")
-                        UserDefaultsManager.shared.saveIsAuthorization(true) // 최초 한 번만 저장
+                        UserDefaultsManager.shared.saveAuthorizationStatus(true) // 최초 한 번만 저장
                     }
                 case .authorized, .provisional, .ephemeral:
                     // 권한이 이미 허용된 경우 (다시 요청할 필요 없음)
-                    if !UserDefaultsManager.shared.getIsAuthorization() {
-                        UserDefaultsManager.shared.saveIsAuthorization(true)
+                    if !UserDefaultsManager.shared.getAuthorizationStatus() {
+                        UserDefaultsManager.shared.saveAuthorizationStatus(true)
                     }
                 @unknown default:
                     break
@@ -73,12 +73,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     print("알림 권한이 허용되었습니다.")
                     // 1초 후에 토스트 메시지 띄우기
                     self.showToast(message: "알림 시간 설정이 가능합니다.")
-                    UserDefaultsManager.shared.saveIsAuthorization(true)
+                    UserDefaultsManager.shared.saveAuthorizationStatus(true)
                 } else {
                     print("알림 권한이 거부되었습니다.")
                     // 1초 후에 토스트 메시지 띄우기
                     self.showToast(message: "알림 권한이 거부되었습니다.")
-                    UserDefaultsManager.shared.saveIsAuthorization(true)
+                    UserDefaultsManager.shared.saveAuthorizationStatus(true)
                 }
             }
         }

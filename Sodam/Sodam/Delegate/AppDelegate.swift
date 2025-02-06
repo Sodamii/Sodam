@@ -64,7 +64,9 @@ private extension AppDelegate {
                 switch settings.authorizationStatus {
                 case .notDetermined:
                     // 권한 요청 (사용자가 한 번도 응답하지 않은 상태)
-                    self.requestNotificationAuthorization()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { // 1초 후 실행
+                        self.requestNotificationAuthorization()
+                    }
                 case .denied:
                     // 권한 허용 거부된 경우 → UserDefaultsManager로 중복 표시 방지
                     if !UserDefaultsManager.shared.getNotificaionAuthorizationStatus() {

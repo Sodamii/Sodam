@@ -11,7 +11,7 @@ final class SettingViewModel {
     private let userDefaultsManager = UserDefaultsManager.shared
     private let localNotificationManager = LocalNotificationManager.shared
     
-    var isSwitchOn: Bool = false
+    var isToggleOn: Bool = false
     let sectionType: [Setting.SetSection] = [.appSetting, .develop]
     var version: String? {
         guard let dictionary = Bundle.main.infoDictionary,
@@ -25,8 +25,8 @@ final class SettingViewModel {
     
     // MARK: - Initializer
     init() {
-        // 앱 시작 시 UserDefaults에서 값 로드
-        self.isSwitchOn = userDefaultsManager.getNotificaionAuthorizationStatus()
+        self.isToggleOn = userDefaultsManager.getNotificaionAuthorizationStatus()
+        self.checkNotificationAuthorization()
     }
     
     func saveNotificationTime(_ sender: Date) {
@@ -56,5 +56,39 @@ final class SettingViewModel {
             return
         }
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
+}
+
+private extension SettingViewModel {
+    // 알림 권한을 확인하고 초기 설정
+    func checkNotificationAuthorization() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                if settings.authorizationStatus == .authorized {
+                    // ✅ 권한 허용 시 항상 실행되는 로직
+                    self.handleAuthorizedState()
+                } else {
+                    self.isToggleOn = false
+                    self.saveIsToggleNotification(false)
+                }
+            }
+        }
+    }
+    
+    func handleAuthorizedState() {
+        // ✅ 최초 권한 허용인 경우에만 기본 시간 설정
+        if !UserDefaultsManager.shared.isNotificationSetupComplete() {
+            let defaultTime = Calendar.current.date(
+                bySettingHour: 21,
+                minute: 0,
+                second: 0,
+                of: Date()
+            )!
+            self.saveNotificationTime(defaultTime)
+            UserDefaultsManager.shared.markNotificationSetupAsComplete()
+        }
+        
+        self.isToggleOn = true
+        self.saveIsToggleNotification(true)
     }
 }

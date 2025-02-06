@@ -20,6 +20,7 @@ final class UserDefaultsManager {
         static let content = "content"  // 작성 내용
         static let imagePath = "imagePath"  // 작성시 등록 이미지
         static let notificationAuthorizationStatus = "notificationAuthorizationStatus"  // 앱 첫 진입시 알림 권한 허용 여부 상태
+        static let notificationInitialSetupComplete = "notificationInitialSetupComplete" // 앱 알림 초기 설정 여부 확인
     }
     
     // MARK: - UserDefaults에 저장
@@ -42,6 +43,10 @@ final class UserDefaultsManager {
     
     func saveNotificaionAuthorizationStatus(_ isAuthorized: Bool) {
         userDefaults.set(isAuthorized, forKey: Keys.notificationAuthorizationStatus)
+    }
+    
+    func isNotificationSetupComplete() -> Bool {
+        return userDefaults.bool(forKey: Keys.notificationInitialSetupComplete)
     }
 
     // MARK: - UserDefaults에 저장된 값 얻어오기
@@ -70,5 +75,9 @@ final class UserDefaultsManager {
     
     func getNotificaionAuthorizationStatus() -> Bool {
         return userDefaults.bool(forKey: Keys.notificationAuthorizationStatus)
+    }
+    
+    func markNotificationSetupAsComplete() {
+        userDefaults.set(true, forKey: Keys.notificationInitialSetupComplete)
     }
 }

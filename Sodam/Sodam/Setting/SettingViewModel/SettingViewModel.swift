@@ -64,24 +64,31 @@ private extension SettingViewModel {
     func checkNotificationAuthorization() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
-                // 권한 여부 체크
-                if settings.authorizationStatus != .authorized {
-                    // 권한 없으면 스위치 OFF로 설정
+                if settings.authorizationStatus == .authorized {
+                    // ✅ 권한 허용 시 항상 실행되는 로직
+                    self.handleAuthorizedState()
+                } else {
                     self.isToggleOn = false
                     self.saveIsToggleNotification(false)
-                } else {
-                    // 권한 있으면 스위치 ON으로 설정
-                    self.isToggleOn = true
-                    self.saveIsToggleNotification(true)
-                    
-                    // 만약 앱 첫 진입 시 알림 허용, 사용자가 알림 설정은 안한상태일때 기본 시간 설정 (저녁 9시)
-                    if self.getNotificationTime() == nil {
-                        let defaultTime = Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: Date())!
-                        self.saveNotificationTime(defaultTime)
-                        self.setReservedNotificaion(defaultTime)
-                    }
                 }
             }
         }
+    }
+    
+    func handleAuthorizedState() {
+        // ✅ 최초 권한 허용인 경우에만 기본 시간 설정
+        if !UserDefaultsManager.shared.isNotificationSetupComplete() {
+            let defaultTime = Calendar.current.date(
+                bySettingHour: 21,
+                minute: 0,
+                second: 0,
+                of: Date()
+            )!
+            self.saveNotificationTime(defaultTime)
+            UserDefaultsManager.shared.markNotificationSetupAsComplete()
+        }
+        
+        self.isToggleOn = true
+        self.saveIsToggleNotification(true)
     }
 }

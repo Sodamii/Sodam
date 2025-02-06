@@ -73,20 +73,38 @@ private extension SettingsViewController {
     @objc func checkNotificationPermissionAndUpdateSwitch() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
-                if settings.authorizationStatus != .authorized {
-                    // 권한이 거부된 경우, 스위치를 OFF로 설정
-                    self.settingViewModel.isToggleOn = false
-                    self.settingViewModel.saveIsToggleNotification(false)
-                } else {
-                    // 권한이 허용된 경우, 스위치를 ON으로 설정
+                _ = !self.settingViewModel.isToggleOn // 이전 상태 확인
+                let isAuthorizedNow = settings.authorizationStatus == .authorized
+                
+                if isAuthorizedNow {
+                    // 사용자가 설정에서 알림을 허용했을 경우
                     self.settingViewModel.isToggleOn = true
                     self.settingViewModel.saveIsToggleNotification(true)
+                    
+                    if self.settingViewModel.getNotificationTime() == nil {
+                        // 기존에 저장된 알림 시간이 없으면 기본값(21:00) 설정
+                        let defaultTime = self.defaultNotificationTime()
+                        self.settingViewModel.saveNotificationTime(defaultTime)
+                        self.settingViewModel.setReservedNotificaion(defaultTime)
+                    }
+                } else {
+                    // 여전히 거부 상태면 스위치를 OFF로 유지
+                    self.settingViewModel.isToggleOn = false
+                    self.settingViewModel.saveIsToggleNotification(false)
                 }
                 
-                // 스위치 상태에 따라 UI 업데이트
+                // UI 업데이트
                 self.settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
             }
         }
+    }
+    
+    // 기본 시간(21:00) 반환하는 함수
+    private func defaultNotificationTime() -> Date {
+        var components = DateComponents()
+        components.hour = 21
+        components.minute = 0
+        return Calendar.current.date(from: components) ?? Date()
     }
 }
 

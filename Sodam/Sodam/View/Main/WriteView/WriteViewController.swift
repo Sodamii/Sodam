@@ -90,14 +90,13 @@ final class WriteViewController: UIViewController {
     private func updateUI(with post: Post) {
         writeView.setTextViewText(post.content) // 텍스트뷰 업데이트
         writeView.collectionViewReload() // 컬렉션 뷰 리로드
+        writeView.updateCollectionViewConstraint(writeViewModel.images.isEmpty)
     }
 }
 
 // MARK: - 컬렉션뷰 DataSource 설정
 extension WriteViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let imageCount = writeViewModel.images.count
-        writeView.updateCollectionViewConstraint(imageCount == 0)
         return writeViewModel.images.count
     }
     

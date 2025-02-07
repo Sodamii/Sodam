@@ -215,11 +215,12 @@ extension WriteView {
     }
     
     func updateCollectionViewConstraint(_ isHidden: Bool) {
+        collectionView.isHidden = isHidden
+        
         if isHidden {
             collectionView.snp.remakeConstraints { make in
                 make.height.equalTo(0)
             }
-            collectionView.isHidden = isHidden
             
             textView.snp.remakeConstraints { make in
                 make.top.equalTo(dateLabel.snp.bottom).offset(20)
@@ -232,7 +233,6 @@ extension WriteView {
                 make.height.equalTo(safeAreaLayoutGuide.snp.width).multipliedBy(0.25)
                 make.bottom.equalTo(containerView.snp.top)
             }
-            collectionView.isHidden = isHidden
             
             textView.snp.remakeConstraints { make in
                 make.top.equalTo(dateLabel.snp.bottom).offset(20)

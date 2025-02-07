@@ -109,6 +109,9 @@ class WriteView: UIView {
         return view
     }()
     
+    // 버튼을 담을 컨테이너 뷰
+    private let containerView: UIView = UIView()
+    
     // MARK: - 초기화
     
     override init(frame: CGRect) {
@@ -128,23 +131,10 @@ extension WriteView {
     private func setupUI() {
         backgroundColor = .viewBackground
         
-        let containerView: UIView = UIView()
-        [
-            collectionView,
-            cameraButton,
-            imageButton,
-            submitButton,
-        ].forEach { containerView.addSubview($0) }
-
-        [
-            dateLabel,
-            textView,
-            placeholderLabel,
-            dismisslButton,
-            containerView,
-            topBar
-        ].forEach { addSubview($0) }
+        containerView.addSubViews([cameraButton, imageButton, submitButton])
         
+        self.addSubViews([dateLabel, textView, placeholderLabel, collectionView, dismisslButton, containerView, topBar])
+
         // 바 제약 조건 설정
         topBar.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(20)
@@ -165,26 +155,26 @@ extension WriteView {
             make.trailing.equalTo(safeAreaLayoutGuide.snp.trailing).offset(-20)
         }
         
+        containerView.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
+            make.height.equalTo(safeAreaLayoutGuide.snp.height).multipliedBy(0.05)
+            containerBottomConstraint = make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).constraint
+        }
+        
+        collectionView.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
+            make.height.equalTo(safeAreaLayoutGuide.snp.width).multipliedBy(0.25)
+            make.bottom.equalTo(containerView.snp.top)
+        }
+        
         textView.snp.makeConstraints { make in
             make.top.equalTo(dateLabel.snp.bottom).offset(20)
-            make.height.equalTo(safeAreaLayoutGuide.snp.height).multipliedBy(0.6)
+            make.bottom.equalTo(collectionView.snp.top)
             make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
         }
         
         placeholderLabel.snp.makeConstraints { make in
             make.top.leading.equalTo(textView).offset(8)
-        }
-        
-        containerView.snp.makeConstraints { make in
-            make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
-            make.height.equalTo(safeAreaLayoutGuide.snp.height).multipliedBy(0.20)
-            containerBottomConstraint = make.bottom.equalTo(safeAreaLayoutGuide).inset(60).constraint
-        }
-        
-        collectionView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
-            make.height.equalTo(safeAreaLayoutGuide.snp.width).multipliedBy(0.25)
         }
         
         cameraButton.snp.makeConstraints { make in

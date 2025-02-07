@@ -36,8 +36,8 @@ final class WriteViewController: UIViewController {
         view = writeView
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         // 임시 저장글 있는지 확인하고 로드
         writeViewModel.loadTemporaryPost()
@@ -96,6 +96,8 @@ final class WriteViewController: UIViewController {
 // MARK: - 컬렉션뷰 DataSource 설정
 extension WriteViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        let imageCount = writeViewModel.images.count
+        writeView.updateCollectionViewConstraint(imageCount == 0)
         return writeViewModel.images.count
     }
     
@@ -237,7 +239,7 @@ extension WriteViewController {
 
         // 동적으로 계산된 inset 적용
         let inset = keyboardHeight - safeAreaBottomInset
-        writeView.updateContainerBottomConstraint(inset: inset)
+        writeView.updateContainerBottomConstraint(inset: inset + 10)
         
         // 업데이트 된 레이아웃 반영
         UIView.animate(withDuration: animationDuration) {
@@ -253,7 +255,7 @@ extension WriteViewController {
         }
         
         // 키보드가 사라지면 컨테이너 뷰의 제약 조건을 원래대로 복원
-        writeView.updateContainerBottomConstraint(inset: 0)
+        writeView.updateContainerBottomConstraint(inset: 60)
         
         UIView.animate(withDuration: animationDuration) {
             self.view.layoutIfNeeded()

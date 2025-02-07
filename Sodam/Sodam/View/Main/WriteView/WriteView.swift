@@ -158,7 +158,7 @@ extension WriteView {
         containerView.snp.makeConstraints { make in
             make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
             make.height.equalTo(safeAreaLayoutGuide.snp.height).multipliedBy(0.05)
-            containerBottomConstraint = make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).constraint
+            containerBottomConstraint = make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(60).constraint
         }
         
         collectionView.snp.makeConstraints { make in
@@ -212,6 +212,36 @@ extension WriteView {
     // 컬렉션뷰 리로드 메서드
     func collectionViewReload() {
         collectionView.reloadData()
+    }
+    
+    func updateCollectionViewConstraint(_ isHidden: Bool) {
+        if isHidden {
+            collectionView.snp.remakeConstraints { make in
+                make.height.equalTo(0)
+            }
+            collectionView.isHidden = isHidden
+            
+            textView.snp.remakeConstraints { make in
+                make.top.equalTo(dateLabel.snp.bottom).offset(20)
+                make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
+                make.bottom.equalTo(containerView.snp.top)
+            }
+        } else {
+            collectionView.snp.remakeConstraints { make in
+                make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
+                make.height.equalTo(safeAreaLayoutGuide.snp.width).multipliedBy(0.25)
+                make.bottom.equalTo(containerView.snp.top)
+            }
+            collectionView.isHidden = isHidden
+            
+            textView.snp.remakeConstraints { make in
+                make.top.equalTo(dateLabel.snp.bottom).offset(20)
+                make.bottom.equalTo(collectionView.snp.top)
+                make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
+            }
+        }
+        
+        self.layoutIfNeeded()
     }
 }
 

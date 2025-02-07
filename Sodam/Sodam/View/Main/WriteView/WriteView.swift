@@ -120,9 +120,10 @@ class WriteView: UIView {
         super.init(coder: coder)
         setupUI()
     }
-    
-    // MARK: - UI 셋업
-    
+}
+
+// MARK: - UI 레이아웃 메서드
+extension WriteView {
     // UI 셋업
     private func setupUI() {
         backgroundColor = .viewBackground
@@ -205,26 +206,35 @@ class WriteView: UIView {
         }
     }
     
-    // MARK: - UI 접근 메서드
-    
     // 하단 UI constraints 조절 메서드
     func updateContainerBottomConstraint(inset: CGFloat) {
         containerBottomConstraint?.update(inset: inset)
     }
-    
+}
+
+// MARK: - 컬렉션뷰 메서드
+extension WriteView {
     // 컬렉션뷰 dataSource 설정 메서드
     func setCollectionViewDataSource(dataSource: UICollectionViewDataSource) {
         collectionView.dataSource = dataSource
     }
     
+    // 컬렉션뷰 리로드 메서드
+    func collectionViewReload() {
+        collectionView.reloadData()
+    }
+}
+
+// MARK: - 텍스트뷰 메서드
+extension WriteView {
+    // placeholder 숨김처리 메서드
+    private func updatePlaceholderVisibility() {
+        placeholderLabel.isHidden = !textView.text.isEmpty
+    }
+    
     // 텍스트뷰 delegate 설정 메서드
     func setTextViewDeleaget(delegate: UITextViewDelegate) {
         textView.delegate = delegate
-    }
-    // 텍스트뷰 내용 변경 메서드
-    func setTextViewText(_ text: String) {
-        textView.text = text
-        updatePlaceholderVisibility() // 텍스트 변경 시 Placeholder 업데이트
     }
     
     // 텍스트뷰 내용 접근 메서드
@@ -232,30 +242,32 @@ class WriteView: UIView {
         return textView.text
     }
     
-    // placeholder 숨김처리 메서드
-    private func updatePlaceholderVisibility() {
-        placeholderLabel.isHidden = !textView.text.isEmpty
+    // 텍스트뷰 내용 변경 메서드
+    func setTextViewText(_ text: String) {
+        textView.text = text
+        updatePlaceholderVisibility() // 텍스트 변경 시 Placeholder 업데이트
     }
-    
+}
+
+// MARK: - 버튼 액션 설정
+extension WriteView {
     // 카메라 버튼 액션 설정 메서드
     func setCameraButtonAction(target: Any, cameraSelector: Selector) {
         cameraButton.addTarget(target, action: cameraSelector, for: .touchUpInside)
     }
+    
     // 사진 버튼 액션 설정 메서드
     func setImageButtonAction(target: Any, imageSelector: Selector) {
         imageButton.addTarget(target, action: imageSelector, for: .touchUpInside)
     }
+    
     // 작성완료 버튼 액션 설정 메서드
     func setSubmitButtonAction(target: Any, submitSelector: Selector) {
         submitButton.addTarget(target, action: submitSelector, for: .touchUpInside)
     }
+    
     // dismiss 버튼 액션 설정 메서드
     func setDismissButtonAction(target: Any, dismissSelector: Selector) {
         dismisslButton.addTarget(target, action: dismissSelector, for: .touchUpInside)
-    }
-    
-    // 컬렉션뷰 리로드 메서드
-    func collectionViewReload() {
-        collectionView.reloadData()
     }
 }

@@ -36,7 +36,7 @@ struct HappinessCell: View {
                         .foregroundStyle(.black)
                         .lineLimit(2)
                         .padding(.bottom, 8)
-                    Text(happiness.date.toFormattedString)
+                    Text(happiness.date.formatForHangdam)
                         .font(.mapoGoldenPier(FontSize.timeStamp))
                         .foregroundStyle(.gray)
                 }

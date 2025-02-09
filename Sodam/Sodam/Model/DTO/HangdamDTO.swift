@@ -46,8 +46,8 @@ extension HangdamEntity {
             id: self.objectID.uriRepresentation().absoluteString,
             name: self.name,
             happinessCount: self.happinesses?.count ?? 0,
-            startDate: self.startDate?.toFormattedString,
-            endDate: self.endDate?.toFormattedString
+            startDate: self.startDate?.formatForHangdam,
+            endDate: self.endDate?.formatForHangdam
         )
     }
 }

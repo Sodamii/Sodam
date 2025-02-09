@@ -14,4 +14,11 @@ extension Date {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter.string(from: self)
     }
+    
+    var formatForHappiness: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US")
+        dateFormatter.dateFormat = "d MMM yyyy"
+        return dateFormatter.string(from: self)
+    }
 }

@@ -39,7 +39,7 @@ fileprivate struct HangdamGrid: View {
                     .padding()
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(hangdam.name ?? "이름을 잃었다.")
+                    Text(hangdam.name ?? "이름잃은담이")
                         .font(.maruburiot(type: .bold, size: 16))
                         .foregroundStyle(Color(uiColor: .darkGray))
                     if let startDate = hangdam.startDate, let endDate = hangdam.endDate {

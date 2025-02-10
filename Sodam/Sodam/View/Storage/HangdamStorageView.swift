@@ -29,17 +29,13 @@ struct HangdamStorageView: View {
                         .background(Capsule().fill(Color.buttonBackground))
                 }
                 if $viewModel.storedHangdams.wrappedValue.count == 0 {
-                    VStack(alignment: .center) {
-                        Spacer()
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text("다 자란 행담이가 여기에 보관됩니다.")
                         Text("행담이에게 행복을 주고 성장시켜보세요!")
-                            .frame(maxWidth: .infinity, maxHeight: 35, alignment: .center)
-                            .font(.mapoGoldenPier(20))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
-                            .foregroundStyle(Color.gray)
-                            .padding(.vertical, 8)
-                        Spacer()
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .font(.mapoGoldenPier(20))
+                    .foregroundStyle(Color.gray)
                 } else {
                     ScrollView {
                         HangdamGridView(hangdams: $viewModel.storedHangdams)

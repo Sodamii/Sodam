@@ -13,6 +13,10 @@ struct HappinessDTO: Hashable {
     let date: Date          // view에 바인딩 할 때 toFormattedString으로 변환 필요
     let imagePaths: [String]
     let hangdamID: String
+    
+    var formattedDate: String {
+        return date.formatForHappiness
+    }
 }
 
 extension HappinessEntity {

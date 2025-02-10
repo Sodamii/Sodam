@@ -128,9 +128,23 @@ final class CoreDataManager {
     }
     
     /// 행담이가 갖고 있는 행복한 기억들 호출
-    func getHappinesses(of hangdamID: NSManagedObjectID) -> [HappinessEntity]? {
-        guard let hangdam = searchHangdam(with: hangdamID) else { return nil }
-        return hangdam.happinesses?.array as? [HappinessEntity]
+    func getHappinesses(of hangdamID: NSManagedObjectID) -> [HappinessEntity] {
+        guard let hangdam = searchHangdam(with: hangdamID) else { return [] }
+        
+        /// 특정 행담이의 행복들 fetch
+        let fetchRequest = NSFetchRequest<HappinessEntity>(entityName: CDKey.happinessEntity.rawValue)
+        fetchRequest.predicate = NSPredicate(format: "hangdam == %@", hangdam)
+        
+        /// 행복을 날짜 내림차순으로 정렬
+        let sortDescriptor = NSSortDescriptor(key: CDKey.date.rawValue, ascending: false)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        do {
+            return try context.fetch(fetchRequest)
+        } catch {
+            print(DataError.fetchRequestFailed.localizedDescription)
+            return []
+        }
     }
     
     /// 행복한 기억 단일 삭제
@@ -165,4 +179,5 @@ fileprivate enum CDKey: String {
     case container = "SodamContainer"
     case hangdamEntity = "HangdamEntity"
     case happinessEntity = "HappinessEntity"
+    case date
 }

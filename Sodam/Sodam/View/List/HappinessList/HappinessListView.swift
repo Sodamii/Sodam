@@ -16,7 +16,7 @@ struct HappinessListView: View {
     
     private let cornerRadius: CGFloat = 15
     
-    init(hangdam: HangdamDTO, isBackButtonHidden: Bool = false ) {
+    init(hangdam: HangdamDTO, isBackButtonHidden: Bool = false) {
         self._viewModel = StateObject(wrappedValue: HappinessListViewModel(hangdam: hangdam))
         self._isBackButtonHidden = State(initialValue: isBackButtonHidden)
     }

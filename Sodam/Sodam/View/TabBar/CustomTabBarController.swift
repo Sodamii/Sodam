@@ -37,8 +37,8 @@ final class CustomTabBarController: UITabBarController {
             selectedImage: UIImage(systemName: "house.fill"))
         
         // 기록 탭
-        let storageViewController = UIHostingController(rootView: HappinessListView(hangdam: storageViewModel.currentHangdam, isBackButtonHidden: true))
-        storageViewController.tabBarItem = UITabBarItem(
+        let happinessListViewController = UIHostingController(rootView: HappinessListView(hangdam: mainViewModel.hangdam, isBackButtonHidden: true))
+        happinessListViewController.tabBarItem = UITabBarItem(
             title: "기록",
             image: UIImage(systemName: "book"),
             selectedImage: UIImage(systemName: "book.fill"))
@@ -52,14 +52,13 @@ final class CustomTabBarController: UITabBarController {
             selectedImage: UIImage(systemName: "gear.fill"))
         
         // 보관 탭
-        let archiveViewModel = HangdamStorageViewModel(hangdamRepository: hangdamRepository)
-        let archiveViewController = UIHostingController(rootView: HangdamStorageView(viewModel: archiveViewModel))
-        archiveViewController.tabBarItem = UITabBarItem(
+        let storageViewController = UIHostingController(rootView: HangdamStorageView(viewModel: storageViewModel))
+        storageViewController.tabBarItem = UITabBarItem(
             title: "보관",
             image: UIImage(systemName: "archivebox"),
             selectedImage: UIImage(systemName: "archivebox.fill"))
 
-        viewControllers = [mainViewController, storageViewController, archiveViewController, settingsViewController]
+        viewControllers = [mainViewController, happinessListViewController, storageViewController, settingsViewController]
 
     }
     

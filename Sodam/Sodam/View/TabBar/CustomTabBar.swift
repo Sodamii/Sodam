@@ -16,5 +16,4 @@ final class CustomTabBar: UITabBar {
         newSize.height = screenHeight * 0.11 // 화면 높이의 11%로 고정
         return newSize
     }
-
 }

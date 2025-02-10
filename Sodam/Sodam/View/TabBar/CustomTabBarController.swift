@@ -69,7 +69,7 @@ final class CustomTabBarController: UITabBarController {
         // 탭바 높이가 기종마다 다를 경우 아이콘과 타이틀 위치도 자동으로 조정되게 비율로 설정.
         // 이렇게 하면 모든 기기에서 거의 일관된 UI 유지 가능
         let tabBarHeight = tabBar.frame.height
-        let titleOffset = -(tabBarHeight * 0.02)
+        let titleOffset = -(tabBarHeight * 0.05)
         _ = tabBarHeight * 0.05
         
         // 선택되지 않은 상태

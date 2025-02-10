@@ -9,14 +9,14 @@ import SwiftUI
 
 struct HangdamGridView: View {
     
-    @Binding var hangdamList: [HangdamDTO]
+    @Binding var hangdams: [HangdamDTO]
     
     let columns = Array(repeating: GridItem(spacing: 16), count: 2)
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: 16) {
-            ForEach(hangdamList.indices, id: \.self) { index in
-                HangdamGrid(hangdam: $hangdamList[index])
+            ForEach(hangdams.indices, id: \.self) { index in
+                HangdamGrid(hangdam: $hangdams[index])
             }
         }
     }
@@ -63,5 +63,5 @@ fileprivate struct HangdamGrid: View {
 
 #Preview {
     let hangdamRepository: HangdamRepository = HangdamRepository()
-    HangdamGridView(hangdamList: .constant(hangdamRepository.getSavedHangdams()))
+    HangdamGridView(hangdams: .constant(hangdamRepository.getSavedHangdams()))
 }

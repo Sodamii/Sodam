@@ -61,7 +61,7 @@ struct HappinessDetailView: View {
             }
             
             ToolbarItem(placement: .principal) {
-                Text(viewModel.happiness.date.toFormattedString)
+                Text(viewModel.happiness.formattedDate)
                     .font(.maruburiot(type: .bold, size: 20))
                     .foregroundStyle(Color.textAccent)
             }

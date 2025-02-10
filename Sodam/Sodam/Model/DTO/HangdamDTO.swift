@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct HangdamDTO {
     let id: String              // 행담이는 DTO가 먼저 생성될 일이 없고, Entity에서 변환될 일만 있기 때문에 상수
@@ -49,5 +50,33 @@ extension HangdamEntity {
             startDate: self.startDate?.formatForHangdam,
             endDate: self.endDate?.formatForHangdam
         )
+    }
+}
+
+public enum iPhoneCategory {
+    case se
+    case normal
+    case max
+}
+
+public extension UIScreen {
+    static var isiPhonePlus: Bool {
+        main.bounds.height > 900
+    }
+    
+    static var isiPhoneSE: Bool {
+        main.bounds.height < 700
+    }
+    
+    static var isiPhoneMini: Bool {
+        main.bounds.height < 820
+    }
+    
+    static var iPhoneCategory: iPhoneCategory {
+        switch main.bounds.height {
+        case 900..<CGFloat.greatestFiniteMagnitude: .max
+        case 0..<700: .se
+        default: .normal
+        }
     }
 }

@@ -66,27 +66,33 @@ final class CustomTabBarController: UITabBarController {
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .tabBackground
         
-        // 탭바 높이가 기종마다 다를 경우 아이콘과 타이틀 위치도 자동으로 조정되게 비율로 설정.
-        // 이렇게 하면 모든 기기에서 거의 일관된 UI 유지 가능
-        let tabBarHeight = tabBar.frame.height
-        let titleOffset = -(tabBarHeight * 0.05)
-        _ = tabBarHeight * 0.05
-        
-        // 선택되지 않은 상태
+        // 선택되지 않은 상태 스타일
         appearance.stackedLayoutAppearance.normal.iconColor = .viewBackground
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
             .foregroundColor: UIColor.viewBackground,
             .font: UIFont.systemFont(ofSize: 10)
         ]
-        appearance.stackedLayoutAppearance.normal.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: titleOffset)
         
-        // 선택된 상태
+        // 선택된 상태 스타일
         appearance.stackedLayoutAppearance.selected.iconColor = .textAccent
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
             .foregroundColor: UIColor.textAccent,
             .font: UIFont.boldSystemFont(ofSize: 12)
         ]
-        appearance.stackedLayoutAppearance.selected.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: titleOffset)
+        
+        // SE 모델일 경우 타이틀 위치 조정
+        if UIScreen.isiPhoneSE {
+            appearance.stackedLayoutAppearance.normal.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -6)
+            appearance.stackedLayoutAppearance.selected.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -6)
+        }
+        
+        // SE 모델일 경우 아이콘 위치 조정
+        if UIScreen.isiPhoneSE {
+            for item in tabBar.items ?? [] {
+                item.imageInsets = UIEdgeInsets(top: 3, left: 0, bottom: -3, right: 0)
+                item.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -3)
+            }
+        }
         
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = tabBar.standardAppearance  // 배경이 사라지지 않도록 설정함

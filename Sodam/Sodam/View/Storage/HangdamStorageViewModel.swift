@@ -3,24 +3,21 @@
 //  Sodam
 //
 //  Created by 박진홍 on 1/26/25.
-//
+//  Edited by EMILY on 10/02/2025.
 
 import Combine
 
 final class HangdamStorageViewModel: ObservableObject {
-    @Published var currentHangdam: HangdamDTO
-    @Published var storedHangdamList: [HangdamDTO]
+    @Published var storedHangdams: [HangdamDTO]
     
     private let hangdamRepository: HangdamRepository
     
     init(hangdamRepository: HangdamRepository) {
         self.hangdamRepository = hangdamRepository
-        self.currentHangdam = hangdamRepository.getCurrentHangdam()
-        self.storedHangdamList = hangdamRepository.getSavedHangdams()
+        self.storedHangdams = hangdamRepository.getSavedHangdams()
     }
     
-    func loadHangdamData() {
-        self.currentHangdam = hangdamRepository.getCurrentHangdam()
-        self.storedHangdamList = hangdamRepository.getSavedHangdams()
+    func loadHangdams() {
+        self.storedHangdams = hangdamRepository.getSavedHangdams()
     }
 }

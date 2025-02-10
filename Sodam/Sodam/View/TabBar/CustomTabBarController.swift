@@ -43,6 +43,13 @@ final class CustomTabBarController: UITabBarController {
             image: UIImage(named: "book"),
             selectedImage: UIImage(named: "book.fill"))
         
+        // 보관 탭
+        let storageViewController = UIHostingController(rootView: HangdamStorageView(viewModel: storageViewModel))
+        storageViewController.tabBarItem = UITabBarItem(
+            title: "보관",
+            image: UIImage(named: "archivebox"),
+            selectedImage: UIImage(named: "archivebox.fill"))
+        
         // 설정 탭
         let settingViewModel = SettingViewModel()
         let settingsViewController = SettingsViewController(settingViewModel: settingViewModel)
@@ -51,13 +58,6 @@ final class CustomTabBarController: UITabBarController {
             image: UIImage(named: "gear"),
             selectedImage: UIImage(named: "gear.fill"))
         
-        // 보관 탭
-        let storageViewController = UIHostingController(rootView: HangdamStorageView(viewModel: storageViewModel))
-        storageViewController.tabBarItem = UITabBarItem(
-            title: "보관",
-            image: UIImage(named: "archivebox"),
-            selectedImage: UIImage(named: "archivebox.fill"))
-
         viewControllers = [mainViewController, happinessListViewController, storageViewController, settingsViewController]
     }
     

@@ -43,7 +43,7 @@ struct HangdamDTO {
 extension HangdamEntity {
     var toDTO: HangdamDTO {
         return HangdamDTO(
-            id: self.objectID.uriRepresentation().absoluteString,
+            id: IDConverter.toStringID(from: self.objectID),
             name: self.name,
             happinessCount: self.happinesses?.count ?? 0,
             startDate: self.startDate?.formatForHangdam,

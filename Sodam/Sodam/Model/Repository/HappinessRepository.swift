@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 /// CoreDataManager와 ViewModel 사이에서 행복한 기억 데이터 처리를 맡는 객체
 final class HappinessRepository {
@@ -20,27 +21,18 @@ final class HappinessRepository {
     
     /// 행복한 기억 생성
     func createHappiness(_ happiness: HappinessDTO) {
-        guard let hangdamID = IDConverter.toNSManagedObjectID(from: happiness.hangdamID, in: coreDataManager.context)
-        else {
-            print(DataError.convertIDFailed.localizedDescription)
-            return
-        }
+        guard let hangdamID = IDConverter.toNSManagedObjectID(from: happiness.hangdamID, in: coreDataManager.context) else { return }
         
         /// 날짜 업데이트 필요성 체크
-        updateHangdamIfNeeded(hangdamID: happiness.hangdamID)
+        updateHangdamIfNeeded(hangdamID: hangdamID)
         
         /// 기억생성
         coreDataManager.createHappiness(happiness, to: hangdamID)
     }
     
     /// 행담이가 가진 기존 행복 개수 체크하여 경우에 따라 이벤트 발생 또는 데이터 업데이트
-    private func updateHangdamIfNeeded(hangdamID: String) {
-        guard let hangdamID = IDConverter.toNSManagedObjectID(from: hangdamID, in: coreDataManager.context),
-              let count = coreDataManager.checkHappinessCount(with: hangdamID)
-        else {
-            print(DataError.convertIDFailed.localizedDescription)
-            return
-        }
+    private func updateHangdamIfNeeded(hangdamID: NSManagedObjectID) {  /// createHappiness에서 guard문으로 이미 NSManagedObjectID type으로 변환한 값을 전달 받음
+        guard let count = coreDataManager.checkHappinessCount(with: hangdamID) else { return }
         
         switch count {
         case 0:     // 행담이 startDate 업데이트, 레벨 1로 성장
@@ -68,11 +60,8 @@ final class HappinessRepository {
     
     /// 기억 삭제
     func deleteHappiness(with id: String?, path: String?) {
-        guard let id = IDConverter.toNSManagedObjectID(from: id, in: coreDataManager.context)
-        else {
-            print(DataError.convertIDFailed.localizedDescription)
-            return
-        }
+        guard let id = IDConverter.toNSManagedObjectID(from: id, in: coreDataManager.context) else { return }
+        
         coreDataManager.deleteHappiness(with: id)
         print("[HappinessRepository] deleteHappiness - 행복 삭제 완료")
         
@@ -81,7 +70,7 @@ final class HappinessRepository {
         print("[HappinessRepository] deleteHappiness - 이미지 삭제 완료")
     }
     
-    func getThumbnailImage(from path: String) -> UIImage? {
+    func getThumbnailImage(from path: String?) -> UIImage? {
         return imageManager.getThumbnailImage(with: path)
     }
     

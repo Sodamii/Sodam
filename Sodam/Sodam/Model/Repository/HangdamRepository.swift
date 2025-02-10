@@ -42,11 +42,7 @@ final class HangdamRepository {
     
     /// 행담이 이름 짓기
     func nameHangdam(id: String, name: String) {
-        guard let id = IDConverter.toNSManagedObjectID(from: id, in: coreDataManager.context)
-        else {
-            print(DataError.convertIDFailed.localizedDescription)
-            return
-        }
+        guard let id = IDConverter.toNSManagedObjectID(from: id, in: coreDataManager.context) else { return }
         
         coreDataManager.updateHangdam(with: id, updateCase: .name(name))
     }

@@ -86,7 +86,7 @@ final class HappinessRepository {
         print("[HappinessRepository] deleteHappiness - 이미지 삭제 완료")
     }
     
-    func getThumbnailImage(from path: String) -> UIImage? {
+    func getThumbnailImage(from path: String?) -> UIImage? {
         return imageManager.getThumbnailImage(with: path)
     }
     

@@ -40,7 +40,7 @@ struct HappinessListView: View {
                        !happinessList.isEmpty {
                         List {
                             ForEach(happinessList, id: \.self) { happiness in
-                                HappinessCell(happiness: happiness, happinessRepository: viewModel.getHappinessRepository(), isCanDelete: viewModel.hangdam.endDate == nil ? false : true, image: viewModel.getThumnail(from: happiness.imagePaths.first ?? ""))
+                                HappinessCell(happiness: happiness, happinessRepository: viewModel.getHappinessRepository(), isCanDelete: viewModel.hangdam.endDate == nil ? false : true, image: viewModel.getThumnail(from: happiness.imagePaths.first))
                             }
                             .listRowSeparator(.hidden)
                             .listRowBackground(

@@ -25,13 +25,13 @@ final class AlertManager {
         completion: @escaping (String?) -> Void
     ) {
         let alertController = UIAlertController(
-            title: "이름 짓기",
-            message: "4글자 이내로 적어주세요",
+            title: "이름 지어주기",
+            message: "한 번 정한 이름은 바꿀 수 없으니 \n 신중하게 지어주세요!",
             preferredStyle: .alert
         )
         
         alertController.addTextField { textField in
-            textField.placeholder = "이름을 입력하세요"
+            textField.placeholder = "4글자 이내로 적어주세요"
             textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged) // 실시간 감지
             
             // 텍스트필드 옆에 Label 추가

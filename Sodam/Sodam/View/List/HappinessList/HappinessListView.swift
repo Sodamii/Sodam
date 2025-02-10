@@ -36,10 +36,9 @@ struct HappinessListView: View {
                         .foregroundStyle(Color.textAccent)
                         .padding(.vertical, 8)
                     
-                    if let happinessList = $viewModel.happinessList.wrappedValue,
-                       !happinessList.isEmpty {
+                    if $viewModel.happinessList.wrappedValue.count > 0 {
                         List {
-                            ForEach(happinessList, id: \.self) { happiness in
+                            ForEach(viewModel.happinessList, id: \.self) { happiness in
                                 HappinessCell(happiness: happiness, happinessRepository: viewModel.getHappinessRepository(), isCanDelete: viewModel.hangdam.endDate == nil ? false : true, image: viewModel.getThumnail(from: happiness.imagePaths.first ?? ""))
                             }
                             .listRowSeparator(.hidden)

@@ -12,11 +12,13 @@ struct HappinessListView: View {
     
     @StateObject var viewModel: HappinessListViewModel
     @Environment(\.dismiss) private var dismiss
+    @State var isBackButtonHidden: Bool // 기록 탭으로 진입하면 뒤로가기 숨기기
     
     private let cornerRadius: CGFloat = 15
     
-    init(hangdam: HangdamDTO) {
+    init(hangdam: HangdamDTO, isBackButtonHidden: Bool = false) {
         self._viewModel = StateObject(wrappedValue: HappinessListViewModel(hangdam: hangdam))
+        self._isBackButtonHidden = State(initialValue: isBackButtonHidden)
     }
     
     var body: some View {
@@ -68,27 +70,21 @@ struct HappinessListView: View {
             .padding([.top, .horizontal])
             .background(Color.viewBackground)
             .onAppear {
-                if let tabBarController = getRootTabBarController() {
-                    tabBarController.tabBar.isHidden = true
-                }
-                viewModel.reloadData()
+                viewModel.reloadData() // onAppear에서 실행
                 print("[HappinessListView] .onAppear - 데이터 리로드")
             }
-        }
-        .navigationBarBackButtonHidden(true)
-        .toolbar{
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                        Text("행담이 보관함")
-                            .font(.maruburiot(type: .bold, size: 16))
-                            .foregroundStyle(Color.textAccent)
+            .toolbar {
+                if !isBackButtonHidden { // ToolbarItem 자체를 조건문으로 감싸기
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            dismiss()
+                        }) {
+                            
+                        }
                     }
                 }
             }
+            .navigationBarBackButtonHidden(isBackButtonHidden)
         }
     }
     

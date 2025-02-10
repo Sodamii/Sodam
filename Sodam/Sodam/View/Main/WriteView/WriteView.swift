@@ -18,7 +18,7 @@ class WriteView: UIView {
     // 화면 상단 날짜 레이블
     private let dateLabel: UILabel = {
         let label: UILabel = UILabel()
-        label.text = DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .none)
+        label.text = Date().formatForHappiness
         label.font = .mapoGoldenPier(20)
         label.textColor = .black
         label.textAlignment = .center
@@ -109,6 +109,9 @@ class WriteView: UIView {
         return view
     }()
     
+    // 버튼을 담을 컨테이너 뷰
+    private let containerView: UIView = UIView()
+    
     // MARK: - 초기화
     
     override init(frame: CGRect) {
@@ -120,30 +123,18 @@ class WriteView: UIView {
         super.init(coder: coder)
         setupUI()
     }
-    
-    // MARK: - UI 셋업
-    
+}
+
+// MARK: - UI 레이아웃 메서드
+extension WriteView {
     // UI 셋업
     private func setupUI() {
         backgroundColor = .viewBackground
         
-        let containerView: UIView = UIView()
-        [
-            collectionView,
-            cameraButton,
-            imageButton,
-            submitButton,
-        ].forEach { containerView.addSubview($0) }
-
-        [
-            dateLabel,
-            textView,
-            placeholderLabel,
-            dismisslButton,
-            containerView,
-            topBar
-        ].forEach { addSubview($0) }
+        containerView.addSubViews([cameraButton, imageButton, submitButton])
         
+        self.addSubViews([dateLabel, textView, placeholderLabel, collectionView, dismisslButton, containerView, topBar])
+
         // 바 제약 조건 설정
         topBar.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(20)
@@ -164,26 +155,26 @@ class WriteView: UIView {
             make.trailing.equalTo(safeAreaLayoutGuide.snp.trailing).offset(-20)
         }
         
+        containerView.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
+            make.height.equalTo(safeAreaLayoutGuide.snp.height).multipliedBy(0.05)
+            containerBottomConstraint = make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(60).constraint
+        }
+        
+        collectionView.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
+            make.height.equalTo(safeAreaLayoutGuide.snp.width).multipliedBy(0.25)
+            make.bottom.equalTo(containerView.snp.top)
+        }
+        
         textView.snp.makeConstraints { make in
             make.top.equalTo(dateLabel.snp.bottom).offset(20)
-            make.height.equalTo(safeAreaLayoutGuide.snp.height).multipliedBy(0.6)
+            make.bottom.equalTo(collectionView.snp.top)
             make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
         }
         
         placeholderLabel.snp.makeConstraints { make in
             make.top.leading.equalTo(textView).offset(8)
-        }
-        
-        containerView.snp.makeConstraints { make in
-            make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
-            make.height.equalTo(safeAreaLayoutGuide.snp.height).multipliedBy(0.20)
-            containerBottomConstraint = make.bottom.equalTo(safeAreaLayoutGuide).inset(60).constraint
-        }
-        
-        collectionView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
-            make.height.equalTo(safeAreaLayoutGuide.snp.width).multipliedBy(0.25)
         }
         
         cameraButton.snp.makeConstraints { make in
@@ -205,26 +196,65 @@ class WriteView: UIView {
         }
     }
     
-    // MARK: - UI 접근 메서드
-    
     // 하단 UI constraints 조절 메서드
     func updateContainerBottomConstraint(inset: CGFloat) {
         containerBottomConstraint?.update(inset: inset)
     }
-    
+}
+
+// MARK: - 컬렉션뷰 메서드
+extension WriteView {
     // 컬렉션뷰 dataSource 설정 메서드
     func setCollectionViewDataSource(dataSource: UICollectionViewDataSource) {
         collectionView.dataSource = dataSource
     }
     
+    // 컬렉션뷰 리로드 메서드
+    func collectionViewReload() {
+        collectionView.reloadData()
+    }
+    
+    func updateCollectionViewConstraint(_ isHidden: Bool) {
+        collectionView.isHidden = isHidden
+        
+        if isHidden {
+            collectionView.snp.remakeConstraints { make in
+                make.height.equalTo(0)
+            }
+            
+            textView.snp.remakeConstraints { make in
+                make.top.equalTo(dateLabel.snp.bottom).offset(20)
+                make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
+                make.bottom.equalTo(containerView.snp.top)
+            }
+        } else {
+            collectionView.snp.remakeConstraints { make in
+                make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
+                make.height.equalTo(safeAreaLayoutGuide.snp.width).multipliedBy(0.25)
+                make.bottom.equalTo(containerView.snp.top)
+            }
+            
+            textView.snp.remakeConstraints { make in
+                make.top.equalTo(dateLabel.snp.bottom).offset(20)
+                make.bottom.equalTo(collectionView.snp.top)
+                make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
+            }
+        }
+        
+        self.layoutIfNeeded()
+    }
+}
+
+// MARK: - 텍스트뷰 메서드
+extension WriteView {
+    // placeholder 숨김처리 메서드
+    private func updatePlaceholderVisibility() {
+        placeholderLabel.isHidden = !textView.text.isEmpty
+    }
+    
     // 텍스트뷰 delegate 설정 메서드
     func setTextViewDeleaget(delegate: UITextViewDelegate) {
         textView.delegate = delegate
-    }
-    // 텍스트뷰 내용 변경 메서드
-    func setTextViewText(_ text: String) {
-        textView.text = text
-        updatePlaceholderVisibility() // 텍스트 변경 시 Placeholder 업데이트
     }
     
     // 텍스트뷰 내용 접근 메서드
@@ -232,30 +262,32 @@ class WriteView: UIView {
         return textView.text
     }
     
-    // placeholder 숨김처리 메서드
-    private func updatePlaceholderVisibility() {
-        placeholderLabel.isHidden = !textView.text.isEmpty
+    // 텍스트뷰 내용 변경 메서드
+    func setTextViewText(_ text: String) {
+        textView.text = text
+        updatePlaceholderVisibility() // 텍스트 변경 시 Placeholder 업데이트
     }
-    
+}
+
+// MARK: - 버튼 액션 설정
+extension WriteView {
     // 카메라 버튼 액션 설정 메서드
     func setCameraButtonAction(target: Any, cameraSelector: Selector) {
         cameraButton.addTarget(target, action: cameraSelector, for: .touchUpInside)
     }
+    
     // 사진 버튼 액션 설정 메서드
     func setImageButtonAction(target: Any, imageSelector: Selector) {
         imageButton.addTarget(target, action: imageSelector, for: .touchUpInside)
     }
+    
     // 작성완료 버튼 액션 설정 메서드
     func setSubmitButtonAction(target: Any, submitSelector: Selector) {
         submitButton.addTarget(target, action: submitSelector, for: .touchUpInside)
     }
+    
     // dismiss 버튼 액션 설정 메서드
     func setDismissButtonAction(target: Any, dismissSelector: Selector) {
         dismisslButton.addTarget(target, action: dismissSelector, for: .touchUpInside)
-    }
-    
-    // 컬렉션뷰 리로드 메서드
-    func collectionViewReload() {
-        collectionView.reloadData()
     }
 }

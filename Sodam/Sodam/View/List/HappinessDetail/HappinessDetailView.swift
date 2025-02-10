@@ -53,6 +53,7 @@ struct HappinessDetailView: View {
                 }) {
                     HStack {
                         Image(systemName: "chevron.left")
+                            .foregroundStyle(Color.textAccent) // 색상 지정 안해주면 파란색으로 나옴
                         Text("기억들")
                             .font(.maruburiot(type: .bold, size: 16))
                             .foregroundStyle(Color.textAccent)
@@ -61,7 +62,7 @@ struct HappinessDetailView: View {
             }
             
             ToolbarItem(placement: .principal) {
-                Text(viewModel.happiness.date.toFormattedString)
+                Text(viewModel.happiness.formattedDate)
                     .font(.maruburiot(type: .bold, size: 20))
                     .foregroundStyle(Color.textAccent)
             }

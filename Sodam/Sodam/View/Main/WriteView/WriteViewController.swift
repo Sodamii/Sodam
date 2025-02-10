@@ -36,8 +36,8 @@ final class WriteViewController: UIViewController {
         view = writeView
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         // 임시 저장글 있는지 확인하고 로드
         writeViewModel.loadTemporaryPost()
@@ -86,8 +86,46 @@ final class WriteViewController: UIViewController {
         }
     }
     
-    // MARK: - 메서드 선언
+    // UI 업데이트 메서드
+    private func updateUI(with post: Post) {
+        writeView.setTextViewText(post.content) // 텍스트뷰 업데이트
+        writeView.collectionViewReload() // 컬렉션 뷰 리로드
+        writeView.updateCollectionViewConstraint(writeViewModel.images.isEmpty)
+    }
+}
+
+// MARK: - 컬렉션뷰 DataSource 설정
+extension WriteViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return writeViewModel.images.count
+    }
     
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCell.identifier, for: indexPath) as? ImageCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        let image = writeViewModel.images[indexPath.item]
+        cell.configure(with: image)
+        
+        // 삭제 클로저 설정
+        cell.onDelete = { [weak self] in
+            self?.writeViewModel.removeImage(at: indexPath.item)
+            collectionView.reloadData()
+        }
+        return cell
+    }
+}
+
+// MARK: - 텍스트뷰 deleage 설정
+extension WriteViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        // 텍스트가 변경될 때마다 뷰모델에 전달
+        writeViewModel.updateText(textView.text)
+    }
+}
+
+// MARK: - 버튼 액션 메서드
+extension WriteViewController {
     // WriteView에 정의된 버튼들의 액션 설정 메서드
     private func setupActions() {
         writeView.setCameraButtonAction(target: self, cameraSelector: #selector(openCamera))
@@ -95,63 +133,6 @@ final class WriteViewController: UIViewController {
         writeView.setSubmitButtonAction(target: self, submitSelector: #selector(submitText))
         writeView.setDismissButtonAction(target: self, dismissSelector: #selector(tapDismiss))
     }
-    
-    // 키보드 감지
-    private func setupKeyboardNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    // 키보드 내리기 구현
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        self.view.endEditing(true) // 키보드 내리기
-    }
-    
-    // 키보드 나타날 때 호출되는 메서드
-    @objc private func keyboardWillShow(_ notification: Notification) {
-        guard let userInfo = notification.userInfo, // 키보드가 나타날 때 프레임 및 애니메이션 시간 정보 저장
-              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect, // 키보드 크기와 위치 저장
-              let animationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { // userInfo 중 애니메이션 지속 시간 저장
-            return
-        }
-        
-        // 키보드 높이를 기준으로 inset 설정
-        let keyboardHeight = keyboardFrame.height
-        let safeAreaBottomInset = view.safeAreaInsets.bottom
-
-        // 동적으로 계산된 inset 적용
-        let inset = keyboardHeight - safeAreaBottomInset
-        writeView.updateContainerBottomConstraint(inset: inset)
-        
-        // 업데이트 된 레이아웃 반영
-        UIView.animate(withDuration: animationDuration) {
-            self.view.layoutIfNeeded()
-        }
-    }
-    
-    // 키보드 사라질 때 호출되는 메서드
-    @objc private func keyboardWillHide(_ notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let animationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else {
-            return
-        }
-        
-        // 키보드가 사라지면 컨테이너 뷰의 제약 조건을 원래대로 복원
-        writeView.updateContainerBottomConstraint(inset: 60)
-        
-        UIView.animate(withDuration: animationDuration) {
-            self.view.layoutIfNeeded()
-        }
-    }
-    
-    // UI 업데이트 메서드
-    private func updateUI(with post: Post) {
-        writeView.setTextViewText(post.content) // 텍스트뷰 업데이트
-        writeView.collectionViewReload() // 컬렉션 뷰 리로드
-    }
-    
-    // MARK: - 버튼 액션 메서드
     
     // 카메라 버튼 탭할 때 호출되는 메서드
     @objc private func openCamera() {
@@ -227,7 +208,92 @@ final class WriteViewController: UIViewController {
         // 모달 닫기
         dismiss(animated: true, completion: nil)
     }
+}
 
+// MARK: - 키보드 관련 메서드
+extension WriteViewController {
+    // 키보드 감지
+    private func setupKeyboardNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    // 키보드 내리기 구현
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        self.view.endEditing(true) // 키보드 내리기
+    }
+    
+    // 키보드 나타날 때 호출되는 메서드
+    @objc private func keyboardWillShow(_ notification: Notification) {
+        guard let userInfo = notification.userInfo, // 키보드가 나타날 때 프레임 및 애니메이션 시간 정보 저장
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect, // 키보드 크기와 위치 저장
+              let animationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { // userInfo 중 애니메이션 지속 시간 저장
+            return
+        }
+        
+        // 키보드 높이를 기준으로 inset 설정
+        let keyboardHeight = keyboardFrame.height
+        let safeAreaBottomInset = view.safeAreaInsets.bottom
+
+        // 동적으로 계산된 inset 적용
+        let inset = keyboardHeight - safeAreaBottomInset
+        writeView.updateContainerBottomConstraint(inset: inset + 10)
+        
+        // 업데이트 된 레이아웃 반영
+        UIView.animate(withDuration: animationDuration) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    // 키보드 사라질 때 호출되는 메서드
+    @objc private func keyboardWillHide(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let animationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else {
+            return
+        }
+        
+        // 키보드가 사라지면 컨테이너 뷰의 제약 조건을 원래대로 복원
+        writeView.updateContainerBottomConstraint(inset: 60)
+        
+        UIView.animate(withDuration: animationDuration) {
+            self.view.layoutIfNeeded()
+        }
+    }
+}
+
+// MARK: - Alert 메서드
+extension WriteViewController {
+    // 이미지 상한을 알리는 Alert 표시
+    private func showAlertMaxImageLimitReached() {
+        let alert = UIAlertController(
+            title: "이미지를 추가할 수 없습니다.",
+            message: "하나의 글에 최대 한 개의 이미지만 추가할 수 있습니다.",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+            alert.dismiss(animated: true, completion: nil)
+        }
+        alert.addAction(okAction)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true)
+        }
+    }
+    
+    // 작성 완료 Alert
+    private func showCompletionAlert(completion: @escaping () -> Void) {
+        let alert = UIAlertController(
+            title: "작성 완료",
+            message: "글이 성공적으로 작성되었습니다!",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+            alert.dismiss(animated: true, completion: completion)
+        }
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
     // 카메라 권한이 없는 경우 설정 화면으로 이동하는 Alert 표시
     private func showAlertGoToSetting(buttonType: ButtonTapType) {
         let title: String
@@ -270,70 +336,6 @@ final class WriteViewController: UIViewController {
         DispatchQueue.main.async {
             self.present(alertControlelr, animated: true)
         }
-    }
-    
-    // MARK: - Alert 메서드
-    
-    // 이미지 상한을 알리는 Alert 표시
-    private func showAlertMaxImageLimitReached() {
-        let alert = UIAlertController(
-            title: "이미지를 추가할 수 없습니다.",
-            message: "하나의 글에 최대 한 개의 이미지만 추가할 수 있습니다.",
-            preferredStyle: .alert
-        )
-        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
-            alert.dismiss(animated: true, completion: nil)
-        }
-        alert.addAction(okAction)
-        DispatchQueue.main.async {
-            self.present(alert, animated: true)
-        }
-    }
-    
-    // 작성 완료 Alert
-    private func showCompletionAlert(completion: @escaping () -> Void) {
-        let alert = UIAlertController(
-            title: "작성 완료",
-            message: "글이 성공적으로 작성되었습니다!",
-            preferredStyle: .alert
-        )
-        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
-            alert.dismiss(animated: true, completion: completion)
-        }
-        alert.addAction(okAction)
-        present(alert, animated: true, completion: nil)
-    }
-}
-
-// MARK: - 컬렉션뷰 DataSource 설정
-
-extension WriteViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return writeViewModel.images.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCell.identifier, for: indexPath) as? ImageCollectionViewCell else {
-            return UICollectionViewCell()
-        }
-        let image = writeViewModel.images[indexPath.item]
-        cell.configure(with: image)
-        
-        // 삭제 클로저 설정
-        cell.onDelete = { [weak self] in
-            self?.writeViewModel.removeImage(at: indexPath.item)
-            collectionView.reloadData()
-        }
-        return cell
-    }
-}
-
-// MARK: - 텍스트뷰 deleage 설정
-
-extension WriteViewController: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        // 텍스트가 변경될 때마다 뷰모델에 전달
-        writeViewModel.updateText(textView.text)
     }
 }
 

@@ -36,8 +36,8 @@ final class SettingsViewController: UIViewController {
     }
     
     deinit {
-            NotificationCenter.default.removeObserver(self)
-        }
+        NotificationCenter.default.removeObserver(self)
+    }
         
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

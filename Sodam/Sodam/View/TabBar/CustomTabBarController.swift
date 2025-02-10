@@ -16,7 +16,7 @@ final class CustomTabBarController: UITabBarController {
         configureViewController()
         setupTabBarAppearance()
         
-        selectedIndex = 1 // 초기 화면을 mainVC로 설정
+        selectedIndex = 0 // 초기 화면을 mainVC로 설정
     }
     
     private func setupTabBar() {
@@ -29,17 +29,37 @@ final class CustomTabBarController: UITabBarController {
         let mainViewModel: MainViewModel = MainViewModel(repository: hangdamRepository)
         let storageViewModel: HangdamStorageViewModel = HangdamStorageViewModel(hangdamRepository: hangdamRepository)
         
+        // 메인 탭
         let mainViewController = MainViewController(viewModel: mainViewModel)
-        mainViewController.tabBarItem = UITabBarItem(title: "메인", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
+        mainViewController.tabBarItem = UITabBarItem(
+            title: "메인",
+            image: UIImage(systemName: "house"),
+            selectedImage: UIImage(systemName: "house.fill"))
         
-        let storageViewController = UIHostingController(rootView: HangdamStorageView(viewModel: storageViewModel))
-        storageViewController.tabBarItem = UITabBarItem(title: "기록", image: UIImage(systemName: "book"), selectedImage: UIImage(systemName: "book.fill"))
+        // 기록 탭
+        let happinessListViewController = UIHostingController(rootView: HappinessListView(hangdam: mainViewModel.hangdam, isBackButtonHidden: true))
+        happinessListViewController.tabBarItem = UITabBarItem(
+            title: "기록",
+            image: UIImage(systemName: "book"),
+            selectedImage: UIImage(systemName: "book.fill"))
         
+        // 설정 탭
         let settingViewModel = SettingViewModel()
         let settingsViewController = SettingsViewController(settingViewModel: settingViewModel)
-        settingsViewController.tabBarItem = UITabBarItem(title: "설정", image: UIImage(systemName: "gear"), selectedImage: UIImage(systemName: "gear.fill"))
+        settingsViewController.tabBarItem = UITabBarItem(
+            title: "설정",
+            image: UIImage(systemName: "gear"),
+            selectedImage: UIImage(systemName: "gear.fill"))
         
-        viewControllers = [storageViewController, mainViewController, settingsViewController]
+        // 보관 탭
+        let storageViewController = UIHostingController(rootView: HangdamStorageView(viewModel: storageViewModel))
+        storageViewController.tabBarItem = UITabBarItem(
+            title: "보관",
+            image: UIImage(systemName: "archivebox"),
+            selectedImage: UIImage(systemName: "archivebox.fill"))
+
+        viewControllers = [mainViewController, happinessListViewController, storageViewController, settingsViewController]
+
     }
     
     private func setupTabBarAppearance() {

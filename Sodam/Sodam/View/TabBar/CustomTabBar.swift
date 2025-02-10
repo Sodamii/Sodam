@@ -13,7 +13,7 @@ final class CustomTabBar: UITabBar {
         
         // 기기 화면 높이에 따라 탭바 높이 계산하기
         let screenHeight = UIScreen.main.bounds.height
-        newSize.height = screenHeight * 0.11 // 화면 높이의 10%로 고정
+        newSize.height = screenHeight * 0.11 // 화면 높이의 11%로 고정
         return newSize
     }
 

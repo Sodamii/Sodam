@@ -48,18 +48,19 @@ final class AlertManager {
         
         let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
             guard let name = alertController.textFields?.first?.text, !name.isEmpty else {
-                viewController.view.showToast(message: "이름을 입력해주세요.")
+                ToastManager.shared.showToastMessage(message: "이름을 입력해주세요.")
                 return
             }
             
             // 글자 수 확인
             if name.count > 4 {
-                viewController.view.showToast(message: "최대 글자수를 초과했습니다.")
+                ToastManager.shared.showToastMessage(message: "최대 글자수를 초과했습니다.")
+
                 return
             }
             
             if containsForbiddenWord(name) {
-                viewController.view.showToast(message: "적절하지 않은 이름입니다.")
+                ToastManager.shared.showToastMessage(message: "적절하지 않은 이름입니다.")
                 return
             }
             

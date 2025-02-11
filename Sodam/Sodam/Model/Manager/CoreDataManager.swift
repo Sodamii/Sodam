@@ -103,22 +103,21 @@ final class CoreDataManager {
     
     /// 행복한 기억 생성 : 행담이 id 받아 행담이에 추가
     func createHappiness(_ dto: HappinessDTO, to hangdamID: NSManagedObjectID) {
-        guard let data = try? NSKeyedArchiver.archivedData(withRootObject: dto.imagePaths, requiringSecureCoding: true)
-        else {
-            print(DataError.convertImagePathsFailed.localizedDescription)
+        /// dto를 entity로 매핑
+        let mapper = HappinessMapper()
+        let mapResult = mapper.toEntity(from: dto, context: context)
+        
+        switch mapResult {
+        case .failure:
+            /// toEntity 메소드 내부에 DataError를 출력하고 있어 더 처리 하지 않음 - 추후에 error handling 필요
             return
+        case .success(let entity):
+            /// 행담이에 추가
+            appendHappiness(entity, to: hangdamID)
+            
+            print("[CoreData] 행복 생성 완료")
+            saveContext()
         }
-        
-        let entity = HappinessEntity(context: context)
-        entity.content = dto.content
-        entity.date = dto.date
-        entity.imagePaths = data
-        
-        /// 행담이에 추가
-        appendHappiness(entity, to: hangdamID)
-        
-        print("[CoreData] 행복 생성 완료")
-        saveContext()
     }
     
     /// 행복한 기억을 행담이에 추가하는 메소드 - 내부 호출

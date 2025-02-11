@@ -13,10 +13,16 @@ import CoreData
 final class HappinessRepository {
     private let coreDataManager: CoreDataManager
     private let imageManager: ImageManager
+    private let dtoMapper: HappinessMapper
     
-    init(coreDataManager: CoreDataManager = CoreDataManager.shared, imageManager: ImageManager = ImageManager()) {
+    init(
+        coreDataManager: CoreDataManager = CoreDataManager.shared,
+        imageManager: ImageManager = ImageManager(),
+        dtoMapper: HappinessMapper = .init()
+    ) {
         self.coreDataManager = coreDataManager
         self.imageManager = imageManager
+        self.dtoMapper = dtoMapper
     }
     
     /// 행복한 기억 생성
@@ -55,7 +61,7 @@ final class HappinessRepository {
     /// 행담이가 가진 기억들 호출
     func getHappinesses(of hangdamID: String) -> [HappinessDTO] {
         guard let id = IDConverter.toNSManagedObjectID(from: hangdamID, in: coreDataManager.context) else { return [] }
-        return coreDataManager.getHappinesses(of: id).compactMap { $0.toDTO }
+        return coreDataManager.getHappinesses(of: id).compactMap { dtoMapper.toDTO(from: $0) }
     }
     
     /// 기억 삭제

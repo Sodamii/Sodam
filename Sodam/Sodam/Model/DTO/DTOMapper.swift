@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 struct HangdamMapper {
     func toDTO(from entity: HangdamEntity) -> HangdamDTO {
@@ -33,5 +34,20 @@ struct HappinessMapper {
             imagePaths: imagePaths,
             hangdamID: IDConverter.toStringID(from: entity.hangdam?.objectID)
         )
+    }
+    
+    func toEntity(from dto: HappinessDTO, context: NSManagedObjectContext) -> Result<HappinessEntity, DataError> {
+        guard let data = try? NSKeyedArchiver.archivedData(withRootObject: dto.imagePaths, requiringSecureCoding: true)
+        else {
+            print(DataError.convertImagePathsFailed.localizedDescription)
+            return .failure(DataError.convertImagePathsFailed)
+        }
+        
+        let entity = HappinessEntity(context: context)
+        entity.content = dto.content
+        entity.date = dto.date
+        entity.imagePaths = data
+        
+        return .success(entity)
     }
 }

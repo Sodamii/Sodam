@@ -31,8 +31,7 @@ final class SettingsViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .viewBackground
         setupTableView()
-        // 사용자 설정 화면에 진입할 때 뱃지 초기화
-        UIApplication.shared.applicationIconBadgeNumber = 0
+        
         // 앱이 포그라운드로 돌아올 때마다 알림 권한 상태를 재확인하여 UI(스위치 상태)를 업데이트
         NotificationCenter.default.addObserver(self, selector: #selector(checkNotificationPermissionAndUpdateSwitch), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
@@ -45,8 +44,9 @@ final class SettingsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // 알림 권한 상태를 체크하여 스위치의 초기 상태를 업데이트
-        checkNotificationPermissionAndUpdateSwitch()
+        UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
+        checkNotificationPermissionAndUpdateSwitch()  // 알림 권한 상태를 체크하여 스위치의 초기 상태를 업데이트
+
     }
 }
 

@@ -15,27 +15,13 @@ struct HangdamStorageView: View {
         NavigationStack {
             VStack(alignment: .center) {
                 HStack(alignment: .bottom) {
-                    Text("행담이 보관함")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .font(.mapoGoldenPier(27))
-                        .foregroundStyle(Color.textAccent)
-                        .padding(.top)
+                    HangdamStorageTitle()
                     
-                    Text("다 자란 행담이 : \($viewModel.storedHangdams.wrappedValue.count)")
-                        .font(.mapoGoldenPier(15))
-                        .foregroundStyle(Color.white)
-                        .padding(.vertical, 7)
-                        .padding(.horizontal, 12)
-                        .background(Capsule().fill(Color.buttonBackground))
+                    HangdamCountTitle(count: $viewModel.storedHangdams.count)
                 }
+                
                 if $viewModel.storedHangdams.wrappedValue.count == 0 {
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text("다 자란 행담이가 여기에 보관됩니다.")
-                        Text("행담이에게 행복을 주고 성장시켜보세요!")
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .font(.mapoGoldenPier(20))
-                    .foregroundStyle(Color.gray)
+                    HangdamEmptyView()
                 } else {
                     ScrollView {
                         HangdamGridView(hangdams: $viewModel.storedHangdams)
@@ -67,6 +53,30 @@ struct HangdamStorageView: View {
             return nil
         }
         return rootViewController as? UITabBarController
+    }
+}
+
+fileprivate struct HangdamStorageTitle: View {
+    var body: some View {
+        Text("행담이 보관함")
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .font(.mapoGoldenPier(27))
+            .foregroundStyle(Color.textAccent)
+            .padding(.top)
+    }
+}
+
+fileprivate struct HangdamCountTitle: View {
+    
+    @State var count: Int
+    
+    var body: some View {
+        Text("다 자란 행담이 : \(count)")
+            .font(.mapoGoldenPier(15))
+            .foregroundStyle(Color.white)
+            .padding(.vertical, 7)
+            .padding(.horizontal, 12)
+            .background(Capsule().fill(Color.buttonBackground))
     }
 }
 

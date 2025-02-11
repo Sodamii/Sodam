@@ -12,8 +12,23 @@ final class CustomTabBar: UITabBar {
         var newSize = super.sizeThatFits(size)
         
         // 기기 화면 높이에 따라 탭바 높이 계산하기
-        let screenHeight = UIScreen.main.bounds.height
-        newSize.height = screenHeight * 0.11 // 화면 높이의 11%로 고정
+        let padding: CGFloat = if UIScreen.isiPhoneSE {
+            20
+        } else {
+            0
+        }
+        newSize.height = newSize.height + padding
         return newSize
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        for subview in subviews {
+            guard let tabBarButton = subview as? UIControl else { continue }
+            let verticalOffset: CGFloat = UIScreen.isiPhoneSE ? 5.0 : 10.0
+            let sign: CGFloat = UIScreen.isiPhoneSE ? -1 : 1
+            tabBarButton.frame = tabBarButton.frame.offsetBy(dx: .zero, dy: sign * verticalOffset)
+        }
     }
 }

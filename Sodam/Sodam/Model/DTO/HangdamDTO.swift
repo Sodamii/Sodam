@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 struct HangdamDTO {
     let id: String              // 행담이는 DTO가 먼저 생성될 일이 없고, Entity에서 변환될 일만 있기 때문에 상수

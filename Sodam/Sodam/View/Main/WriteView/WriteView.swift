@@ -59,7 +59,7 @@ class WriteView: UIView {
     // 카메라 버튼
     private let cameraButton: UIButton = {
         let button: UIButton = UIButton()
-        button.tintColor = .textAccent
+        button.tintColor = .darkGray
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "camera")
         config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 20) // 이미지 크기 설정
@@ -70,7 +70,7 @@ class WriteView: UIView {
     // 사진 선택 버튼
     private let imageButton: UIButton = {
         let button: UIButton = UIButton()
-        button.tintColor = .textAccent
+        button.tintColor = .darkGray
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "photo.on.rectangle")
         config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 20)
@@ -81,7 +81,7 @@ class WriteView: UIView {
     // 작성 완료 버튼
     private let submitButton: UIButton = {
         let button: UIButton = UIButton()
-        button.tintColor = .textAccent
+        button.tintColor = .darkGray
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "checkmark")
         config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 20)
@@ -92,7 +92,7 @@ class WriteView: UIView {
     // dismiss 버튼
     private let dismisslButton: UIButton = {
         let button: UIButton = UIButton()
-        button.tintColor = .textAccent
+        button.tintColor = .darkGray
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "xmark")
         config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 20)

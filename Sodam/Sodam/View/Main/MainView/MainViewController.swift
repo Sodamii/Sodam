@@ -17,6 +17,9 @@ final class MainViewController: UIViewController {
     private let viewModel: MainViewModel
     private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
+    // 알럿이 항상 필요한게 아니라서 필요할때까지 초기화를 지연시키려고 lazy 사용
+    private lazy var alertManager: AlertManager = AlertManager(viewController: self)
+    
     init(viewModel: MainViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -113,32 +116,16 @@ final class MainViewController: UIViewController {
     /// 작성 버튼 클릭 시 호출
     @objc private func createButtonTapped() {
         if viewModel.hasAlreadyWrittenToday() {
-            // 오늘 작성한 경우 경고 메시지 출력
-            let alert = UIAlertController(title: "오늘의 소확행 작성 완료!",
-                                          message: "내일 또 당신의 소소한 행복을 작성해주세요",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-            present(alert, animated: true, completion: nil)
+            alertManager.showAlreadyWrittenTodayAlert()
             return
         }
-        if let name = viewModel.hangdam.name {
-            // 이미 저장된 이름이 있는 경우에 바로 작성화면으로 이동
-            print("이미 저장된 이름 있음: \(name)")
+        
+        if viewModel.hangdam.name != nil {
             modalWriteViewController()
         } else {
-            // 저장된 이름이 없는 경우 알림창 표시
-            AlertManager.showAlert(on: self) { [weak self] name in
-                guard let self = self,
-                      let name = name,
-                      !name.isEmpty
-                else {
-                    print("이름이 입력되지 않았습니다.")
-                    return
-                }
-                viewModel.saveNewName(as: name) // 새 이름 저장
-                print("입력 된 이름: \(name)")
-                
-                // 이름 저장 후 바로 작성화면으로 이동
+            alertManager.showNameInputAlert { [weak self] name in
+                guard let self = self, let name = name, !name.isEmpty else { return }
+                self.viewModel.saveNewName(as: name)
                 self.modalWriteViewController()
             }
         }

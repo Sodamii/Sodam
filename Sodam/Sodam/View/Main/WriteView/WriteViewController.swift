@@ -19,6 +19,9 @@ final class WriteViewController: UIViewController {
     private let writeViewModel: WriteViewModel
     private let writeView = WriteView()
     
+    // 알럿이 항상 필요한게 아니라서 필요할때까지 초기화를 지연시키려고 lazy 사용
+    private lazy var alertManager: AlertManager = AlertManager(viewController: self)
+    
     // MARK: - 초기화
     init(writeViewModel: WriteViewModel) {
         self.writeViewModel = writeViewModel
@@ -136,22 +139,19 @@ extension WriteViewController {
     
     // 카메라 버튼 탭할 때 호출되는 메서드
     @objc private func openCamera() {
-        // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
         guard writeViewModel.images.count < 1 else {
-            showAlertMaxImageLimitReached()
+            alertManager.showImageLimitAlert()
             return
         }
         
         writeViewModel.requestCameraAccess { [weak self] isGranted in
             if isGranted {
-                // 카메라 권한이 허용된 경우 카메라 생성 및 표시
                 let cameraPicker = self?.writeViewModel.createCameraPicker()
                 if let picker = cameraPicker {
                     self?.present(picker, animated: true)
                 }
             } else {
-                // 권한이 거부된 경우 설정 화면으로 이동하는 알림 표시
-                self?.showAlertGoToSetting(buttonType: .camera)
+                self?.alertManager.showGoToSettingsAlert(for: .camera)
             }
         }
     }
@@ -160,7 +160,7 @@ extension WriteViewController {
     @objc private func addImage() {
         // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
         guard writeViewModel.images.count < 1 else {
-            showAlertMaxImageLimitReached()
+            alertManager.showImageLimitAlert()
             return
         }
         
@@ -173,7 +173,7 @@ extension WriteViewController {
                 }
             } else {
                 // 권한이 거부된 경우 설정 화면으로 이동하는 알림 표시
-                self?.showAlertGoToSetting(buttonType: .image)
+                self?.alertManager.showGoToSettingsAlert(for: .image)
             }
         }
     }
@@ -181,22 +181,15 @@ extension WriteViewController {
     // 작성완료 버튼 탭할 때 호출되는 메서드
     @objc private func submitText() {
         guard !writeView.getTextViewText().trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            // 경고 메시지 표시
-            let alert = UIAlertController(title: "행복 기록이 없습니다", message: "내용을 입력해주세요!", preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
-            alert.addAction(okAction)
-            present(alert, animated: true, completion: nil)
+            alertManager.showEmptyTextAlert()
             return
         }
         
         // 작성 완료 알림 표시
-        showCompletionAlert { [weak self] in
-            // WriteViewModel에 작성 완료 이벤트 전달
-            self?.writeViewModel.submitPost {
-                // 글이 정상적으로 작성된 경우에만 기록 저장
+        alertManager.showCompletionAlert {
+            self.writeViewModel.submitPost {
                 NotificationCenter.default.post(name: Notification.didWriteToday, object: nil)
-                // 모달 닫기
-                self?.dismiss(animated: true, completion: nil)
+                self.dismiss(animated: true, completion: nil)
             }
         }
     }
@@ -235,7 +228,7 @@ extension WriteViewController {
         // 키보드 높이를 기준으로 inset 설정
         let keyboardHeight = keyboardFrame.height
         let safeAreaBottomInset = view.safeAreaInsets.bottom
-
+        
         // 동적으로 계산된 inset 적용
         let inset = keyboardHeight - safeAreaBottomInset
         writeView.updateContainerBottomConstraint(inset: inset + 10)
@@ -260,87 +253,4 @@ extension WriteViewController {
             self.view.layoutIfNeeded()
         }
     }
-}
-
-// MARK: - Alert 메서드
-extension WriteViewController {
-    // 이미지 상한을 알리는 Alert 표시
-    private func showAlertMaxImageLimitReached() {
-        let alert = UIAlertController(
-            title: "이미지를 추가할 수 없습니다.",
-            message: "하나의 글에 최대 한 개의 이미지만 추가할 수 있습니다.",
-            preferredStyle: .alert
-        )
-        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
-            alert.dismiss(animated: true, completion: nil)
-        }
-        alert.addAction(okAction)
-        DispatchQueue.main.async {
-            self.present(alert, animated: true)
-        }
-    }
-    
-    // 작성 완료 Alert
-    private func showCompletionAlert(completion: @escaping () -> Void) {
-        let alert = UIAlertController(
-            title: "작성 완료",
-            message: "글이 성공적으로 작성되었습니다!",
-            preferredStyle: .alert
-        )
-        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
-            alert.dismiss(animated: true, completion: completion)
-        }
-        alert.addAction(okAction)
-        present(alert, animated: true, completion: nil)
-    }
-    
-    // 카메라 권한이 없는 경우 설정 화면으로 이동하는 Alert 표시
-    private func showAlertGoToSetting(buttonType: ButtonTapType) {
-        let title: String
-        
-        switch buttonType {
-        case .camera:
-            title = "현재 카메라 사용에 대한 접근 권한이 없습니다."
-        case .image:
-            title = "현재 사진 라이브러리 접근에 대한 권한이 없습니다."
-        }
-        
-        let alertControlelr  = UIAlertController(
-            title: title,
-            message: "설정 > Sodam 탭에서 접근 권한을 활성화 해주세요.",
-            preferredStyle: .alert
-        )
-        
-        // 취소 버튼
-        let cancelAlert = UIAlertAction(title: "취소", style: .cancel) { _ in
-            alertControlelr.dismiss(animated: true, completion: nil)
-        }
-        
-        // 설정으로 이동하는 버튼
-        let doneAlert = UIAlertAction(title: "설정으로 이동하기", style: .default) { _ in
-            guard let settingURL = URL(string: UIApplication.openSettingsURLString),
-                  UIApplication.shared.canOpenURL(settingURL)
-            else {
-                return
-            }
-            UIApplication.shared.open(settingURL, options: [:])
-        }
-        
-        // Alert에 버튼 추가
-        [
-            cancelAlert,
-            doneAlert
-        ].forEach(alertControlelr.addAction(_:))
-        
-        // Alert 표시
-        DispatchQueue.main.async {
-            self.present(alertControlelr, animated: true)
-        }
-    }
-}
-
-// MARK: - 알럿 케이스
-private enum ButtonTapType {
-    case camera
-    case image
 }

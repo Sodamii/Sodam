@@ -29,7 +29,9 @@ struct HappinessDetailView: View {
                     }
                     HStack(alignment: .top) {
                         Text(viewModel.happiness.content)
-                            .font(.maruburiot(type: .regular, size: 16))
+//                            .font(.maruburiot(type: .regular, size: 16))
+                            .font(.sejongGeulggot(16))
+                            .lineSpacing(10)
                             .foregroundStyle(Color(UIColor.darkGray))
                             .multilineTextAlignment(.leading)
                             .padding(.horizontal, 16)

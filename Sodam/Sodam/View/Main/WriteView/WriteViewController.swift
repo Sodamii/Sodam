@@ -254,7 +254,7 @@ extension WriteViewController {
         }
         
         // 키보드가 사라지면 컨테이너 뷰의 제약 조건을 원래대로 복원
-        writeView.updateContainerBottomConstraint(inset: 60)
+        writeView.updateContainerBottomConstraint(inset: 20)
         
         UIView.animate(withDuration: animationDuration) {
             self.view.layoutIfNeeded()

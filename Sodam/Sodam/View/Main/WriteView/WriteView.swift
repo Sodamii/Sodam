@@ -28,7 +28,6 @@ class WriteView: UIView {
     // 글 작성 텍스트뷰
     private let textView: UITextView = {
         let textView: UITextView = UITextView()
-        textView.font = .sejongGeulggot(16)
         textView.textColor = .darkGray
         textView.backgroundColor = .viewBackground
         return textView
@@ -38,7 +37,7 @@ class WriteView: UIView {
     private let placeholderLabel: UILabel = {
         let label = UILabel()
         label.text = "행복을 작성해주세요"
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = .sejongGeulggot(16)
         label.textColor = .lightGray
         return label
     }()
@@ -60,7 +59,7 @@ class WriteView: UIView {
     // 카메라 버튼
     private let cameraButton: UIButton = {
         let button: UIButton = UIButton()
-        button.tintColor = .gray
+        button.tintColor = .textAccent
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "camera")
         config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 20) // 이미지 크기 설정
@@ -71,7 +70,7 @@ class WriteView: UIView {
     // 사진 선택 버튼
     private let imageButton: UIButton = {
         let button: UIButton = UIButton()
-        button.tintColor = .gray
+        button.tintColor = .textAccent
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "photo.on.rectangle")
         config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 20)
@@ -82,7 +81,7 @@ class WriteView: UIView {
     // 작성 완료 버튼
     private let submitButton: UIButton = {
         let button: UIButton = UIButton()
-        button.tintColor = .gray
+        button.tintColor = .textAccent
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "checkmark")
         config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 20)
@@ -93,7 +92,7 @@ class WriteView: UIView {
     // dismiss 버튼
     private let dismisslButton: UIButton = {
         let button: UIButton = UIButton()
-        button.tintColor = .gray
+        button.tintColor = .textAccent
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "xmark")
         config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 20)
@@ -158,7 +157,7 @@ extension WriteView {
         containerView.snp.makeConstraints { make in
             make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
             make.height.equalTo(safeAreaLayoutGuide.snp.height).multipliedBy(0.05)
-            containerBottomConstraint = make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(60).constraint
+            containerBottomConstraint = make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(20).constraint
         }
         
         collectionView.snp.makeConstraints { make in
@@ -252,6 +251,26 @@ extension WriteView {
         placeholderLabel.isHidden = !textView.text.isEmpty
     }
     
+    // 텍스트뷰 줄 간격 설정 메서드 추가
+    private func updateTextViewAttributes() {
+        let font = UIFont.sejongGeulggot(16)
+        let lineHeight = font.lineHeight // 폰트는 기본 줄 높이
+        let swiftUILineSpacing: CGFloat = 10 // SwiftUI에서 사용한 lineSpacing 값
+        
+        // UIKit의 lineSpacing 계산 (SwiftUI와 일치시키기)
+        let adjustedLineSpacing = swiftUILineSpacing - (lineHeight - font.pointSize)
+        
+        let parapraphStyle = NSMutableParagraphStyle()
+        parapraphStyle.lineSpacing = adjustedLineSpacing
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .paragraphStyle: parapraphStyle,
+            .font: font
+        ]
+        
+        textView.attributedText = NSAttributedString(string: textView.text, attributes: attributes)
+    }
+    
     // 텍스트뷰 delegate 설정 메서드
     func setTextViewDeleaget(delegate: UITextViewDelegate) {
         textView.delegate = delegate
@@ -266,6 +285,7 @@ extension WriteView {
     func setTextViewText(_ text: String) {
         textView.text = text
         updatePlaceholderVisibility() // 텍스트 변경 시 Placeholder 업데이트
+        updateTextViewAttributes() // 텍스트 변경 시 스타일 적용
     }
 }
 

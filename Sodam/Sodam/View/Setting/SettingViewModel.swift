@@ -47,7 +47,7 @@ final class SettingViewModel {
     }
     
     // 알림 토글 상태 가져오기
-    func getIsToggle() -> Bool {
+    func getNotificationToggleState() -> Bool {
         userDefaultsManager.getNotificationToggleState()
     }
     

@@ -5,10 +5,10 @@
 🛠 [기술스택](#-기술-스택) <br>
 🧨 [트러블슈팅](#-트러블슈팅) <br>
 
-# <img src="https://github.com/user-attachments/assets/d9a357a2-ce93-4b53-9eba-054461a405a7" width="40"> 소담 (Sodam)
+# <img src="https://github.com/user-attachments/assets/5dc1d9ed-487c-403a-9471-4be49dc602b2" width="40"> 소담 (Sodam)
 
 ![iOS](https://img.shields.io/badge/iOS-16.6+-blue.svg)
-![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)
+![Swift](https://img.shields.io/badge/Swift-5.0-orange.svg)
 ![UIKit](https://img.shields.io/badge/UIKit-Programmatic-blue.svg)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-Enabled-green.svg)
 ![MVVM](https://img.shields.io/badge/Architecture-MVVM-green.svg)
@@ -55,7 +55,7 @@
 
 | 분류 | 사용 기술 |
 | ---- | ---- |
-| **언어** | Swift 6.0.2 |
+| **언어** | Swift 5.0.0 |
 | **프레임워크** | UIKit, SwiftUI |
 | **아키텍처** | MVVM |
 | **데이터 저장소** | Core Data, UserDefaults, fileManager |

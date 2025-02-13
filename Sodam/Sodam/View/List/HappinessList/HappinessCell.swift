@@ -36,7 +36,7 @@ struct HappinessCell: View {
                 VStack(alignment: .leading) {
 //                    Text(happiness.content)
                     Text(content)
-                        .font(.mapoGoldenPier(FontSize.body))
+                        .font(.sejongGeulggot(16))
                         .foregroundStyle(.black)
                         .lineLimit(2)
                         .padding(.bottom, 8)

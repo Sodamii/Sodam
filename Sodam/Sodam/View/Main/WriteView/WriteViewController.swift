@@ -18,13 +18,19 @@ final class WriteViewController: UIViewController {
     
     private let writeViewModel: WriteViewModel
     private let writeView = WriteView()
+    private let cameraPickerService: ImagePickerServicable
+    private let photoLibraryPickerService: ImagePickerServicable
     
     // 알럿이 항상 필요한게 아니라서 필요할때까지 초기화를 지연시키려고 lazy 사용
     private lazy var alertManager: AlertManager = AlertManager(viewController: self)
     
     // MARK: - 초기화
-    init(writeViewModel: WriteViewModel) {
+    init(writeViewModel: WriteViewModel,
+         cameraPickerService: ImagePickerServicable = CameraPickerService(),
+         photoLibraryPickerService: ImagePickerServicable = PhotoLibraryPickerService()) {
         self.writeViewModel = writeViewModel
+        self.cameraPickerService = cameraPickerService
+        self.photoLibraryPickerService = photoLibraryPickerService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -50,6 +56,9 @@ final class WriteViewController: UIViewController {
         super.viewDidLoad()
         // 컬렉션 뷰의 데이터 소스와 델리게이트 설정
         writeView.setCollectionViewDataSource(dataSource: self)
+        
+        cameraPickerService.setDelegate(self)
+        photoLibraryPickerService.setDelegate(self)
         
         // 키보드 알림 설정
         setupKeyboardNotification()
@@ -144,14 +153,12 @@ extension WriteViewController {
             return
         }
         
-        writeViewModel.requestCameraAccess { [weak self] isGranted in
+        cameraPickerService.requestAccess(self) { [weak self] isGranted in
+            guard let self = self else { return }
             if isGranted {
-                let cameraPicker = self?.writeViewModel.createCameraPicker()
-                if let picker = cameraPicker {
-                    self?.present(picker, animated: true)
-                }
+                cameraPickerService.show(self)
             } else {
-                self?.alertManager.showGoToSettingsAlert(for: .camera)
+                self.alertManager.showGoToSettingsAlert(for: .camera)
             }
         }
     }
@@ -164,16 +171,13 @@ extension WriteViewController {
             return
         }
         
-        writeViewModel.requestPhotoLibraryAccess { [weak self] isGranted in
+        photoLibraryPickerService.requestAccess(self) { [weak self] isGranted in
+            guard let self = self else { return }
             if isGranted {
-                // 사진 라이브러리 권한이 허용된 경우 사진 피커 생성 및 표시
-                let photoPicker = self?.writeViewModel.createPhotoPicker()
-                if let picker = photoPicker {
-                    self?.present(picker, animated: true)
-                }
+                photoLibraryPickerService.show(self)
             } else {
                 // 권한이 거부된 경우 설정 화면으로 이동하는 알림 표시
-                self?.alertManager.showGoToSettingsAlert(for: .image)
+                self.alertManager.showGoToSettingsAlert(for: .image)
             }
         }
     }
@@ -251,6 +255,17 @@ extension WriteViewController {
         
         UIView.animate(withDuration: animationDuration) {
             self.view.layoutIfNeeded()
+        }
+    }
+}
+
+// MARK: - ImagePickerServiceDelegate
+extension WriteViewController: ImagePickerServiceDelegate {
+    func didFinishPicking(_ image: UIImage?) {
+        if let image = image {
+            writeViewModel.addImage(image)
+        } else {
+            print("[WriteViewController] 사용자가 이미지 선택을 취소했거나 로드가 실패함")
         }
     }
 }

@@ -42,7 +42,6 @@ final class SettingsViewController: UIViewController {
 
         // 저장된 앱 설정 값을 불러오기
         settingViewModel.isToggleOn = settingViewModel.getAppNotificationToggleState()
-        print("settingViewModel.isToggleOn => \(settingViewModel.isToggleOn)")
         settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
 }
@@ -115,9 +114,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
             if indexPath.row == 0 {
                 // 첫 번째 셀: 알림 설정
                 cell.configure(title: Setting.SetCell.notification.rawValue, switchAction: #selector(didToggleSwitch(_:)), timeAction: nil, version: "")
-                print("cell.switchButton.isOn => \(settingViewModel.isToggleOn)")
                 cell.switchButton.isOn = settingViewModel.getAppNotificationToggleState()
-                isShowTimeCell = false
             } else if indexPath.row == 1 && settingViewModel.getAppNotificationToggleState() {
                 // 두 번째 셀: 시간 설정 (스위치가 켜졌을 때만 표시)
                 cell.configure(title: Setting.SetCell.setTime.rawValue, switchAction: nil, timeAction: #selector(userScheduleNotification), version: "")
@@ -162,7 +159,10 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     
     // 알림 스위치의 상태가 변경되었을 때 호출되는 액션
     @objc func didToggleSwitch(_ sender: UISwitch) {
-        print("sender.isOn => \(sender.isOn)")
+
+        if UserDefaultsManager.shared.getNotificaionAuthorizationStatus() {
+            showNotificationPermissionAlert()
+        }
         settingViewModel.saveIsAppToggleNotification(sender.isOn)
         self.isShowTimeCell = sender.isOn
         settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)

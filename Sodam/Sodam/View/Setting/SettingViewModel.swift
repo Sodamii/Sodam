@@ -28,7 +28,6 @@ final class SettingViewModel {
     // MARK: - Initializer
     init() {
         self.isToggleOn = userDefaultsManager.getAppNotificationToggleState()
-        print("self.isToggleOn =>\(self.isToggleOn)")
     }
     
     // 알림 시간 저장
@@ -38,7 +37,6 @@ final class SettingViewModel {
     
     // 앱 설정 알림 토글 상태 저장
     func saveIsAppToggleNotification(_ sender: Bool) {
-        print("sender =>\(sender)")
         userDefaultsManager.saveAppNotificationToggleState(sender)
     }
     
@@ -60,7 +58,6 @@ final class SettingViewModel {
     // URL 열기 메서드
     func openURL(_ urlString: String) {
         guard let url = URL(string: urlString), UIApplication.shared.canOpenURL(url) else {
-            print("유효하지 않은 URL입니다: \(urlString)")
             return
         }
         UIApplication.shared.open(url, options: [:], completionHandler: nil)

@@ -24,21 +24,25 @@ final class LocalNotificationManager: NSObject {
             self?.handleNotificationAuthorizationStatus(settings.authorizationStatus)
         }
     }
-
     
     // 알림 권한 상태 처리
     private func handleNotificationAuthorizationStatus(_ status: UNAuthorizationStatus) {
         switch status {
-        // 권한이 아직 결정되지 않은 경우 권한 요청
+            // 권한이 아직 결정되지 않은 경우 권한 요청
         case .notDetermined:
-            break
+            requestNotificationAuthorization { [weak self] granted in
+                if granted {
+                    // 권한이 허가되면 기본 알림 설정
+                    self?.setNotificationState(granted)
+                }
+            }
         // 권한이 거부된 경우 안내 메시지 표시
         case .denied:
             showDeniedToastOnce()
             
         // 권한이 이미 허가되었거나 임시 허가된 경우 기본 알림 설정
         case .authorized, .provisional, .ephemeral:
-            if (UserDefaultsManager.shared.getIsFirst()) {
+            if UserDefaultsManager.shared.getIsFirst() {
                 setNotificationState(true)
                 return
             }
@@ -49,6 +53,31 @@ final class LocalNotificationManager: NSObject {
             break
         }
     }
+    
+    // 알림 권한 요청 (최초 1회만 실행)
+    private func requestNotificationAuthorization(completion: @escaping (Bool) -> Void) {
+        // 이미 권한이 설정되어 있는 경우 요청하지 않음
+        guard !UserDefaultsManager.shared.getNotificaionAuthorizationStatus() else {
+            completion(true)
+            return
+        }
+        
+        let center = UNUserNotificationCenter.current()
+        let options: UNAuthorizationOptions = [.alert, .badge, .sound]
+        
+        center.requestAuthorization(options: options) { [weak self] granted, error in
+            if granted {
+                // 권한이 허가여부를 UserDefaults에 저장(true가 허용)
+                UserDefaultsManager.shared.saveNotificaionAuthorizationStatus(true)
+                completion(true)
+            } else {
+                // 권한이 거부된 경우 안내 메시지 표시(false가 거부)
+                self?.showDeniedToastOnce()
+                completion(false)
+            }
+        }
+    }
+    
     
     // 알림 시간 설정 (사용자가 설정한 시간)
     func setReservedNotification(_ time: Date) {
@@ -112,9 +141,11 @@ final class LocalNotificationManager: NSObject {
         // 이미 동일한 알림이 예약되어 있는지 확인
         let isAlreadyScheduled = existingRequests.contains { $0.identifier == identifier }
         DispatchQueue.main.async {
-            // 알림이 새로 예약되었거나 시간이 변경되었음을 사용자에게 알림
-            let message = isAlreadyScheduled ? "알림 시간이 \(self.timeFormatted(time))로 변경되었습니다." : "기본 알림 시간 \(self.timeFormatted(time))로 설정되었습니다."
-            ToastManager.shared.showToastMessage(message: message)
+            if UserDefaultsManager.shared.getIsFirst() {
+                // 알림이 새로 예약되었거나 시간이 변경되었음을 사용자에게 알림
+                let message = isAlreadyScheduled ? "알림 시간이 \(self.timeFormatted(time))로 변경되었습니다." : "기본 알림 시간 \(self.timeFormatted(time))로 설정되었습니다."
+                ToastManager.shared.showToastMessage(message: message)
+            }
         }
     }
     
@@ -132,11 +163,9 @@ final class LocalNotificationManager: NSObject {
 private extension LocalNotificationManager {
     // 기본 알림 설정 (최초 1회만 실행)
     func setNotificationState(_ status: Bool) {
-        print("최초1회만 실행 \(status)")
-        
         let calendar = Calendar.current
         let defaultTime = calendar.date(bySettingHour: 21, minute: 0, second: 0, of: Date())!
-        print("LocalNotificationManager.status =>\(status)")
+
         UserDefaultsManager.shared.saveAppNotificationToggleState(status)
         UserDefaultsManager.shared.saveNotificationTime(defaultTime)
         
@@ -161,7 +190,6 @@ private extension LocalNotificationManager {
 extension LocalNotificationManager: UNUserNotificationCenterDelegate {
     // Foreground 상태에서 알림을 수신할 때 호출
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        //UIApplication.shared.applicationIconBadgeNumber += 1  // 배지 번호를 증가시켜 앱 아이콘에 표시
         completionHandler([.banner, .badge, .sound, .list])
     }
     

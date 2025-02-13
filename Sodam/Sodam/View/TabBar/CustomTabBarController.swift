@@ -16,7 +16,7 @@ final class CustomTabBarController: UITabBarController {
         configureViewController()
         setupTabBarAppearance()
         
-        selectedIndex = 1 // 초기 화면을 mainVC로 설정
+        selectedIndex = 0 // 초기 화면을 mainVC로 설정
     }
     
     private func setupTabBar() {
@@ -29,17 +29,36 @@ final class CustomTabBarController: UITabBarController {
         let mainViewModel: MainViewModel = MainViewModel(repository: hangdamRepository)
         let storageViewModel: HangdamStorageViewModel = HangdamStorageViewModel(hangdamRepository: hangdamRepository)
         
+        // 메인 탭
         let mainViewController = MainViewController(viewModel: mainViewModel)
-        mainViewController.tabBarItem = UITabBarItem(title: "메인", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
+        mainViewController.tabBarItem = UITabBarItem(
+            title: "메인",
+            image: UIImage(named: "main"),
+            selectedImage: UIImage(named: "main.fill"))
         
+        // 기록 탭
+        let happinessListViewController = UIHostingController(rootView: HappinessListView(hangdam: mainViewModel.hangdam, isBackButtonHidden: true))
+        happinessListViewController.tabBarItem = UITabBarItem(
+            title: "기록",
+            image: UIImage(named: "book"),
+            selectedImage: UIImage(named: "book.fill"))
+        
+        // 보관 탭
         let storageViewController = UIHostingController(rootView: HangdamStorageView(viewModel: storageViewModel))
-        storageViewController.tabBarItem = UITabBarItem(title: "기록", image: UIImage(systemName: "book"), selectedImage: UIImage(systemName: "book.fill"))
+        storageViewController.tabBarItem = UITabBarItem(
+            title: "보관",
+            image: UIImage(named: "archivebox"),
+            selectedImage: UIImage(named: "archivebox.fill"))
         
+        // 설정 탭
         let settingViewModel = SettingViewModel()
         let settingsViewController = SettingsViewController(settingViewModel: settingViewModel)
-        settingsViewController.tabBarItem = UITabBarItem(title: "설정", image: UIImage(systemName: "gear"), selectedImage: UIImage(systemName: "gear.fill"))
+        settingsViewController.tabBarItem = UITabBarItem(
+            title: "설정",
+            image: UIImage(named: "gear"),
+            selectedImage: UIImage(named: "gear.fill"))
         
-        viewControllers = [storageViewController, mainViewController, settingsViewController]
+        viewControllers = [mainViewController, happinessListViewController, storageViewController, settingsViewController]
     }
     
     private func setupTabBarAppearance() {
@@ -47,21 +66,35 @@ final class CustomTabBarController: UITabBarController {
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .tabBackground
         
-        // 선택되지 않은 상태의 색상과 폰트 설정
+        // 선택되지 않은 상태 스타일
         appearance.stackedLayoutAppearance.normal.iconColor = .viewBackground
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
             .foregroundColor: UIColor.viewBackground,
             .font: UIFont.systemFont(ofSize: 10)
         ]
         
-        // 선택된 상태의 색상과 Bold 폰트 설정
+        // 선택된 상태 스타일
         appearance.stackedLayoutAppearance.selected.iconColor = .textAccent
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
             .foregroundColor: UIColor.textAccent,
-            .font: UIFont.boldSystemFont(ofSize: 11)  // Bold 폰트 지정
+            .font: UIFont.boldSystemFont(ofSize: 12)
         ]
         
+        // SE 모델일 경우 타이틀 위치 조정
+        if UIScreen.isiPhoneSE {
+            appearance.stackedLayoutAppearance.normal.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -6)
+            appearance.stackedLayoutAppearance.selected.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -6)
+        }
+        
+        // SE 모델일 경우 아이콘 위치 조정
+        if UIScreen.isiPhoneSE {
+            for item in tabBar.items ?? [] {
+                item.imageInsets = UIEdgeInsets(top: 3, left: 0, bottom: -3, right: 0)
+                item.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -3)
+            }
+        }
+        
         tabBar.standardAppearance = appearance
-        tabBar.scrollEdgeAppearance = appearance
+        tabBar.scrollEdgeAppearance = tabBar.standardAppearance  // 배경이 사라지지 않도록 설정함
     }
 }

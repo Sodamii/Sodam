@@ -21,11 +21,11 @@ final class ImageCollectionViewCell: UICollectionViewCell {
     // 휴지통 버튼
     private let deleteButton: UIButton = {
         let button = UIButton()
-        button.tintColor = .black
+        button.tintColor = .red
         button.layer.cornerRadius = 8
         var config = UIButton.Configuration.plain()
         config.image = UIImage(systemName: "trash")
-        config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 12) // 이미지 크기 설정
+        config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 10) // 이미지 크기 설정
         button.configuration = config
         return button
     }()
@@ -56,7 +56,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
         
         blurView.snp.makeConstraints { make in
             make.top.trailing.equalToSuperview().inset(4)
-            make.width.height.equalTo(24)
+            make.width.height.equalTo(20)
         }
         
         deleteButton.snp.makeConstraints { make in

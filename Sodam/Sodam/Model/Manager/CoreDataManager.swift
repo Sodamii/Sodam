@@ -103,22 +103,21 @@ final class CoreDataManager {
     
     /// 행복한 기억 생성 : 행담이 id 받아 행담이에 추가
     func createHappiness(_ dto: HappinessDTO, to hangdamID: NSManagedObjectID) {
-        guard let data = try? NSKeyedArchiver.archivedData(withRootObject: dto.imagePaths, requiringSecureCoding: true)
-        else {
-            print(DataError.convertImagePathsFailed.localizedDescription)
+        /// dto를 entity로 매핑
+        let mapper = HappinessMapper()
+        let mapResult = mapper.toEntity(from: dto, context: context)
+        
+        switch mapResult {
+        case .failure:
+            /// toEntity 메소드 내부에 DataError를 출력하고 있어 더 처리 하지 않음 - 추후에 error handling 필요
             return
+        case .success(let entity):
+            /// 행담이에 추가
+            appendHappiness(entity, to: hangdamID)
+            
+            print("[CoreData] 행복 생성 완료")
+            saveContext()
         }
-        
-        let entity = HappinessEntity(context: context)
-        entity.content = dto.content
-        entity.date = dto.date
-        entity.imagePaths = data
-        
-        /// 행담이에 추가
-        appendHappiness(entity, to: hangdamID)
-        
-        print("[CoreData] 행복 생성 완료")
-        saveContext()
     }
     
     /// 행복한 기억을 행담이에 추가하는 메소드 - 내부 호출
@@ -128,9 +127,23 @@ final class CoreDataManager {
     }
     
     /// 행담이가 갖고 있는 행복한 기억들 호출
-    func getHappinesses(of hangdamID: NSManagedObjectID) -> [HappinessEntity]? {
-        guard let hangdam = searchHangdam(with: hangdamID) else { return nil }
-        return hangdam.happinesses?.array as? [HappinessEntity]
+    func getHappinesses(of hangdamID: NSManagedObjectID) -> [HappinessEntity] {
+        guard let hangdam = searchHangdam(with: hangdamID) else { return [] }
+        
+        /// 특정 행담이의 행복들 fetch
+        let fetchRequest = NSFetchRequest<HappinessEntity>(entityName: CDKey.happinessEntity.rawValue)
+        fetchRequest.predicate = NSPredicate(format: "hangdam == %@", hangdam)
+        
+        /// 행복을 날짜 내림차순으로 정렬
+        let sortDescriptor = NSSortDescriptor(key: CDKey.date.rawValue, ascending: false)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        do {
+            return try context.fetch(fetchRequest)
+        } catch {
+            print(DataError.fetchRequestFailed.localizedDescription)
+            return []
+        }
     }
     
     /// 행복한 기억 단일 삭제
@@ -165,4 +178,5 @@ fileprivate enum CDKey: String {
     case container = "SodamContainer"
     case hangdamEntity = "HangdamEntity"
     case happinessEntity = "HappinessEntity"
+    case date
 }

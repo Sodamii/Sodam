@@ -35,11 +35,7 @@ final class MainView: UIView {
     // 라벨 뷰
     private let messageLabel: UILabel = {
         let label = UILabel()
-        label.text = "행담이에게 행복한 기억을 먹여주세욤 >< 뿌뿌~~"
-        label.textAlignment = .center
-        label.font = .mapoGoldenPier(18)
         label.numberOfLines = 0
-        label.textColor = .darkGray
         return label
     }()
     
@@ -105,9 +101,25 @@ final class MainView: UIView {
         circularImageView.layer.cornerRadius = circularImageView.frame.width / 2
     }
     
-    // 메세지라벨
+    // 메세지 라벨
     func updateMessage(_ message: String) {
-        messageLabel.text = message
+        // 줄 간격 설정
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 8
+        paragraphStyle.alignment = .center
+        
+        // 속성 설정
+        let attributes: [NSAttributedString.Key: Any] = [
+            .paragraphStyle: paragraphStyle,
+            .foregroundColor: UIColor.darkGray,
+            .font: UIFont.mapoGoldenPier(18)
+        ]
+        
+        // NSAttributedString으로 변환
+        let attributedString = NSAttributedString(string: message, attributes: attributes)
+        
+        // UILabel에 적용
+        messageLabel.attributedText = attributedString
     }
     
     // 이름 라벨 업데이트

@@ -19,6 +19,9 @@ final class WriteViewController: UIViewController {
     private let writeViewModel: WriteViewModel
     private let writeView = WriteView()
     
+    // 알럿이 항상 필요한게 아니라서 필요할때까지 초기화를 지연시키려고 lazy 사용
+    private lazy var alertManager: AlertManager = AlertManager(viewController: self)
+    
     // MARK: - 초기화
     init(writeViewModel: WriteViewModel) {
         self.writeViewModel = writeViewModel
@@ -36,8 +39,8 @@ final class WriteViewController: UIViewController {
         view = writeView
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         // 임시 저장글 있는지 확인하고 로드
         writeViewModel.loadTemporaryPost()
@@ -86,8 +89,46 @@ final class WriteViewController: UIViewController {
         }
     }
     
-    // MARK: - 메서드 선언
+    // UI 업데이트 메서드
+    private func updateUI(with post: Post) {
+        writeView.setTextViewText(post.content) // 텍스트뷰 업데이트
+        writeView.collectionViewReload() // 컬렉션 뷰 리로드
+        writeView.updateCollectionViewConstraint(writeViewModel.images.isEmpty)
+    }
+}
+
+// MARK: - 컬렉션뷰 DataSource 설정
+extension WriteViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return writeViewModel.images.count
+    }
     
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCell.identifier, for: indexPath) as? ImageCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        let image = writeViewModel.images[indexPath.item]
+        cell.configure(with: image)
+        
+        // 삭제 클로저 설정
+        cell.onDelete = { [weak self] in
+            self?.writeViewModel.removeImage(at: indexPath.item)
+            collectionView.reloadData()
+        }
+        return cell
+    }
+}
+
+// MARK: - 텍스트뷰 deleage 설정
+extension WriteViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        // 텍스트가 변경될 때마다 뷰모델에 전달
+        writeViewModel.updateText(textView.text)
+    }
+}
+
+// MARK: - 버튼 액션 메서드
+extension WriteViewController {
     // WriteView에 정의된 버튼들의 액션 설정 메서드
     private func setupActions() {
         writeView.setCameraButtonAction(target: self, cameraSelector: #selector(openCamera))
@@ -96,6 +137,74 @@ final class WriteViewController: UIViewController {
         writeView.setDismissButtonAction(target: self, dismissSelector: #selector(tapDismiss))
     }
     
+    // 카메라 버튼 탭할 때 호출되는 메서드
+    @objc private func openCamera() {
+        guard writeViewModel.images.count < 1 else {
+            alertManager.showImageLimitAlert()
+            return
+        }
+        
+        writeViewModel.requestCameraAccess { [weak self] isGranted in
+            if isGranted {
+                let cameraPicker = self?.writeViewModel.createCameraPicker()
+                if let picker = cameraPicker {
+                    self?.present(picker, animated: true)
+                }
+            } else {
+                self?.alertManager.showGoToSettingsAlert(for: .camera)
+            }
+        }
+    }
+    
+    // 이미지 버튼 탭할 때 호출되는 메서드
+    @objc private func addImage() {
+        // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
+        guard writeViewModel.images.count < 1 else {
+            alertManager.showImageLimitAlert()
+            return
+        }
+        
+        writeViewModel.requestPhotoLibraryAccess { [weak self] isGranted in
+            if isGranted {
+                // 사진 라이브러리 권한이 허용된 경우 사진 피커 생성 및 표시
+                let photoPicker = self?.writeViewModel.createPhotoPicker()
+                if let picker = photoPicker {
+                    self?.present(picker, animated: true)
+                }
+            } else {
+                // 권한이 거부된 경우 설정 화면으로 이동하는 알림 표시
+                self?.alertManager.showGoToSettingsAlert(for: .image)
+            }
+        }
+    }
+    
+    // 작성완료 버튼 탭할 때 호출되는 메서드
+    @objc private func submitText() {
+        guard !writeView.getTextViewText().trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            alertManager.showEmptyTextAlert()
+            return
+        }
+        
+        // 작성 완료 알림 표시
+        alertManager.showCompletionAlert {
+            self.writeViewModel.submitPost {
+                NotificationCenter.default.post(name: Notification.didWriteToday, object: nil)
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
+    }
+    
+    // 취소 버튼 탭할 때 호출되는 메서드
+    @objc private func tapDismiss() {
+        // WriteViewModel에 취소 이벤트 전달
+        writeViewModel.cancelPost()
+        // 모달 닫기
+        dismiss(animated: true, completion: nil)
+    }
+}
+
+// MARK: - 키보드 관련 메서드
+extension WriteViewController {
     // 키보드 감지
     private func setupKeyboardNotification() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -119,10 +228,10 @@ final class WriteViewController: UIViewController {
         // 키보드 높이를 기준으로 inset 설정
         let keyboardHeight = keyboardFrame.height
         let safeAreaBottomInset = view.safeAreaInsets.bottom
-
+        
         // 동적으로 계산된 inset 적용
         let inset = keyboardHeight - safeAreaBottomInset
-        writeView.updateContainerBottomConstraint(inset: inset)
+        writeView.updateContainerBottomConstraint(inset: inset + 10)
         
         // 업데이트 된 레이아웃 반영
         UIView.animate(withDuration: animationDuration) {
@@ -138,207 +247,10 @@ final class WriteViewController: UIViewController {
         }
         
         // 키보드가 사라지면 컨테이너 뷰의 제약 조건을 원래대로 복원
-        writeView.updateContainerBottomConstraint(inset: 60)
+        writeView.updateContainerBottomConstraint(inset: 20)
         
         UIView.animate(withDuration: animationDuration) {
             self.view.layoutIfNeeded()
         }
     }
-    
-    // UI 업데이트 메서드
-    private func updateUI(with post: Post) {
-        writeView.setTextViewText(post.content) // 텍스트뷰 업데이트
-        writeView.collectionViewReload() // 컬렉션 뷰 리로드
-    }
-    
-    // MARK: - 버튼 액션 메서드
-    
-    // 카메라 버튼 탭할 때 호출되는 메서드
-    @objc private func openCamera() {
-        // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
-        guard writeViewModel.images.count < 1 else {
-            showAlertMaxImageLimitReached()
-            return
-        }
-        
-        writeViewModel.requestCameraAccess { [weak self] isGranted in
-            if isGranted {
-                // 카메라 권한이 허용된 경우 카메라 생성 및 표시
-                let cameraPicker = self?.writeViewModel.createCameraPicker()
-                if let picker = cameraPicker {
-                    self?.present(picker, animated: true)
-                }
-            } else {
-                // 권한이 거부된 경우 설정 화면으로 이동하는 알림 표시
-                self?.showAlertGoToSetting(buttonType: .camera)
-            }
-        }
-    }
-    
-    // 이미지 버튼 탭할 때 호출되는 메서드
-    @objc private func addImage() {
-        // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
-        guard writeViewModel.images.count < 1 else {
-            showAlertMaxImageLimitReached()
-            return
-        }
-        
-        writeViewModel.requestPhotoLibraryAccess { [weak self] isGranted in
-            if isGranted {
-                // 사진 라이브러리 권한이 허용된 경우 사진 피커 생성 및 표시
-                let photoPicker = self?.writeViewModel.createPhotoPicker()
-                if let picker = photoPicker {
-                    self?.present(picker, animated: true)
-                }
-            } else {
-                // 권한이 거부된 경우 설정 화면으로 이동하는 알림 표시
-                self?.showAlertGoToSetting(buttonType: .image)
-            }
-        }
-    }
-    
-    // 작성완료 버튼 탭할 때 호출되는 메서드
-    @objc private func submitText() {
-        guard !writeView.getTextViewText().trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            // 경고 메시지 표시
-            let alert = UIAlertController(title: "행복 기록이 없습니다", message: "내용을 입력해주세요!", preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
-            alert.addAction(okAction)
-            present(alert, animated: true, completion: nil)
-            return
-        }
-        
-        // 작성 완료 알림 표시
-        showCompletionAlert { [weak self] in
-            // WriteViewModel에 작성 완료 이벤트 전달
-            self?.writeViewModel.submitPost {
-                // 글이 정상적으로 작성된 경우에만 기록 저장
-                NotificationCenter.default.post(name: Notification.didWriteToday, object: nil)
-                // 모달 닫기
-                self?.dismiss(animated: true, completion: nil)
-            }
-        }
-    }
-    
-    // 취소 버튼 탭할 때 호출되는 메서드
-    @objc private func tapDismiss() {
-        // WriteViewModel에 취소 이벤트 전달
-        writeViewModel.cancelPost()
-        // 모달 닫기
-        dismiss(animated: true, completion: nil)
-    }
-
-    // 카메라 권한이 없는 경우 설정 화면으로 이동하는 Alert 표시
-    private func showAlertGoToSetting(buttonType: ButtonTapType) {
-        let title: String
-        
-        switch buttonType {
-        case .camera:
-            title = "현재 카메라 사용에 대한 접근 권한이 없습니다."
-        case .image:
-            title = "현재 사진 라이브러리 접근에 대한 권한이 없습니다."
-        }
-        
-        let alertControlelr  = UIAlertController(
-            title: title,
-            message: "설정 > Sodam 탭에서 접근 권한을 활성화 해주세요.",
-            preferredStyle: .alert
-        )
-        
-        // 취소 버튼
-        let cancelAlert = UIAlertAction(title: "취소", style: .cancel) { _ in
-            alertControlelr.dismiss(animated: true, completion: nil)
-        }
-        
-        // 설정으로 이동하는 버튼
-        let doneAlert = UIAlertAction(title: "설정으로 이동하기", style: .default) { _ in
-            guard let settingURL = URL(string: UIApplication.openSettingsURLString),
-                  UIApplication.shared.canOpenURL(settingURL)
-            else {
-                return
-            }
-            UIApplication.shared.open(settingURL, options: [:])
-        }
-        
-        // Alert에 버튼 추가
-        [
-            cancelAlert,
-            doneAlert
-        ].forEach(alertControlelr.addAction(_:))
-        
-        // Alert 표시
-        DispatchQueue.main.async {
-            self.present(alertControlelr, animated: true)
-        }
-    }
-    
-    // MARK: - Alert 메서드
-    
-    // 이미지 상한을 알리는 Alert 표시
-    private func showAlertMaxImageLimitReached() {
-        let alert = UIAlertController(
-            title: "이미지를 추가할 수 없습니다.",
-            message: "하나의 글에 최대 한 개의 이미지만 추가할 수 있습니다.",
-            preferredStyle: .alert
-        )
-        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
-            alert.dismiss(animated: true, completion: nil)
-        }
-        alert.addAction(okAction)
-        DispatchQueue.main.async {
-            self.present(alert, animated: true)
-        }
-    }
-    
-    // 작성 완료 Alert
-    private func showCompletionAlert(completion: @escaping () -> Void) {
-        let alert = UIAlertController(
-            title: "작성 완료",
-            message: "글이 성공적으로 작성되었습니다!",
-            preferredStyle: .alert
-        )
-        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
-            alert.dismiss(animated: true, completion: completion)
-        }
-        alert.addAction(okAction)
-        present(alert, animated: true, completion: nil)
-    }
-}
-
-// MARK: - 컬렉션뷰 DataSource 설정
-
-extension WriteViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return writeViewModel.images.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCell.identifier, for: indexPath) as? ImageCollectionViewCell else {
-            return UICollectionViewCell()
-        }
-        let image = writeViewModel.images[indexPath.item]
-        cell.configure(with: image)
-        
-        // 삭제 클로저 설정
-        cell.onDelete = { [weak self] in
-            self?.writeViewModel.removeImage(at: indexPath.item)
-            collectionView.reloadData()
-        }
-        return cell
-    }
-}
-
-// MARK: - 텍스트뷰 deleage 설정
-
-extension WriteViewController: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        // 텍스트가 변경될 때마다 뷰모델에 전달
-        writeViewModel.updateText(textView.text)
-    }
-}
-
-// MARK: - 알럿 케이스
-private enum ButtonTapType {
-    case camera
-    case image
 }

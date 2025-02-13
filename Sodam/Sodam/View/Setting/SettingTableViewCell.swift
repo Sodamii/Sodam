@@ -31,7 +31,7 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
         timePicker.preferredDatePickerStyle = .compact
         timePicker.datePickerMode = .time
         timePicker.locale = Locale(identifier: "ko")
-        timePicker.minuteInterval = 1
+        timePicker.minuteInterval = 30
         timePicker.tintColor = .buttonBackground
         return timePicker
     }()

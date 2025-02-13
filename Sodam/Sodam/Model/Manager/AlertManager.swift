@@ -53,9 +53,9 @@ final class AlertManager {
             preferredStyle: .alert
         )
         
-        alertController.addTextField { textField in
+        alertController.addTextField { [weak self] textField in
             textField.placeholder = "4글자 이내로 적어주세요"
-            textField.addTarget(self, action: #selector(self.textFieldDidChange(_:)), for: .editingChanged)
+            textField.addTarget(self, action: #selector(self?.textFieldDidChange(_:)), for: .editingChanged)
             
             let rightLabel = UILabel()
             rightLabel.text = "담이"

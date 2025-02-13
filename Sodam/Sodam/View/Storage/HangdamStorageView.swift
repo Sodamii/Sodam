@@ -13,59 +13,31 @@ struct HangdamStorageView: View {
     
     var body: some View {
         NavigationStack {
-            GeometryReader { geometry in
-                VStack(alignment: .center) {
-                    NavigationLink {
-                        HappinessListView(hangdam: $viewModel.currentHangdam.wrappedValue)
-                    } label: {
-                        HangdamStatusView(size: geometry.size, hangdam: $viewModel.currentHangdam)
-                            .clipShape(.rect(cornerRadius: 15))
-                    }
+            VStack(alignment: .center) {
+                HStack(alignment: .bottom) {
+                    HangdamStorageTitle()
                     
-                    HStack(alignment: .bottom) {
-                        Text("행담이 보관함")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.mapoGoldenPier(27))
-                            .foregroundStyle(Color.textAccent)
-                            .padding(.top)
-                        
-                        Text("다 자란 행담이 : \($viewModel.storedHangdamList.wrappedValue.count)")
-                            .font(.mapoGoldenPier(15))
-                            .foregroundStyle(Color.white)
-                            .padding(.vertical, 7)
-                            .padding(.horizontal, 12)
-                            .background(Capsule().fill(Color.buttonBackground))
-                    }
-                    if $viewModel.storedHangdamList.wrappedValue.count == 0 {
-                        VStack(alignment: .center) {
-                            Spacer()
-                            Text("행담이에게 행복을 주고 성장시켜보세요!")
-                                .frame(maxWidth: .infinity, maxHeight: 35, alignment: .center)
-                                .font(.mapoGoldenPier(20))
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.5)
-                                .foregroundStyle(Color.gray)
-                                .padding(.vertical, 8)
-                            Spacer()
-                        }
-                    } else {
-                        ScrollView {
-                            HangdamGridView(hangdamList: $viewModel.storedHangdamList)
-                                .padding(.bottom)
-                        }
-                        .scrollIndicators(.hidden)
-                    }
+                    HangdamCountTitle(count: $viewModel.storedHangdams.count)
                 }
-                .padding(.top)
-                .padding(.horizontal)
+                
+                if $viewModel.storedHangdams.wrappedValue.count == 0 {
+                    HangdamEmptyView()
+                } else {
+                    ScrollView {
+                        HangdamGridView(hangdams: $viewModel.storedHangdams)
+                            .padding(.bottom)
+                    }
+                    .scrollIndicators(.hidden)
+                }
             }
+            .padding(.horizontal)
             .background(Color.viewBackground)
             .onAppear {
                 withAnimation {
                     if let tabBarController = getRootTabBarController() {
                         tabBarController.tabBar.isHidden = false
                     }
-                    viewModel.loadHangdamData()
+                    viewModel.loadHangdams()
                 }
             }
         }
@@ -81,6 +53,30 @@ struct HangdamStorageView: View {
             return nil
         }
         return rootViewController as? UITabBarController
+    }
+}
+
+fileprivate struct HangdamStorageTitle: View {
+    var body: some View {
+        Text("행담이 보관함")
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .font(.mapoGoldenPier(27))
+            .foregroundStyle(Color.textAccent)
+            .padding(.top)
+    }
+}
+
+fileprivate struct HangdamCountTitle: View {
+    
+    @State var count: Int
+    
+    var body: some View {
+        Text("다 자란 행담이 : \(count)")
+            .font(.mapoGoldenPier(15))
+            .foregroundStyle(Color.white)
+            .padding(.vertical, 7)
+            .padding(.horizontal, 12)
+            .background(Capsule().fill(Color.buttonBackground))
     }
 }
 

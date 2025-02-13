@@ -18,22 +18,3 @@ struct HappinessDTO: Hashable {
         return date.formatForHappiness
     }
 }
-
-extension HappinessEntity {
-    var toDTO: HappinessDTO? {
-        guard let content = self.content,
-              let date = self.date,
-              let imagePaths = self.imagePaths?.toStringArray
-        else {
-            return nil
-        }
-        
-        return HappinessDTO(
-            id: IDConverter.toStringID(from: self.objectID),
-            content: content,
-            date: date,
-            imagePaths: imagePaths,
-            hangdamID: IDConverter.toStringID(from: self.hangdam?.objectID)
-        )
-    }
-}

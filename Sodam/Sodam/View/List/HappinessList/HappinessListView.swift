@@ -22,7 +22,6 @@ struct HappinessListView: View {
     }
     
     var body: some View {
-        
         NavigationStack {
             GeometryReader { geometry in
                 VStack(alignment: .center) {
@@ -36,11 +35,22 @@ struct HappinessListView: View {
                         .foregroundStyle(Color.textAccent)
                         .padding(.vertical, 8)
                     
-                    if let happinessList = $viewModel.happinessList.wrappedValue,
-                       !happinessList.isEmpty {
+                    if viewModel.happinessList.count > 0 {
                         List {
-                            ForEach(happinessList, id: \.self) { happiness in
-                                HappinessCell(happiness: happiness, happinessRepository: viewModel.getHappinessRepository(), isCanDelete: viewModel.hangdam.endDate == nil ? false : true, image: viewModel.getThumnail(from: happiness.imagePaths.first ?? ""))
+                            ForEach(viewModel.happinessList, id: \.self) { happiness in
+                                NavigationLink (destination: {
+                                    HappinessDetailView(
+                                        viewModel: HappinessDetailViewModel(happiness: happiness, happinessRepository: viewModel.getHappinessRepository()),
+                                        isCanDelete: viewModel.hangdam.endDate == nil ? false : true
+                                    )
+                                }, label: {
+                                    HappinessCell(
+                                        image: viewModel.getThumnail(from: happiness.imagePaths.first),
+                                        content: happiness.content,
+                                        date: happiness.formattedDate
+                                    )
+//                                    HappinessCell(happiness: happiness, happinessRepository: viewModel.getHappinessRepository(), isCanDelete: viewModel.hangdam.endDate == nil ? false : true, image: viewModel.getThumnail(from: happiness.imagePaths.first))
+                                })
                             }
                             .listRowSeparator(.hidden)
                             .listRowBackground(

@@ -11,7 +11,7 @@ import UIKit
 
 final class HappinessListViewModel: ObservableObject {
     @Published var hangdam: HangdamDTO
-    @Published var happinessList: [HappinessDTO]?
+    @Published var happinessList: [HappinessDTO]
     
     private let happinessRepository: HappinessRepository
     
@@ -31,8 +31,7 @@ final class HappinessListViewModel: ObservableObject {
         return self.happinessRepository
     }
     
-    func getThumnail(from path: String) -> UIImage? {
+    func getThumnail(from path: String?) -> UIImage? {
         return self.happinessRepository.getThumbnailImage(from: path)
     }
 }
-

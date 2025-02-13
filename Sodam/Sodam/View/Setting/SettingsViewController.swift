@@ -10,11 +10,13 @@ import UIKit
 final class SettingsViewController: UIViewController {
     private let settingViewModel: SettingViewModel
     private let settingView = SettingView()
-
+    var isShowTimeCell: Bool
+    
     // MARK: - Initializer
     
     init(settingViewModel: SettingViewModel) {
         self.settingViewModel = settingViewModel
+        self.isShowTimeCell = settingViewModel.getAppNotificationToggleState()
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -30,19 +32,18 @@ final class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .viewBackground
-        setupTableView()
+        //setupTableView()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
-        checkNotificationPermissionAndUpdateSwitch()  // 알림 권한 상태를 체크하여 스위치의 초기 상태를 업데이트 뷰가 갱신될 필요가 있어viewWillAppear에 작성
-        NotificationCenter.default.addObserver(self, selector: #selector(checkNotificationPermissionAndUpdateSwitch), name: UIApplication.willEnterForegroundNotification, object: nil)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
+        setupTableView()
+
+        // 저장된 앱 설정 값을 불러오기
+        settingViewModel.isToggleOn = settingViewModel.getAppNotificationToggleState()
+        print("settingViewModel.isToggleOn => \(settingViewModel.isToggleOn)")
+        settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
 }
 
@@ -55,54 +56,6 @@ private extension SettingsViewController {
         settingView.tableView.separatorInset.right = 15
         
         settingView.tableView.register(SettingTableViewCell.self, forCellReuseIdentifier: SettingTableViewCell.reuseIdentifier)
-    }
-    
-    /// 현재 알림 권한 상태를 확인한 후, 해당 상태에 따라 스위치와 알림 시간을 업데이트
-    ///
-    /// - 설명:
-    ///   1. `UNUserNotificationCenter`의 설정을 가져와 사용자가 알림을 허용했는지 확인
-    ///   2. 허용된 경우 스위치를 ON 상태로 만들고, 저장된 알림 시간이 없으면 기본 시간(21:00)으로 설정
-    ///   3. 거부된 경우 스위치를 OFF 상태로 유지하고, 상태를 저장
-    ///
-    ///
-    @objc func checkNotificationPermissionAndUpdateSwitch() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            DispatchQueue.main.async {
-                let isAuthorizedNow = settings.authorizationStatus == .authorized  // 현재 알림 권한 상태 확인
-                let savedToggleState = self.settingViewModel.getNotificationToggleState()  // 저장된 알림 토글 상태 가져오기
-                let isFirstLaunch = UserDefaultsManager.shared.isFirstLaunch()  // 첫 실행 여부 확인
-                
-                print("✅ savedToggleState: \(savedToggleState)")
-                print("🔍 첫 실행 여부: \(isFirstLaunch)")
-                
-                if isFirstLaunch {
-                    // ✅ 앱이 첫 실행일 경우, 기존 저장된 토글 상태 유지 (무조건 false로 설정하지 않음)
-                    self.settingViewModel.isToggleOn = savedToggleState
-                    
-                    // ✅ 첫 실행이 끝났음을 저장 (한 번만 실행됨)
-                    UserDefaultsManager.shared.markFirstLaunchCompleted()
-                } else {
-                    // ✅ 기존 저장된 값 사용
-                    self.settingViewModel.isToggleOn = savedToggleState
-                }
-                
-                self.settingViewModel.saveIsToggleNotification(self.settingViewModel.isToggleOn)
-                
-                if isAuthorizedNow, self.settingViewModel.isToggleOn, self.settingViewModel.getNotificationTime() == nil {
-                    // 기존에 저장된 알림 시간이 없으면 기본값(21:00) 설정
-                    let defaultTime = self.defaultNotificationTime()
-                    self.settingViewModel.saveNotificationTime(defaultTime)
-                    self.settingViewModel.setReservedNotificaion(defaultTime)
-                } else if !isAuthorizedNow {
-                    // 알림 권한이 없으면 강제로 OFF
-                    self.settingViewModel.isToggleOn = false
-                    self.settingViewModel.saveIsToggleNotification(false)
-                }
-                
-                // UI 업데이트를 위해 테이블 뷰 리로드
-                self.settingView.tableView.reloadData()
-            }
-        }
     }
     
     // 기본 시간(21:00) 반환하는 함수
@@ -128,7 +81,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         
         switch sectionType {
         case .appSetting:
-            return settingViewModel.isToggleOn ? 2 : 1
+            return self.isShowTimeCell ? 2 : 1
         case .develop:
             return 2
         }
@@ -162,8 +115,10 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
             if indexPath.row == 0 {
                 // 첫 번째 셀: 알림 설정
                 cell.configure(title: Setting.SetCell.notification.rawValue, switchAction: #selector(didToggleSwitch(_:)), timeAction: nil, version: "")
-                cell.switchButton.isOn = settingViewModel.isToggleOn
-            } else if indexPath.row == 1 && settingViewModel.isToggleOn {
+                print("cell.switchButton.isOn => \(settingViewModel.isToggleOn)")
+                cell.switchButton.isOn = settingViewModel.getAppNotificationToggleState()
+                isShowTimeCell = false
+            } else if indexPath.row == 1 && settingViewModel.getAppNotificationToggleState() {
                 // 두 번째 셀: 시간 설정 (스위치가 켜졌을 때만 표시)
                 cell.configure(title: Setting.SetCell.setTime.rawValue, switchAction: nil, timeAction: #selector(userScheduleNotification), version: "")
                 cell.titleLabel.textColor = .black
@@ -177,7 +132,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         case .develop:
             cell.timePicker.isHidden = true
             cell.switchButton.isHidden = true
-
+            
             // 두 번째 섹션의 셀 (항상 두 개 표시)
             if indexPath.row == 0 {
                 cell.versionLabel.isHidden = true
@@ -207,32 +162,17 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     
     // 알림 스위치의 상태가 변경되었을 때 호출되는 액션
     @objc func didToggleSwitch(_ sender: UISwitch) {
-        // 알림 권한 상태를 비동기로 확인하여, 권한이 없는 경우 경고창을 띄우고 스위치를 OFF로 변경
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            DispatchQueue.main.async {
-                if settings.authorizationStatus != .authorized {
-                    sender.isOn = false // 토글을 다시 OFF 상태로 변경
-                    self.settingViewModel.isToggleOn = false // ViewModel도 OFF로 반영
-                    self.settingViewModel.saveIsToggleNotification(false) // 상태를 즉시 저장
-                    
-                    self.showNotificationPermissionAlert()
-                } else {
-                    // 사용자가 직접 스위치를 Off 했을 때 상태를 즉시 저장
-                    self.settingViewModel.isToggleOn = sender.isOn
-                    self.settingViewModel.saveIsToggleNotification(sender.isOn)
-                    
-                    self.handleNotificationToggle(isOn: sender.isOn)
-                    print("🔹 handleNotificationToggle - isOn: \(sender.isOn)")
-                }
-            }
-        }
+        print("sender.isOn => \(sender.isOn)")
+        settingViewModel.saveIsAppToggleNotification(sender.isOn)
+        self.isShowTimeCell = sender.isOn
+        settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
     
     // 사용자가 DatePicker를 통해 알림 시간을 선택했을 때 호출되는 액션
     @objc func userScheduleNotification(_ sender: UIDatePicker) {
         //선택한 시간을 뷰모델에 저장하고, 알림 스위치가 켜진 경우 알림 예약을 업데이트
         settingViewModel.saveNotificationTime(sender.date)
-
+        
         if settingViewModel.isToggleOn {
             settingViewModel.setReservedNotificaion(sender.date)
         }
@@ -266,27 +206,16 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     
     // 알림 스위치가 On/Off시 실행되는 메서드
     private func handleNotificationToggle(isOn: Bool) {
-        // 뷰모델의 상태를 업데이트하고 UserDefaults에 저장
-        settingViewModel.isToggleOn = isOn
-        settingViewModel.saveIsToggleNotification(isOn)
-        
-        if isOn {
-            // 알림 스위치가 켜진 경우, 저장된 알림 시간이 있으면 해당 시간으로 알림 예약을 진행
-            if let savedTime = settingViewModel.getNotificationTime() {
-                settingViewModel.setReservedNotificaion(savedTime)
-            } else {
-                // 저장된 시간이 없는 경우 현재 시간을 기본값으로 사용하여 알림 예약
-                // TODO: 현재시간이 아닌 디폴트 9시 재확인
-                let currentDate = Date()
-                settingViewModel.saveNotificationTime(currentDate)
-                settingViewModel.setReservedNotificaion(currentDate)
-            }
+        if isOn, let savedTime = settingViewModel.getNotificationTime() {
+            settingViewModel.setReservedNotificaion(savedTime)
         } else {
-            // 알림 스위치가 꺼진 경우, 미리 예약된 알림 요청을 제거
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["SelectedTimeNotification"])
         }
-        
-        // 알림 스위치 상태 변경에 따른 UI 갱신을 위해 첫 번째 섹션을 다시 로드
         settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
+}
+
+@available(iOS 17.0, *)
+#Preview {
+    SettingsViewController(settingViewModel: SettingViewModel())
 }

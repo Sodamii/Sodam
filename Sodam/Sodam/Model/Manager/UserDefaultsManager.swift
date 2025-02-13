@@ -16,12 +16,12 @@ final class UserDefaultsManager {
     // 이름 충돌 방지 및 재사용성 증가
     private enum Keys {
         static let notificationTime = "time"  // 앱 알림 시간
-        static let notificationToggleState = "notificationToggleState"  // 앱 알림 토글 상태
+        static let appSettingToggleState = "appSettingToggleState"  // 앱 설정 토글 상태
         static let content = "content"  // 작성 내용
         static let imagePath = "imagePath"  // 작성시 등록 이미지
         static let notificationAuthorizationStatus = "notificationAuthorizationStatus"  // 알림 권한 상태 (허용/거부)를 UserDefaults에 저장
         static let notificationInitialSetupComplete = "notificationInitialSetupComplete" // 앱 알림 초기 설정 여부 확인
-        static let isFirstLaunch = "isFirstLaunch"  // 앱 첫 실행 여부 저장
+        static let isFirst = "isfirst"
     }
     
     // MARK: - UserDefaults에 저장
@@ -31,9 +31,9 @@ final class UserDefaultsManager {
         userDefaults.set(time, forKey: Keys.notificationTime)
     }
     
-    // 알림 토글 상태 (ON/OFF)를 UserDefaults에 저장
-    func saveNotificationToggleState(_ isOn: Bool) {
-        userDefaults.set(isOn, forKey: Keys.notificationToggleState)
+    // 앱 설정 알림 토글 상태 (ON/OFF)를 UserDefaults에 저장
+    func saveAppNotificationToggleState(_ isOn: Bool) {
+        userDefaults.set(isOn, forKey: Keys.appSettingToggleState)
     }
     
     // 작성된 내용(content)을 UserDefaults에 저장
@@ -51,14 +51,8 @@ final class UserDefaultsManager {
         userDefaults.set(isAuthorized, forKey: Keys.notificationAuthorizationStatus)
     }
     
-    // 알림 초기 설정 완료 여부를 확인 (알림 설정이 처음 완료되었는지 여부)
-    func isNotificationSetupComplete() -> Bool {
-        return userDefaults.bool(forKey: Keys.notificationInitialSetupComplete)
-    }
-    
-    // 앱 첫 실행 여부를 확인하는 함수 추가
-    func isFirstLaunch() -> Bool {
-        return !userDefaults.bool(forKey: Keys.isFirstLaunch)
+    func saveIsFisrt(_ isFirst: Bool) {
+        userDefaults.set(isFirst, forKey: Keys.isFirst)
     }
 
     // MARK: - UserDefaults에 저장된 값 얻어오기
@@ -68,9 +62,9 @@ final class UserDefaultsManager {
         userDefaults.object(forKey: Keys.notificationTime) as? Date
     }
     
-    // 알림 토글 상태 (ON/OFF)를 가져옴
-    func getNotificationToggleState() -> Bool {
-        userDefaults.bool(forKey: Keys.notificationToggleState)
+    // 앱 설정 알림 토글 상태 (ON/OFF)를 가져옴
+    func getAppNotificationToggleState() -> Bool {
+        userDefaults.bool(forKey: Keys.appSettingToggleState)
     }
     
     // 작성된 내용을 가져옴
@@ -83,6 +77,9 @@ final class UserDefaultsManager {
         userDefaults.stringArray(forKey: Keys.imagePath)
     }
     
+    func getIsFirst() -> Bool {
+        userDefaults.bool(forKey: Keys.isFirst)
+    }
     // 임시 저장된 콘텐츠와 이미지 경로 삭제
     func deleteTemporaryPost() {
         print("[WriteView] 임시저장 됐던 content와 imagePath 삭제")
@@ -93,15 +90,5 @@ final class UserDefaultsManager {
     // 저장된 알림 권한 상태를 가져옴
     func getNotificaionAuthorizationStatus() -> Bool {
         return userDefaults.bool(forKey: Keys.notificationAuthorizationStatus)
-    }
-    
-    // 알림 초기 설정을 완료 표시 (첫 설정 후 완료 상태로 변경)
-    func markNotificationSetupAsComplete() {
-        userDefaults.set(true, forKey: Keys.notificationInitialSetupComplete)
-    }
-    
-    // 앱 첫 실행 여부를 `false`로 변경 (즉, 첫 실행이 아님을 저장)
-    func markFirstLaunchCompleted() {
-        userDefaults.set(true, forKey: Keys.isFirstLaunch)
     }
 }

@@ -107,7 +107,23 @@ final class MainView: UIView {
     
     // 메세지라벨
     func updateMessage(_ message: String) {
-        messageLabel.text = message
+        // 줄 간격 설정
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 8
+        paragraphStyle.alignment = .center
+        
+        // 속성 설정
+        let attributes: [NSAttributedString.Key: Any] = [
+            .paragraphStyle: paragraphStyle,
+            .foregroundColor: messageLabel.textColor ?? .darkGray,
+            .font: messageLabel.font ?? UIFont.mapoGoldenPier(18)
+        ]
+        
+        // NSAttributedString으로 변환
+        let attributedString = NSAttributedString(string: message, attributes: attributes)
+        
+        // UILabel에 적용
+        messageLabel.attributedText = attributedString
     }
     
     // 이름 라벨 업데이트

@@ -14,16 +14,22 @@ final class HappinessListViewModel: ObservableObject {
     @Published var happinessList: [HappinessDTO]
     
     private let happinessRepository: HappinessRepository
+    private let hangdamRepository: HangdamRepository
     
-    init(hangdam: HangdamDTO, happinessRepository: HappinessRepository = HappinessRepository()) {
-        self.hangdam = hangdam
+    init(happinessRepository: HappinessRepository = HappinessRepository(),
+         hangdamRepository: HangdamRepository = HangdamRepository()
+    ) {
         self.happinessRepository = happinessRepository
-        self.happinessList = happinessRepository.getHappinesses(of: hangdam.id)
+        self.hangdamRepository = hangdamRepository
+        self.hangdam = hangdamRepository.getCurrentHangdam()
+        self.happinessList = happinessRepository.getHappinesses(of: hangdamRepository.getCurrentHangdam().id)
     }
     
     func reloadData() {
+        let newHangdam = hangdamRepository.getCurrentHangdam()
         let newHappinesslist = happinessRepository.getHappinesses(of: hangdam.id)
         self.happinessList = newHappinesslist
+        self.hangdam = newHangdam
         print("[HappinessListViewModel] reloadeData 리로드")
     }
     

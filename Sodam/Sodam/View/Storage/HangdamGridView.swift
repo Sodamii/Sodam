@@ -28,7 +28,7 @@ fileprivate struct HangdamGrid: View {
     
     var body: some View {
         NavigationLink {
-            HappinessListView(hangdam: hangdam)
+            HappinessListView()
         } label: {
             VStack(spacing: 1) {
                 Image(.level4)

@@ -32,6 +32,7 @@ final class WriteViewController: UIViewController {
         self.cameraPickerService = cameraPickerService
         self.photoLibraryPickerService = photoLibraryPickerService
         super.init(nibName: nil, bundle: nil)
+        self.writeViewModel.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -68,11 +69,6 @@ final class WriteViewController: UIViewController {
         
         // UITextView의 delegate 설정
         writeView.setTextViewDeleaget(delegate: self)
-        
-        // 뷰모델의 데이터 변경을 관찰
-        writeViewModel.bindPostUpdated { [weak self] post in
-            self?.updateUI(with: post)
-        }
     }
     
     // 모달 dismiss 될 때 호출될 메서드
@@ -97,27 +93,22 @@ final class WriteViewController: UIViewController {
             delegate?.writeViewControllerDiddismiss()
         }
     }
-    
-    // UI 업데이트 메서드
-    private func updateUI(with post: Post) {
-        writeView.setTextViewText(post.content) // 텍스트뷰 업데이트
-        writeView.collectionViewReload() // 컬렉션 뷰 리로드
-        writeView.updateCollectionViewConstraint(writeViewModel.images.isEmpty)
-    }
 }
 
 // MARK: - 컬렉션뷰 DataSource 설정
 extension WriteViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return writeViewModel.images.count
+        return writeViewModel.imageCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCell.identifier, for: indexPath) as? ImageCollectionViewCell else {
             return UICollectionViewCell()
         }
-        let image = writeViewModel.images[indexPath.item]
-        cell.configure(with: image)
+        
+        if let image = writeViewModel.image(at: indexPath.item) {
+            cell.configure(with: image)
+        }
         
         // 삭제 클로저 설정
         cell.onDelete = { [weak self] in
@@ -125,14 +116,6 @@ extension WriteViewController: UICollectionViewDataSource {
             collectionView.reloadData()
         }
         return cell
-    }
-}
-
-// MARK: - 텍스트뷰 deleage 설정
-extension WriteViewController: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        // 텍스트가 변경될 때마다 뷰모델에 전달
-        writeViewModel.updateText(textView.text)
     }
 }
 
@@ -148,7 +131,7 @@ extension WriteViewController {
     
     // 카메라 버튼 탭할 때 호출되는 메서드
     @objc private func openCamera() {
-        guard writeViewModel.images.count < 1 else {
+        guard writeViewModel.imageCount < 1 else {
             alertManager.showImageLimitAlert()
             return
         }
@@ -166,7 +149,7 @@ extension WriteViewController {
     // 이미지 버튼 탭할 때 호출되는 메서드
     @objc private func addImage() {
         // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
-        guard writeViewModel.images.count < 1 else {
+        guard writeViewModel.imageCount < 1 else {
             alertManager.showImageLimitAlert()
             return
         }
@@ -261,11 +244,34 @@ extension WriteViewController {
 
 // MARK: - ImagePickerServiceDelegate
 extension WriteViewController: ImagePickerServiceDelegate {
+    /// 선택된 이미지 전달받는 메서드
     func didFinishPicking(_ image: UIImage?) {
         if let image = image {
             writeViewModel.addImage(image)
         } else {
             print("[WriteViewController] 사용자가 이미지 선택을 취소했거나 로드가 실패함")
         }
+    }
+}
+
+extension WriteViewController: WriteViewModelDelegate {
+    /// UI 업데이트 메서드
+    private func updateUI(with post: Post) {
+        writeView.setTextViewText(post.content) // 텍스트뷰 업데이트
+        writeView.collectionViewReload() // 컬렉션 뷰 리로드
+        writeView.updateCollectionViewConstraint(post.images.isEmpty) // 이미지 유무에 따라 컬렉션뷰 숨김처리
+    }
+    
+    /// 뷰모델에게 작성 내용 전달받는 메서드
+    func didUpdatePost(_ post: Post) {
+        updateUI(with: post) // 작성된 내용으로 UI 업데이트
+    }
+}
+
+// MARK: - 텍스트뷰 deleage 설정
+extension WriteViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        // 텍스트가 변경될 때마다 뷰모델에 전달
+        writeViewModel.updateText(textView.text)
     }
 }

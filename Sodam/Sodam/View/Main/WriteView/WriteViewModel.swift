@@ -7,22 +7,29 @@
 
 import UIKit
 
+protocol WriteViewModelDelegate: AnyObject {
+    func didUpdatePost(_ post: Post)
+}
+
 final class WriteViewModel {
     
-    private let writeModel: WriteModel
+    weak var delegate: WriteViewModelDelegate?
+
     private let happinessRepository: HappinessRepository
     private let currentHangdamID: String
     private let imageManager: ImageManager = .init()
     
     var isPostSubmitted: Bool = false // 작성 완료, 임시 저장 구분하기 위한 Bool 타입 변수. 첫 작성을 고려하여 초기값은 false
     
-    init(writeModel: WriteModel = .init(),
+    private var post: Post
+    
+    init(
          repository: HappinessRepository = HappinessRepository(),
          currentHangdamID: String
     ) {
-        self.writeModel = writeModel
         self.happinessRepository = repository
         self.currentHangdamID = currentHangdamID
+        self.post = Post(content: "", images: [])
     }
 }
 
@@ -30,30 +37,36 @@ final class WriteViewModel {
 extension WriteViewModel {
     // 텍스트 업데이트 메서드
     func updateText(_ text: String) {
-        writeModel.updateText(text)
+        post.content = text
+        delegate?.didUpdatePost(post)
+    }
+    
+    func addImage(_ image: UIImage) {
+        post.images.append(image)
+        delegate?.didUpdatePost(post)
+    }
+    
+    func removeImage(at index: Int) {
+        guard index < post.images.count else { return }
+        post.images.remove(at: index)
+        delegate?.didUpdatePost(post)
     }
     
     // 작성 완료 이벤트 처리
     func submitPost(completion: @escaping () -> Void) {
-        let imagePaths = saveImages(writeModel.post.images)
+        let imagePaths = saveImages(post.images)
         
-        let newHappiness: HappinessDTO = HappinessDTO(content: text, date: Date.now, imagePaths: imagePaths, hangdamID: currentHangdamID)
+        let newHappiness: HappinessDTO = HappinessDTO(content: post.content, date: Date.now, imagePaths: imagePaths, hangdamID: currentHangdamID)
         happinessRepository.createHappiness(newHappiness)
         
         isPostSubmitted = true
+        
         // post 초기화
-        writeModel.resetPost()
+        resetPost()
+        delegate?.didUpdatePost(post)
+        
         // 작성 완료 알림 표시 후 모달 닫기
         completion()
-    }
-    
-    func addImage(_ image: UIImage) {
-        writeModel.addImage(image)
-    }
-    
-    // 뷰에서 이미지 제거
-    func removeImage(at index: Int) {
-        writeModel.removeImage(at: index)
     }
     
     // 작성 취소 이벤트 처리
@@ -61,24 +74,26 @@ extension WriteViewModel {
         saveTemporaryPost()
         isPostSubmitted = false
     }
+    
+    // 제출 완료시 작성 내용 초기화
+    func resetPost() {
+        post = Post(content: "", images: [])
+        delegate?.didUpdatePost(post)
+    }
 }
 
 // MARK: - 결과를 뷰에 전달
 extension WriteViewModel {
-    // Model의 데이터 변경을 관찰
-    func bindPostUpdated(completion: @escaping (Post) -> Void) {
-        writeModel.onPostUpdated = completion
+    
+    var imageCount: Int {
+        return post.images.count
     }
     
-    // Model의 이미지 데이터를 View에 전달
-    var images: [UIImage] {
-        return writeModel.post.images
+    func image(at index: Int) -> UIImage? {
+        guard index < post.images.count else { return nil }
+        return post.images[index]
     }
     
-    // Model의 텍스트 데이터를 View에 전달
-    var text: String {
-        return writeModel.post.content
-    }
 }
 
 // MARK: - 이미지 경로 생성 및 저장
@@ -99,9 +114,9 @@ extension WriteViewModel {
     
     // 임시 저장을 위한 메서드
     func saveTemporaryPost() {
-        let imagePaths = saveImages(writeModel.post.images)
+        let imagePaths = saveImages(post.images)
         
-        UserDefaultsManager.shared.saveContent(writeModel.post.content)
+        UserDefaultsManager.shared.saveContent(post.content)
         UserDefaultsManager.shared.saveImagePath(imagePaths)
     }
     
@@ -115,12 +130,12 @@ extension WriteViewModel {
         }
         
         // 불러온 글 내용을 모델에 업데이트
-        writeModel.updateText(content)
+        updateText(content)
         
         for imagePath in imagePaths {
             if let result = imageManager.getImage(with: imagePath) { // ImageManager의 getImage 호출해서 이미지 불러오기
                 // 뷰에 이미지 추가
-                writeModel.addImage(result)
+                addImage(result)
             }
         }
     }

@@ -18,14 +18,21 @@ final class WriteViewController: UIViewController {
     
     private let writeViewModel: WriteViewModel
     private let writeView = WriteView()
+    private let cameraPickerService: ImagePickerServicable
+    private let photoLibraryPickerService: ImagePickerServicable
     
     // 알럿이 항상 필요한게 아니라서 필요할때까지 초기화를 지연시키려고 lazy 사용
     private lazy var alertManager: AlertManager = AlertManager(viewController: self)
     
     // MARK: - 초기화
-    init(writeViewModel: WriteViewModel) {
+    init(writeViewModel: WriteViewModel,
+         cameraPickerService: ImagePickerServicable = CameraPickerService(),
+         photoLibraryPickerService: ImagePickerServicable = PhotoLibraryPickerService()) {
         self.writeViewModel = writeViewModel
+        self.cameraPickerService = cameraPickerService
+        self.photoLibraryPickerService = photoLibraryPickerService
         super.init(nibName: nil, bundle: nil)
+        self.writeViewModel.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -51,6 +58,9 @@ final class WriteViewController: UIViewController {
         // 컬렉션 뷰의 데이터 소스와 델리게이트 설정
         writeView.setCollectionViewDataSource(dataSource: self)
         
+        cameraPickerService.setDelegate(self)
+        photoLibraryPickerService.setDelegate(self)
+        
         // 키보드 알림 설정
         setupKeyboardNotification()
         
@@ -59,11 +69,6 @@ final class WriteViewController: UIViewController {
         
         // UITextView의 delegate 설정
         writeView.setTextViewDeleaget(delegate: self)
-        
-        // 뷰모델의 데이터 변경을 관찰
-        writeViewModel.bindPostUpdated { [weak self] post in
-            self?.updateUI(with: post)
-        }
     }
     
     // 모달 dismiss 될 때 호출될 메서드
@@ -88,27 +93,22 @@ final class WriteViewController: UIViewController {
             delegate?.writeViewControllerDiddismiss()
         }
     }
-    
-    // UI 업데이트 메서드
-    private func updateUI(with post: Post) {
-        writeView.setTextViewText(post.content) // 텍스트뷰 업데이트
-        writeView.collectionViewReload() // 컬렉션 뷰 리로드
-        writeView.updateCollectionViewConstraint(writeViewModel.images.isEmpty)
-    }
 }
 
 // MARK: - 컬렉션뷰 DataSource 설정
 extension WriteViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return writeViewModel.images.count
+        return writeViewModel.imageCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCell.identifier, for: indexPath) as? ImageCollectionViewCell else {
             return UICollectionViewCell()
         }
-        let image = writeViewModel.images[indexPath.item]
-        cell.configure(with: image)
+        
+        if let image = writeViewModel.image(at: indexPath.item) {
+            cell.configure(with: image)
+        }
         
         // 삭제 클로저 설정
         cell.onDelete = { [weak self] in
@@ -116,14 +116,6 @@ extension WriteViewController: UICollectionViewDataSource {
             collectionView.reloadData()
         }
         return cell
-    }
-}
-
-// MARK: - 텍스트뷰 deleage 설정
-extension WriteViewController: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        // 텍스트가 변경될 때마다 뷰모델에 전달
-        writeViewModel.updateText(textView.text)
     }
 }
 
@@ -139,19 +131,17 @@ extension WriteViewController {
     
     // 카메라 버튼 탭할 때 호출되는 메서드
     @objc private func openCamera() {
-        guard writeViewModel.images.count < 1 else {
+        guard writeViewModel.imageCount < 1 else {
             alertManager.showImageLimitAlert()
             return
         }
         
-        writeViewModel.requestCameraAccess { [weak self] isGranted in
+        cameraPickerService.requestAccess(self) { [weak self] isGranted in
+            guard let self = self else { return }
             if isGranted {
-                let cameraPicker = self?.writeViewModel.createCameraPicker()
-                if let picker = cameraPicker {
-                    self?.present(picker, animated: true)
-                }
+                cameraPickerService.show(self)
             } else {
-                self?.alertManager.showGoToSettingsAlert(for: .camera)
+                self.alertManager.showGoToSettingsAlert(for: .camera)
             }
         }
     }
@@ -159,21 +149,18 @@ extension WriteViewController {
     // 이미지 버튼 탭할 때 호출되는 메서드
     @objc private func addImage() {
         // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
-        guard writeViewModel.images.count < 1 else {
+        guard writeViewModel.imageCount < 1 else {
             alertManager.showImageLimitAlert()
             return
         }
         
-        writeViewModel.requestPhotoLibraryAccess { [weak self] isGranted in
+        photoLibraryPickerService.requestAccess(self) { [weak self] isGranted in
+            guard let self = self else { return }
             if isGranted {
-                // 사진 라이브러리 권한이 허용된 경우 사진 피커 생성 및 표시
-                let photoPicker = self?.writeViewModel.createPhotoPicker()
-                if let picker = photoPicker {
-                    self?.present(picker, animated: true)
-                }
+                photoLibraryPickerService.show(self)
             } else {
                 // 권한이 거부된 경우 설정 화면으로 이동하는 알림 표시
-                self?.alertManager.showGoToSettingsAlert(for: .image)
+                self.alertManager.showGoToSettingsAlert(for: .image)
             }
         }
     }
@@ -252,5 +239,35 @@ extension WriteViewController {
         UIView.animate(withDuration: animationDuration) {
             self.view.layoutIfNeeded()
         }
+    }
+}
+
+// MARK: - ImagePickerServiceDelegate
+extension WriteViewController: ImagePickerServiceDelegate {
+    /// 선택된 이미지 전달받는 메서드
+    func didFinishPicking(_ image: UIImage?) {
+        if let image = image {
+            writeViewModel.addImage(image)
+        } else {
+            print("[WriteViewController] 사용자가 이미지 선택을 취소했거나 로드가 실패함")
+        }
+    }
+}
+
+// MARK: - 뷰 업데이트
+extension WriteViewController: WriteViewModelDelegate {
+    /// 뷰모델에게 작성 내용 전달받는 메서드
+    func didUpdatePost(_ text: String, _ isEmpty: Bool) {
+        writeView.setTextViewText(text) // 텍스트뷰 업데이트
+        writeView.collectionViewReload() // 컬렉션 뷰 리로드
+        writeView.updateCollectionViewConstraint(isEmpty) // 이미지 유무에 따라 컬렉션뷰 숨김처리
+    }
+}
+
+// MARK: - 텍스트뷰 deleage 설정
+extension WriteViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        // 텍스트가 변경될 때마다 뷰모델에 전달
+        writeViewModel.updateText(textView.text)
     }
 }

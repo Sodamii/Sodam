@@ -16,8 +16,8 @@ struct HappinessListView: View {
     
     private let cornerRadius: CGFloat = 15
     
-    init(hangdam: HangdamDTO, isBackButtonHidden: Bool = false) {
-        self._viewModel = StateObject(wrappedValue: HappinessListViewModel(hangdam: hangdam))
+    init(isBackButtonHidden: Bool = false) {
+        self._viewModel = StateObject(wrappedValue: HappinessListViewModel())
         self._isBackButtonHidden = State(initialValue: isBackButtonHidden)
     }
     
@@ -117,7 +117,6 @@ enum FontSize {
 }
 
 #Preview {
-    let hangdamRepository: HangdamRepository = HangdamRepository()
-    HappinessListView(hangdam: hangdamRepository.getCurrentHangdam())
+    
 }
 

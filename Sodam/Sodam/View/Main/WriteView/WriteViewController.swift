@@ -254,6 +254,7 @@ extension WriteViewController: ImagePickerServiceDelegate {
     }
 }
 
+// MARK: - 뷰 업데이트
 extension WriteViewController: WriteViewModelDelegate {
     /// UI 업데이트 메서드
     private func updateUI(with post: Post) {

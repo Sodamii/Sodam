@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// 뷰에 작성 내용 전달
 protocol WriteViewModelDelegate: AnyObject {
     func didUpdatePost(_ post: Post)
 }
@@ -33,26 +34,28 @@ final class WriteViewModel {
     }
 }
 
-// MARK: - 입력을 모델에 전달
+// MARK: - 입력 이벤트 처리
 extension WriteViewModel {
-    // 텍스트 업데이트 메서드
+    /// 텍스트 업데이트 메서드
     func updateText(_ text: String) {
         post.content = text
         delegate?.didUpdatePost(post)
     }
     
+    /// 뷰에 이미지 추가 메서드
     func addImage(_ image: UIImage) {
         post.images.append(image)
         delegate?.didUpdatePost(post)
     }
     
+    // 뷰에서 이미지 제거 메서드
     func removeImage(at index: Int) {
         guard index < post.images.count else { return }
         post.images.remove(at: index)
         delegate?.didUpdatePost(post)
     }
     
-    // 작성 완료 이벤트 처리
+    /// 작성 완료 이벤트 처리 메서드
     func submitPost(completion: @escaping () -> Void) {
         let imagePaths = saveImages(post.images)
         
@@ -69,36 +72,37 @@ extension WriteViewModel {
         completion()
     }
     
-    // 작성 취소 이벤트 처리
+    /// 작성 취소 이벤트 처리 메서드
     func cancelPost() {
         saveTemporaryPost()
         isPostSubmitted = false
     }
     
-    // 제출 완료시 작성 내용 초기화
+    /// 제출 완료시 작성 내용 초기화 메서드
     func resetPost() {
         post = Post(content: "", images: [])
         delegate?.didUpdatePost(post)
     }
 }
 
-// MARK: - 결과를 뷰에 전달
+// MARK: - 뷰에서 사용할 모델 정보 전달
 extension WriteViewModel {
     
+    // 이미지 갯수 반환
     var imageCount: Int {
         return post.images.count
     }
     
+    // 특정 셀의 이미지 반환
     func image(at index: Int) -> UIImage? {
         guard index < post.images.count else { return nil }
         return post.images[index]
     }
-    
 }
 
 // MARK: - 이미지 경로 생성 및 저장
 extension WriteViewModel {
-    // 이미지 경로 생성 및 파일매니저에 저장하기 위한 메서드
+    /// 이미지 경로 생성 및 파일매니저에 저장하기 위한 메서드
     private func saveImages(_ images: [UIImage]) -> [String] {
         var imagePaths: [String] = []
         
@@ -112,7 +116,7 @@ extension WriteViewModel {
         return imagePaths
     }
     
-    // 임시 저장을 위한 메서드
+    /// 임시 저장을 위한 메서드
     func saveTemporaryPost() {
         let imagePaths = saveImages(post.images)
         
@@ -120,7 +124,7 @@ extension WriteViewModel {
         UserDefaultsManager.shared.saveImagePath(imagePaths)
     }
     
-    // 임시 저장된 글 불러오는 메서드
+    /// 임시 저장된 글 불러오는 메서드
     func loadTemporaryPost() {
         guard let content = UserDefaultsManager.shared.getContent(), // 임시 저장된 글 불러오기
               let imagePaths = UserDefaultsManager.shared.getImagePath() // 임시 저장된 이미지 경로 불러오기

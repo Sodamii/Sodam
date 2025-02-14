@@ -11,12 +11,12 @@ struct HangdamStatusView: View {
     
     let size: CGSize
     
-    @Binding var hangdam: HangdamDTO
+    @Binding var content: StatusContent
     
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
             Image
-                .hangdamImage(level: hangdam.level)
+                .hangdamImage(level:content.level)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: size.width / 3)
@@ -24,18 +24,19 @@ struct HangdamStatusView: View {
                 .clipShape(.circle)
             
             VStack(alignment: .leading, spacing: 10) {
-                Text(hangdam.name ?? "이름을 지어주세요!")
-                    .font(.maruburiot(type: .bold, size: hangdam.name == nil ? 18 : 25))
-                Text("Lv.\(hangdam.level) \(hangdam.levelName)")
+                Text(content.name)
+                    .font(.maruburiot(type: .bold, size: 25))
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
+                
+                //                Text("Lv.\(hangdam.level) \(hangdam.levelName)")
+                Text(content.levelDescription)
                     .font(.maruburiot(type: .semiBold, size: 17))
-                if let startDate = hangdam.startDate {
-                    Text("\(startDate) ~ \(hangdam.endDate ?? "")")
-                        .font(.maruburiot(type: .regular, size: 16))
-                        .minimumScaleFactor(0.7)
-                        .lineLimit(1)
-                } else {
-                    Text("")
-                }
+                
+                Text(content.dateDescription)
+                    .font(.maruburiot(type: .regular, size: 16))
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
             }
             .foregroundStyle(Color(uiColor: .white))
         }
@@ -47,6 +48,14 @@ struct HangdamStatusView: View {
 }
 
 #Preview {
-    let hangdamRepository: HangdamRepository = HangdamRepository()
-    HangdamStatusView(size: CGSize(width: 402, height: 716), hangdam: .constant(hangdamRepository.getCurrentHangdam()))
+    HangdamStatusView(
+        size: CGSize(width: 402, height: 716),
+        content: .constant(StatusContent(
+            level: 1,
+            name: "test",
+            levelDescription: "lv.1 test",
+            dateDescription: "2000.22.22 ~"
+        )
+        )
+    )
 }

@@ -7,11 +7,7 @@
 
 import UIKit
 
-// MARK: - 알럿 타입 정의
-enum ButtonTapType {
-    case camera        // 카메라 접근 권한이 없을 때
-    case image         // 사진 라이브러리 접근 권한이 없을 때
-}
+// MARK: - 알럿 매니저
 
 final class AlertManager {
     
@@ -26,10 +22,13 @@ final class AlertManager {
     ///   - title: 알럿의 제목
     ///   - message: 알럿의 메세지
     ///   - actions: 알럿에 추가할 액션들
-    func showAlert(title: String, message: String, actions: [UIAlertAction] = []) {
+    func showAlert(alertMessage: AlertMessage, actions: [UIAlertAction] = []) {
         // 알럿 컨트롤러 (제목, 메세지, 스타일 설정)
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        
+        let alertController = UIAlertController(
+            title: alertMessage.title,
+            message: alertMessage.message,
+            preferredStyle: .alert
+        )
         // 전달된 액션이 없으면 기본 "확인" 버튼을 추가함
         if actions.isEmpty {
             alertController.addAction(UIAlertAction(title: "확인", style: .default))
@@ -69,24 +68,22 @@ final class AlertManager {
         
         // 확인 버튼 액션 설정
         let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
-            //입력된 이름이 비어있는지 확인
             guard let name = alertController.textFields?.first?.text, !name.isEmpty else {
-                // 이름 비어있으면 토스트 메세지로 알림
-                ToastManager.shared.showToastMessage(message: "이름을 입력해주세요.")
+                ToastManager.shared.showToastMessage(message: ToastMessage.nameRequired.message)
                 return
             }
             
             // 이름 길이 네글자 초과하는지 확인
             if name.count > 4 {
                 // 글자수 초과하면 토스트 메세지로 알림
-                ToastManager.shared.showToastMessage(message: "최대 글자수를 초과했습니다.")
+                ToastManager.shared.showToastMessage(message: ToastMessage.nameTooLong.message)
                 return
             }
             
             // 금지어가 포함된 이름인지 확인
             if AlertManager.containsForbiddenWord(name) {
                 // 금지어 있으면 토스트 메세지로 아림
-                ToastManager.shared.showToastMessage(message: "적절하지 않은 이름입니다.")
+                ToastManager.shared.showToastMessage(message: ToastMessage.invalidName.message)
                 return
             }
             
@@ -105,50 +102,20 @@ final class AlertManager {
         viewController?.present(alertController, animated: true)
     }
     
-    /// 이미 작성했다면 나오는 알럿
-    func showAlreadyWrittenTodayAlert() {
-        showAlert(
-            title: "오늘의 소확행 작성 완료!",
-            message: "내일 또 당신의 소소한 행복을 작성해주세요"
-        )
-    }
-    
     // MARK: - WriteViewController 알럿
-    
-    /// 행복 작성이 빈 공간일 경우
-    func showEmptyTextAlert() {
-        showAlert(
-            title: "행복 기록이 없습니다",
-            message: "내용을 입력해주세요!"
-        )
-    }
-    
-    /// 이미지 개수 제한 경고 알럿
-    func showImageLimitAlert() {
-        showAlert(
-            title: "이미지를 추가할 수 없습니다.",
-            message: "하나의 글에 최대 한 개의 이미지만 \n 추가할 수 있습니다."
-        )
-    }
     
     /// 작성 완료 알럿
     func showCompletionAlert(dismissHandler: @escaping () -> Void) {
         let okAction = UIAlertAction(title: "확인", style: .default) { _ in
             dismissHandler()
         }
-        showAlert(title: "작성 완료", message: "글이 성공적으로 작성되었습니다!", actions: [okAction])
+        showAlert(alertMessage: .writeCompleted, actions: [okAction])
     }
     
     /// 설정 이동 알럿 (카메라 / 사진 라이브러리)
     /// - Parameter type: 카메라 또는 이미지 접근 권한에 대한 설정 이동 여부
     func showGoToSettingsAlert(for type: ButtonTapType) {
-        let title: String
-        switch type {
-        case .camera:
-            title = "현재 카메라 사용에 대한 접근 권한이 없습니다."
-        case .image:
-            title = "현재 사진 라이브러리 접근에 대한 권한이 없습니다."
-        }
+        let alertMessage: AlertMessage = (type == .camera) ? .cameraPermission : .imagePermission
         
         let settingsAction = UIAlertAction(title: "설정으로 이동하기", style: .default) { _ in
             guard let settingsURL = URL(string: UIApplication.openSettingsURLString),
@@ -159,7 +126,7 @@ final class AlertManager {
         }
         let cancelAction = UIAlertAction(title: "취소", style: .cancel)
         
-        showAlert(title: title, message: "설정 > Sodam 탭에서 접근 권한을 활성화 해주세요.", actions: [cancelAction, settingsAction])
+        showAlert(alertMessage: alertMessage, actions: [cancelAction, settingsAction])
     }
     
     // MARK: - 실시간 입력 감지

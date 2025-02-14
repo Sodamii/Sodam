@@ -9,25 +9,24 @@ import SwiftUI
 import Combine
 
 struct HappinessListView: View {
-    
-    @StateObject var viewModel: HappinessListViewModel
+    @ObservedObject var viewModel: HappinessListViewModel
     @Environment(\.dismiss) private var dismiss
-    @State var isBackButtonHidden: Bool // 기록 탭으로 진입하면 뒤로가기 숨기기
     
+    private let isBackButtonHidden: Bool // 기록 탭으로 진입하면 뒤로가기 숨기기
     private let cornerRadius: CGFloat = 15
     
-    init(hangdam: HangdamDTO, isBackButtonHidden: Bool = false) {
-        self._viewModel = StateObject(wrappedValue: HappinessListViewModel(hangdam: hangdam))
-        self._isBackButtonHidden = State(initialValue: isBackButtonHidden)
+    init(viewModel: HappinessListViewModel, isBackButtonHidden: Bool) {
+        self.viewModel = viewModel
+        self.isBackButtonHidden = isBackButtonHidden
     }
     
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
                 VStack(alignment: .center) {
-                    HangdamStatusView(size: geometry.size, hangdam: $viewModel.hangdam)
+                    HangdamStatusView(size: geometry.size, content: $viewModel.statusContent)
                         .clipShape(.rect(cornerRadius: cornerRadius))
-                    Text("\($viewModel.hangdam.wrappedValue.name ?? "행담이")가 먹은 기억들")
+                    Text(viewModel.listContent.title)
                         .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
                         .font(.mapoGoldenPier(FontSize.title2))
                         .lineLimit(1)
@@ -35,27 +34,28 @@ struct HappinessListView: View {
                         .foregroundStyle(Color.textAccent)
                         .padding(.vertical, 8)
                     
-                    if viewModel.happinessList.count > 0 {
+                    if !viewModel.listConfigs.isEmpty {
                         List {
-                            ForEach(viewModel.happinessList, id: \.self) { happiness in
-                                NavigationLink (destination: {
-                                    HappinessDetailView(
-                                        viewModel: HappinessDetailViewModel(happiness: happiness, happinessRepository: viewModel.getHappinessRepository()),
-                                        isCanDelete: viewModel.hangdam.endDate == nil ? false : true
-                                    )
-                                }, label: {
-                                    HappinessCell(
-                                        image: viewModel.getThumnail(from: happiness.imagePaths.first),
-                                        content: happiness.content,
-                                        date: happiness.formattedDate
-                                    )
-//                                    HappinessCell(happiness: happiness, happinessRepository: viewModel.getHappinessRepository(), isCanDelete: viewModel.hangdam.endDate == nil ? false : true, image: viewModel.getThumnail(from: happiness.imagePaths.first))
-                                })
+                            ForEach(viewModel.listConfigs, id: \.self) { config in
+                                NavigationLink (
+                                    destination: {
+                                        HappinessDetailView(
+                                            viewModel: HappinessDetailViewModel(
+                                                id: config.detailContentID,
+                                                isCanDelete: viewModel.isCanDelete,
+                                                content: config.detailContent,
+                                                detailViewOperator: viewModel.detailViewOperator
+                                            )
+                                        )
+                                    },
+                                    label: {
+                                        HappinessCell(content: config.cellContent)
+                                    }
+                                )
                             }
                             .listRowSeparator(.hidden)
                             .listRowBackground(
-                                RoundedRectangle(cornerRadius: cornerRadius)
-                                    .foregroundStyle(Color.cellBackground)
+                                RoundedRectangle(cornerRadius: cornerRadius).foregroundStyle(Color.cellBackground)
                             )
                             .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
                         }
@@ -65,7 +65,7 @@ struct HappinessListView: View {
                     } else {
                         VStack(alignment:.center) {
                             Spacer()
-                            Text("아직 가진 기억이 없어요😢")
+                            Text(viewModel.listContent.emptyComment)
                                 .frame(maxWidth: .infinity, maxHeight: 35, alignment: .center)
                                 .font(.mapoGoldenPier(20))
                                 .lineLimit(1)
@@ -117,7 +117,5 @@ enum FontSize {
 }
 
 #Preview {
-    let hangdamRepository: HangdamRepository = HangdamRepository()
-    HappinessListView(hangdam: hangdamRepository.getCurrentHangdam())
 }
 

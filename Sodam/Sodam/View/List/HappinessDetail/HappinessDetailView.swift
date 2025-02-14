@@ -11,14 +11,13 @@ struct HappinessDetailView: View {
     
     let viewModel: HappinessDetailViewModel
     @State private var isAlertPresented: Bool = false
-    let isCanDelete: Bool
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack{
             ScrollView {
                 VStack {
-                    if let imagePath = viewModel.happiness.imagePaths.first {
+                    if let imagePath = viewModel.content.happinessImagePath {
                         Image(uiImage: self.viewModel.getImage(from: imagePath))
                             .resizable()
                             .scaledToFit()
@@ -28,7 +27,7 @@ struct HappinessDetailView: View {
                             .padding(.bottom)
                     }
                     HStack(alignment: .top) {
-                        Text(viewModel.happiness.content)
+                        Text(viewModel.content.happinessContent)
                             .font(.sejongGeulggot(16))
                             .lineSpacing(10)
                             .foregroundStyle(Color(UIColor.darkGray))
@@ -63,11 +62,11 @@ struct HappinessDetailView: View {
             }
             
             ToolbarItem(placement: .principal) {
-                Text(viewModel.happiness.formattedDate)
+                Text(viewModel.content.happinessDate)
                     .font(.maruburiot(type: .bold, size: 20))
                     .foregroundStyle(Color.textAccent)
             }
-            if isCanDelete {
+            if viewModel.isCanDelete {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button( action: {
                         isAlertPresented = true

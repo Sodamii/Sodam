@@ -5,11 +5,11 @@
 //  Created by 박진홍 on 2/14/25.
 //
 
-final class StatusContentMapper: ContentMapperProtocol {
+final class StatusContentMapper: DataMapping {
     typealias Input = HangdamDTO
     typealias Output = StatusContent
     
-    func map(from input: HangdamDTO) throws -> StatusContent {
+    func map(from input: HangdamDTO) -> StatusContent {
         let level: Int = input.level
         
         let name: String = {

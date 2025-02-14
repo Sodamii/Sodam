@@ -25,10 +25,27 @@ struct HangdamGridView: View {
 fileprivate struct HangdamGrid: View {
     
     @Binding var hangdam: HangdamDTO
+    //TODO: 풀 받으면 사라질 예정
+    var listViewModel: HappinessListViewModel = {
+        let hangdamRepository: HangdamRepository = HangdamRepository()
+        let happinessRepository: HappinessRepository = HappinessRepository()
+        
+        let detailViewOperator: DetailViewOperator = DetailViewOperator(happinessRepository: happinessRepository)
+        let listViewReloader: ListViewReloader = ListViewReloader(happinessRepository: happinessRepository, hangdamRepository: hangdamRepository)
+        let mapperFactory: DataMapperFactory = DataMapperFactory()
+        
+        let listViewModel: HappinessListViewModel = HappinessListViewModel(
+            detailViewOperator: detailViewOperator,
+            listViewReloader: listViewReloader,
+            mapperFactory: mapperFactory
+        )
+        
+        return listViewModel
+    }()
     
     var body: some View {
         NavigationLink {
-            HappinessListView(hangdam: hangdam)
+            HappinessListView(viewModel: listViewModel, isBackButtonHidden: true)
         } label: {
             VStack(spacing: 1) {
                 Image(.level4)

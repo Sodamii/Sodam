@@ -10,38 +10,24 @@
 import SwiftUI
 
 struct HappinessCell: View {
-    
-//    let happiness: HappinessDTO
-//    let happinessRepository: HappinessRepository
-//    let isCanDelete: Bool
-    
-    let image: UIImage?
-    let content: String
-    let date: String
-//    @State var viewModel: HappinessDetailViewModel?
+    let content: HappinessCellContent
     
     var body: some View {
-//        NavigationLink {
-//            if let viewModel = viewModel {
-//                HappinessDetailView(viewModel: viewModel, isCanDelete: isCanDelete)
-//            }
-//        } label: {
             HStack(alignment: .center, spacing: 16) {
-                if let image = image { // 추후 이미지가 여럿 생기더라도 여긴 첫 이미지를 사용
-                    Image(uiImage: image)
+                if let image = content.imagePath { // 추후 이미지가 여럿 생기더라도 여긴 첫 이미지를 사용
+                    Image(uiImage: UIImage(systemName: "person")!) // TODO: 푸시 전 반드시 수정
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .clipShape(.rect(cornerRadius: 15))
                 }
                 VStack(alignment: .leading) {
-//                    Text(happiness.content)
-                    Text(content)
+                    Text(content.happinessContent)
                         .font(.sejongGeulggot(16))
                         .foregroundStyle(.black)
                         .lineLimit(2)
                         .padding(.bottom, 8)
 //                    Text(happiness.formattedDate)
-                    Text(date)
+                    Text(content.date)
                         .font(.mapoGoldenPier(FontSize.timeStamp))
                         .foregroundStyle(.gray)
                 }

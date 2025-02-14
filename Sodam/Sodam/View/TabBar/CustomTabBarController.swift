@@ -26,8 +26,19 @@ final class CustomTabBarController: UITabBarController {
     
     private func configureViewController() {
         let hangdamRepository: HangdamRepository = HangdamRepository()
+        let happinessRepository: HappinessRepository = HappinessRepository()
         let mainViewModel: MainViewModel = MainViewModel(repository: hangdamRepository)
         let storageViewModel: HangdamStorageViewModel = HangdamStorageViewModel(hangdamRepository: hangdamRepository)
+        
+        let detailViewOperator: DetailViewOperator = DetailViewOperator(happinessRepository: happinessRepository)
+        let listViewReloader: ListViewReloader = ListViewReloader(happinessRepository: happinessRepository, hangdamRepository: hangdamRepository)
+        let mapperFactory: DataMapperFactory = DataMapperFactory()
+        
+        let listViewModel: HappinessListViewModel = HappinessListViewModel(
+            detailViewOperator: detailViewOperator,
+            listViewReloader: listViewReloader,
+            mapperFactory: mapperFactory
+        )
         
         // 메인 탭
         let mainViewController = MainViewController(viewModel: mainViewModel)
@@ -37,7 +48,7 @@ final class CustomTabBarController: UITabBarController {
             selectedImage: UIImage(named: "main.fill"))
         
         // 기록 탭
-        let happinessListViewController = UIHostingController(rootView: HappinessListView(hangdam: mainViewModel.hangdam, isBackButtonHidden: true))
+        let happinessListViewController = UIHostingController(rootView: HappinessListView(viewModel: listViewModel, isBackButtonHidden: false))
         happinessListViewController.tabBarItem = UITabBarItem(
             title: "기록",
             image: UIImage(named: "book"),

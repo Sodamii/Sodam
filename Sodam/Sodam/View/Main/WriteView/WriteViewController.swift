@@ -132,7 +132,7 @@ extension WriteViewController {
     // 카메라 버튼 탭할 때 호출되는 메서드
     @objc private func openCamera() {
         guard writeViewModel.imageCount < 1 else {
-            alertManager.showImageLimitAlert()
+            alertManager.showAlert(alertMessage: .imageLimit)
             return
         }
         
@@ -150,7 +150,7 @@ extension WriteViewController {
     @objc private func addImage() {
         // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
         guard writeViewModel.imageCount < 1 else {
-            alertManager.showImageLimitAlert()
+            alertManager.showAlert(alertMessage: .imageLimit)
             return
         }
         
@@ -168,7 +168,7 @@ extension WriteViewController {
     // 작성완료 버튼 탭할 때 호출되는 메서드
     @objc private func submitText() {
         guard !writeView.getTextViewText().trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            alertManager.showEmptyTextAlert()
+            alertManager.showAlert(alertMessage: .emptyText)
             return
         }
         

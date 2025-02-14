@@ -29,7 +29,6 @@ struct HangdamStatusView: View {
                     .minimumScaleFactor(0.7)
                     .lineLimit(1)
                 
-                //                Text("Lv.\(hangdam.level) \(hangdam.levelName)")
                 Text(content.levelDescription)
                     .font(.maruburiot(type: .semiBold, size: 17))
                 

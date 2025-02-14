@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 struct HappinessListView: View {
-    @ObservedObject var viewModel: HappinessListViewModel
+    @ObservedObject private var viewModel: HappinessListViewModel
     @Environment(\.dismiss) private var dismiss
     
     private let isBackButtonHidden: Bool // 기록 탭으로 진입하면 뒤로가기 숨기기
@@ -49,7 +49,12 @@ struct HappinessListView: View {
                                         )
                                     },
                                     label: {
-                                        HappinessCell(content: config.cellContent)
+                                        HappinessCellView(
+                                            viewModel: HappinessCellViewModel(
+                                                content: config.cellContent,
+                                                thumbnailFetcher: viewModel.cellThumbnailFetcher
+                                            )
+                                        )
                                     }
                                 )
                             }

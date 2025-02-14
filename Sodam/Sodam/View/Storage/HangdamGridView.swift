@@ -32,11 +32,13 @@ fileprivate struct HangdamGrid: View {
         
         let detailViewOperator: DetailViewOperator = DetailViewOperator(happinessRepository: happinessRepository)
         let listViewReloader: ListViewReloader = ListViewReloader(happinessRepository: happinessRepository, hangdamRepository: hangdamRepository)
+        let cellThumbnailFetcher: CellThumbnailFetcher = CellThumbnailFetcher(happinessRepository: happinessRepository)
         let mapperFactory: DataMapperFactory = DataMapperFactory()
         
         let listViewModel: HappinessListViewModel = HappinessListViewModel(
             detailViewOperator: detailViewOperator,
             listViewReloader: listViewReloader,
+            cellThumbnailFetcher: cellThumbnailFetcher,
             mapperFactory: mapperFactory
         )
         

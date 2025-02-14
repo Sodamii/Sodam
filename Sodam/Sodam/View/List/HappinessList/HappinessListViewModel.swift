@@ -17,14 +17,21 @@ final class HappinessListViewModel: ObservableObject {
     
     let detailViewOperator: DetailViewOperator
     let listViewReloader: ListViewReloader
+    let cellThumbnailFetcher: CellThumbnailFetcher
     
     private let statusContentMapper: StatusContentMapper
     private let listContentMappper: HappinessListContentMapper
     private let listConfigMapper: HappinessListConfigMapper
     
-    init(detailViewOperator: DetailViewOperator, listViewReloader: ListViewReloader, mapperFactory: DataMapperFactory) {
+    init(
+        detailViewOperator: DetailViewOperator,
+        listViewReloader: ListViewReloader,
+        cellThumbnailFetcher: CellThumbnailFetcher,
+        mapperFactory: DataMapperFactory
+    ) {
         self.detailViewOperator = detailViewOperator
         self.listViewReloader = listViewReloader
+        self.cellThumbnailFetcher = cellThumbnailFetcher
         
         self.statusContentMapper = mapperFactory.createStatusMapper()
         self.listContentMappper = mapperFactory.createHappinessListContentMapper()

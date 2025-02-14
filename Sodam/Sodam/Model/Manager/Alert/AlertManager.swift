@@ -24,8 +24,11 @@ final class AlertManager {
     ///   - actions: 알럿에 추가할 액션들
     func showAlert(alertMessage: AlertMessage, actions: [UIAlertAction] = []) {
         // 알럿 컨트롤러 (제목, 메세지, 스타일 설정)
-        let alertController = UIAlertController(title: alertMessage.title, message: alertMessage.message, preferredStyle: .alert)
-        
+        let alertController = UIAlertController(
+            title: alertMessage.title,
+            message: alertMessage.message,
+            preferredStyle: .alert
+        )
         // 전달된 액션이 없으면 기본 "확인" 버튼을 추가함
         if actions.isEmpty {
             alertController.addAction(UIAlertAction(title: "확인", style: .default))
@@ -99,22 +102,7 @@ final class AlertManager {
         viewController?.present(alertController, animated: true)
     }
     
-    /// 이미 작성했다면 나오는 알럿
-    func showAlreadyWrittenTodayAlert() {
-        showAlert(alertMessage: .alreadyWrittenToday)
-    }
-    
     // MARK: - WriteViewController 알럿
-    
-    /// 행복 작성이 빈 공간일 경우
-    func showEmptyTextAlert() {
-        showAlert(alertMessage: .emptyText)
-    }
-    
-    /// 이미지 개수 제한 경고 알럿
-    func showImageLimitAlert() {
-            showAlert(alertMessage: .imageLimit)
-    }
     
     /// 작성 완료 알럿
     func showCompletionAlert(dismissHandler: @escaping () -> Void) {

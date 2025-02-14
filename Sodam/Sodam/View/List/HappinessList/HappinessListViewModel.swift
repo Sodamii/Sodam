@@ -57,7 +57,5 @@ final class HappinessListViewModel: ObservableObject {
         self.isCanDelete = (newHangdam.endDate == nil ? false : true)
 
         print("[HappinessListViewModel] reloadeData 리로드")
-        
     }
-
 }

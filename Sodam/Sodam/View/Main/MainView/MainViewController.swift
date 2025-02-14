@@ -116,7 +116,7 @@ final class MainViewController: UIViewController {
     /// 작성 버튼 클릭 시 호출
     @objc private func createButtonTapped() {
         if viewModel.hasAlreadyWrittenToday() {
-            alertManager.showAlreadyWrittenTodayAlert()
+            alertManager.showAlert(alertMessage: .alreadyWrittenToday)
             return
         }
         

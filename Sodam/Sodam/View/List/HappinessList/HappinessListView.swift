@@ -18,6 +18,7 @@ struct HappinessListView: View {
     init(viewModel: HappinessListViewModel, isBackButtonHidden: Bool) {
         self.viewModel = viewModel
         self.isBackButtonHidden = isBackButtonHidden
+
     }
     
     var body: some View {
@@ -120,7 +121,3 @@ enum FontSize {
     static let body: CGFloat = 16
     static let timeStamp: CGFloat = 14
 }
-
-#Preview {
-}
-

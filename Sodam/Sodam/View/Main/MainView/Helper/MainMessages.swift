@@ -8,7 +8,7 @@
 import Foundation
 
 enum MainMessages: String, CaseIterable {
-    case message1 = "행복은 먼 곳에 있지 않아요. \n 지금 이 순간에 왔을지도요."
+    case message1 = "행복은 먼 곳에 있지 않아요. \n 지금 이 순간에 왔을지도!."
     case message2 = "작은 것에 감사할 줄 알 때 \n 큰 행복이 찾아온답니다."
     case message3 = "당신은 이미 충분히 빛나는 \n 전구 같은 사람!"
     case message4 = "웃음은 마음의 태양이죠. \n 오늘도 환하게 웃어보기!"
@@ -25,7 +25,7 @@ enum MainMessages: String, CaseIterable {
     case message15 = "행복은 다른 사람의 미소를 보는 데서 \n 시작될 수 있답니다."
     case message16 = "당신의 마음속엔 \n 이미 행복의 씨앗이 있네요."
     case message17 = "힘들 때면 스스로를 응원해봐요. \n 행복은 당신을 기다려요."
-    case message18 = "행복은 완벽함이 아닌 \n 불완전함을 사랑하는 마음에서 오는 것."
+    case message18 = "행복은 완벽함이 아닌 \n 불완전함을 사랑하는 마음에서 온다."
     case message19 = "자신을 소중히 여길 때 \n 행복은 더 자주 찾아온답니다."
     case message20 = "지금 느끼는 감사가 \n 내일의 행복을 만들어줄거에요"
     case message21 = "와! 행복을 나누러 와줘서 고마워! \n 내가 잘 기억하고 있을게" // 민석

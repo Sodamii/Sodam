@@ -256,16 +256,11 @@ extension WriteViewController: ImagePickerServiceDelegate {
 
 // MARK: - 뷰 업데이트
 extension WriteViewController: WriteViewModelDelegate {
-    /// UI 업데이트 메서드
-    private func updateUI(with post: Post) {
-        writeView.setTextViewText(post.content) // 텍스트뷰 업데이트
-        writeView.collectionViewReload() // 컬렉션 뷰 리로드
-        writeView.updateCollectionViewConstraint(post.images.isEmpty) // 이미지 유무에 따라 컬렉션뷰 숨김처리
-    }
-    
     /// 뷰모델에게 작성 내용 전달받는 메서드
-    func didUpdatePost(_ post: Post) {
-        updateUI(with: post) // 작성된 내용으로 UI 업데이트
+    func didUpdatePost(_ text: String, _ isEmpty: Bool) {
+        writeView.setTextViewText(text) // 텍스트뷰 업데이트
+        writeView.collectionViewReload() // 컬렉션 뷰 리로드
+        writeView.updateCollectionViewConstraint(isEmpty) // 이미지 유무에 따라 컬렉션뷰 숨김처리
     }
 }
 

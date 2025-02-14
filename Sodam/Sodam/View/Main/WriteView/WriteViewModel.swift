@@ -9,7 +9,7 @@ import UIKit
 
 /// 뷰에 작성 내용 전달
 protocol WriteViewModelDelegate: AnyObject {
-    func didUpdatePost(_ post: Post)
+    func didUpdatePost(_ text: String, _ isEmpty: Bool)
 }
 
 final class WriteViewModel {
@@ -39,20 +39,20 @@ extension WriteViewModel {
     /// 텍스트 업데이트 메서드
     func updateText(_ text: String) {
         post.content = text
-        delegate?.didUpdatePost(post)
+        delegate?.didUpdatePost(text, post.images.isEmpty)
     }
     
     /// 뷰에 이미지 추가 메서드
     func addImage(_ image: UIImage) {
         post.images.append(image)
-        delegate?.didUpdatePost(post)
+        delegate?.didUpdatePost(post.content, post.images.isEmpty)
     }
     
     // 뷰에서 이미지 제거 메서드
     func removeImage(at index: Int) {
         guard index < post.images.count else { return }
         post.images.remove(at: index)
-        delegate?.didUpdatePost(post)
+        delegate?.didUpdatePost(post.content, post.images.isEmpty)
     }
     
     /// 작성 완료 이벤트 처리 메서드
@@ -66,7 +66,7 @@ extension WriteViewModel {
         
         // post 초기화
         resetPost()
-        delegate?.didUpdatePost(post)
+        delegate?.didUpdatePost(post.content, post.images.isEmpty)
         
         // 작성 완료 알림 표시 후 모달 닫기
         completion()
@@ -81,7 +81,7 @@ extension WriteViewModel {
     /// 제출 완료시 작성 내용 초기화 메서드
     func resetPost() {
         post = Post(content: "", images: [])
-        delegate?.didUpdatePost(post)
+        delegate?.didUpdatePost(post.content, post.images.isEmpty)
     }
 }
 

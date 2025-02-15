@@ -40,6 +40,10 @@ final class SettingViewModel {
         userDefaultsManager.saveAppNotificationToggleState(sender)
     }
     
+    func saveNotificationAuthorizationStatus(_ status: Bool) {
+        userDefaultsManager.saveNotificaionAuthorizationStatus(status)
+    }
+    
     // 저장된 알림 시간 가져오기
     func getNotificationTime() -> Date? {
         userDefaultsManager.getNotificationTime()
@@ -62,5 +66,4 @@ final class SettingViewModel {
         }
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
-
 }

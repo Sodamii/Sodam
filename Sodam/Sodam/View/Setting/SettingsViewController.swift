@@ -10,13 +10,11 @@ import UIKit
 final class SettingsViewController: UIViewController {
     private let settingViewModel: SettingViewModel
     private let settingView = SettingView()
-    var isShowTimeCell: Bool
     
     // MARK: - Initializer
     
     init(settingViewModel: SettingViewModel) {
         self.settingViewModel = settingViewModel
-        self.isShowTimeCell = settingViewModel.getAppNotificationToggleState()
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -32,17 +30,49 @@ final class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .viewBackground
-        //setupTableView()
+        setupTableView()
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(checkNotificationAuthorizationStatus),
+                                               name: UIApplication.willEnterForegroundNotification,
+                                               object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
-        setupTableView()
-
-        // 저장된 앱 설정 값을 불러오기
-        settingViewModel.isToggleOn = settingViewModel.getAppNotificationToggleState()
-        settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+        //setupTableView()
+        checkNotificationAuthorizationStatus()  // 뷰가 나타날 때마다 현재 알림 권한 상태를 체크하고 UI 업데이트
+        settingView.tableView.reloadData()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+        self.settingViewModel.isToggleOn = settingViewModel.getAppNotificationToggleState()
+    }
+    
+    // 알림 권한 상태를 확인하는 메서드 추가
+    @objc func checkNotificationAuthorizationStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                let isAuthorized = settings.authorizationStatus == .authorized
+                self.settingViewModel.saveNotificationAuthorizationStatus(isAuthorized)
+                
+                if isAuthorized {
+                    self.settingViewModel.saveIsAppToggleNotification(true)
+                    self.settingViewModel.isToggleOn = true
+                } else {
+                    self.settingViewModel.saveIsAppToggleNotification(false)
+                    self.settingViewModel.isToggleOn = false
+                }
+                
+                self.settingView.tableView.reloadData()
+            }
+        }
     }
 }
 
@@ -55,14 +85,6 @@ private extension SettingsViewController {
         settingView.tableView.separatorInset.right = 15
         
         settingView.tableView.register(SettingTableViewCell.self, forCellReuseIdentifier: SettingTableViewCell.reuseIdentifier)
-    }
-    
-    // 기본 시간(21:00) 반환하는 함수
-    private func defaultNotificationTime() -> Date {
-        var components = DateComponents()
-        components.hour = 21
-        components.minute = 0
-        return Calendar.current.date(from: components) ?? Date()
     }
 }
 
@@ -80,7 +102,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         
         switch sectionType {
         case .appSetting:
-            return self.isShowTimeCell ? 2 : 1
+            return settingViewModel.isToggleOn ? 2 : 1
         case .develop:
             return 2
         }
@@ -106,21 +128,26 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         // 셀 구성
         switch sectionType {
         case .appSetting:
-            cell.timePicker.isHidden = true
-            cell.switchButton.isHidden = false
             cell.arrowImage.isHidden = true
             cell.versionLabel.isHidden = true
             
             if indexPath.row == 0 {
                 // 첫 번째 셀: 알림 설정
-                cell.configure(title: Setting.SetCell.notification.rawValue, switchAction: #selector(didToggleSwitch(_:)), timeAction: nil, version: "")
-                cell.switchButton.isOn = settingViewModel.getAppNotificationToggleState()
+                cell.timePicker.isHidden = true
+                cell.switchButton.isHidden = false
+                cell.configure(title: Setting.SetCell.notification.rawValue,
+                               switchAction: #selector(didToggleSwitch(_:)),
+                               timeAction: nil, version: "")
+                cell.switchButton.isOn = settingViewModel.isToggleOn
+                
             } else if indexPath.row == 1 && settingViewModel.getAppNotificationToggleState() {
                 // 두 번째 셀: 시간 설정 (스위치가 켜졌을 때만 표시)
-                cell.configure(title: Setting.SetCell.setTime.rawValue, switchAction: nil, timeAction: #selector(userScheduleNotification), version: "")
-                cell.titleLabel.textColor = .black
                 cell.timePicker.isHidden = false
                 cell.switchButton.isHidden = true
+                cell.configure(title: Setting.SetCell.setTime.rawValue,
+                               switchAction: nil,
+                               timeAction: #selector(userScheduleNotification),
+                               version: "")
                 
                 if let savedTime = settingViewModel.getNotificationTime() {
                     cell.timePicker.date = savedTime
@@ -134,11 +161,17 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
             if indexPath.row == 0 {
                 cell.versionLabel.isHidden = true
                 cell.arrowImage.isHidden = false
-                cell.configure(title: Setting.SetCell.appReview.rawValue, switchAction: nil, timeAction: nil, version: "")
+                cell.configure(title: Setting.SetCell.appReview.rawValue,
+                               switchAction: nil,
+                               timeAction: nil,
+                               version: "")
             } else if indexPath.row == 1 {
                 cell.versionLabel.isHidden = false
                 cell.arrowImage.isHidden = true
-                cell.configure(title: "\(Setting.SetCell.appVersion.rawValue)", switchAction: nil, timeAction: nil, version: settingViewModel.version ?? "")
+                cell.configure(title: "\(Setting.SetCell.appVersion.rawValue)",
+                               switchAction: nil,
+                               timeAction: nil,
+                               version: settingViewModel.version ?? "")
             }
         }
         return cell
@@ -159,13 +192,26 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     
     // 알림 스위치의 상태가 변경되었을 때 호출되는 액션
     @objc func didToggleSwitch(_ sender: UISwitch) {
-
-        if UserDefaultsManager.shared.getNotificaionAuthorizationStatus() {
-            showNotificationPermissionAlert()
+        let newState = sender.isOn
+        UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                
+                if settings.authorizationStatus == .authorized {
+                    // 알림이 허용된 상태면 저장 및 UI 업데이트
+                    self.settingViewModel.saveIsAppToggleNotification(newState)
+                    self.settingViewModel.isToggleOn = newState
+                } else {
+                    // 알림이 거부된 상태에서는 강제로 스위치를 OFF 하고, 상태 저장 X
+                    sender.setOn(false, animated: true)
+                    
+                    // 상태를 저장하지 않고, 사용자가 설정을 변경할 수 있도록 안내
+                    self.showNotificationPermissionAlert()
+                }
+                
+                self.settingView.tableView.reloadData()
+            }
         }
-        settingViewModel.saveIsAppToggleNotification(sender.isOn)
-        self.isShowTimeCell = sender.isOn
-        settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
     
     // 사용자가 DatePicker를 통해 알림 시간을 선택했을 때 호출되는 액션
@@ -185,33 +231,25 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
             message: "앱의 알림을 받으려면 설정에서 알림을 허용해주세요.",
             preferredStyle: .alert
         )
+
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel) { [weak self] _ in
+            self?.settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+        }
         
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { _ in
-            // 해당 앱 설정으로 이동
+        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { [weak self] _ in
             if let url = URL(string: UIApplication.openSettingsURLString),
                UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                UIApplication.shared.open(url, options: [:]) { _ in
+                    // 설정에서 돌아올 때 상태 업데이트
+                    self?.checkNotificationAuthorizationStatus()
+                }
             }
         }
         
         alertController.addAction(cancelAction)
         alertController.addAction(settingsAction)
         
-        // 메인 스레드에서 표시
-        DispatchQueue.main.async {
-            self.present(alertController, animated: true, completion: nil)
-        }
-    }
-    
-    // 알림 스위치가 On/Off시 실행되는 메서드
-    private func handleNotificationToggle(isOn: Bool) {
-        if isOn, let savedTime = settingViewModel.getNotificationTime() {
-            settingViewModel.setReservedNotificaion(savedTime)
-        } else {
-            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["SelectedTimeNotification"])
-        }
-        settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+        present(alertController, animated: true)
     }
 }
 

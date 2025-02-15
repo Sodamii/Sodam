@@ -58,10 +58,10 @@ final class LocalNotificationManager: NSObject {
     // 알림 권한 요청 (최초 1회만 실행)
     private func requestNotificationAuthorization(completion: @escaping (Bool) -> Void) {
         // 이미 권한이 설정되어 있는 경우 요청하지 않음
-//        guard !UserDefaultsManager.shared.getNotificaionAuthorizationStatus() else {
-//            completion(true)
-//            return
-//        }
+        guard !UserDefaultsManager.shared.getNotificaionAuthorizationStatus() else {
+            completion(true)
+            return
+        }
         
         let center = UNUserNotificationCenter.current()
         let options: UNAuthorizationOptions = [.alert, .badge, .sound]

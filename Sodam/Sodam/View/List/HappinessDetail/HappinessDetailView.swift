@@ -15,7 +15,7 @@ struct HappinessDetailView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        NavigationStack{
+        NavigationStack {
             ScrollView {
                 VStack {
                     if let imagePath = viewModel.happiness.imagePaths.first {
@@ -39,6 +39,7 @@ struct HappinessDetailView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
+            .scrollIndicators(.hidden)
             .frame(maxWidth: .infinity)
             .background(Color.viewBackground)
             .padding()

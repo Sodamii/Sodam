@@ -13,18 +13,18 @@ protocol ListViewReloading {
 
 final class ListViewReloader: ListViewReloading {
     private let happinessRepository: HappinessRepository
-    private let hangdamRepository: HangdamRepository
+    private let hangdam: HangdamDTO
     
-    init(happinessRepository: HappinessRepository, hangdamRepository: HangdamRepository) {
+    init(happinessRepository: HappinessRepository, hangdam: HangdamDTO) {
         self.happinessRepository = happinessRepository
-        self.hangdamRepository = hangdamRepository
+        self.hangdam = hangdam
     }
     
     func reloadData() -> ListViewReloadData {
         return (
-            hangdamRepository.getCurrentHangdam(),
+            hangdam,
             happinessRepository.getHappinesses(
-                of: hangdamRepository.getCurrentHangdam().id
+                of: hangdam.id
             )
         )
         

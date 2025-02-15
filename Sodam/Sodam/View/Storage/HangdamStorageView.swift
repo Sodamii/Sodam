@@ -37,8 +37,8 @@ struct HangdamStorageView: View {
                     if let tabBarController = getRootTabBarController() {
                         tabBarController.tabBar.isHidden = false
                     }
-                    viewModel.loadHangdams()
                 }
+                viewModel.loadHangdams()
             }
         }
         .tint(.textAccent)

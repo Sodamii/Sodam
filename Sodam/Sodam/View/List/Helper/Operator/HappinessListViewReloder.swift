@@ -6,6 +6,7 @@
 //
 
 typealias ListViewReloadData = (hangdam: HangdamDTO, happiness: [HappinessDTO])
+
 protocol ListViewReloading {
     func reloadData() -> ListViewReloadData
 }

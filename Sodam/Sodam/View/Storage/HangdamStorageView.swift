@@ -17,14 +17,14 @@ struct HangdamStorageView: View {
                 HStack(alignment: .bottom) {
                     HangdamStorageTitle()
                     
-                    HangdamCountTitle(count: $viewModel.storedHangdams.count)
+                    HangdamCountTitle(count: viewModel.hangdamGridStores.count)
                 }
                 
-                if $viewModel.storedHangdams.wrappedValue.count == 0 {
+                if viewModel.hangdamGridStores.isEmpty {
                     HangdamEmptyView()
                 } else {
                     ScrollView {
-                        HangdamGridView(hangdams: $viewModel.storedHangdams)
+                        HangdamGridView(viewModel: viewModel)
                             .padding(.bottom)
                     }
                     .scrollIndicators(.hidden)
@@ -68,7 +68,7 @@ fileprivate struct HangdamStorageTitle: View {
 
 fileprivate struct HangdamCountTitle: View {
     
-    @State var count: Int
+    let count: Int
     
     var body: some View {
         Text("다 자란 행담이 : \(count)")

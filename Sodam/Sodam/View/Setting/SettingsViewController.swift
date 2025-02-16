@@ -201,9 +201,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 
                 if settings.authorizationStatus == .authorized {
                     // 알림이 허용된 상태라면 사용자 토글 상태 저장
-                    self.settingViewModel.isToggleOn = newState
-                    self.settingViewModel.saveIsAppToggleNotification(newState)
-                    print("사용자 설정에 따른 토글 상태 저장: \(newState)")
+                    self.handleToggleStateChange(to: newState)
                 } else {
                     // 알림 권한이 없으면 스위치를 OFF로 하고, 사용자에게 알림 권한을 요청하도록 안내
                     sender.setOn(false, animated: true)
@@ -222,6 +220,29 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         
         if settingViewModel.isToggleOn {
             settingViewModel.setReservedNotificaion(sender.date)
+        }
+    }
+    
+    private func handleToggleStateChange(to newState: Bool) {
+        if newState {
+            // 알림이 허용되고 스위치가 ON이면 사용자 토글 상태 저장
+            self.settingViewModel.isToggleOn = true
+            self.settingViewModel.saveIsAppToggleNotification(true)
+            print("사용자 설정에 따른 토글 상태 저장: \(true)")
+            
+            // 알림 예약을 다시 설정 (스위치가 켜졌을 때만)
+            if let notificationTime = self.settingViewModel.getNotificationTime() {
+                self.settingViewModel.setReservedNotificaion(notificationTime)
+            }
+        } else {
+            // 알림이 허용되고 스위치가 OFF이면 알림 삭제
+            self.settingViewModel.isToggleOn = false
+            self.settingViewModel.saveIsAppToggleNotification(false)
+            print("사용자 설정에 따른 토글 상태 저장: \(false)")
+            
+            // 알림을 취소
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            print("등록된 알림이 삭제되었습니다.")
         }
     }
     

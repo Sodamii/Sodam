@@ -17,7 +17,7 @@ struct HappinessDetailView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack {
+                VStack(spacing: 16) {
                     if let imagePath = viewModel.happiness.imagePaths.first {
                         Image(uiImage: self.viewModel.getImage(from: imagePath))
                             .resizable()
@@ -25,24 +25,21 @@ struct HappinessDetailView: View {
                             .clipShape(.rect(cornerRadius: 15))
                             .padding()
                             .background(RoundedRectangle(cornerRadius: 15).foregroundStyle(Color.cellBackground))
-                            .padding(.bottom)
                     }
-                    HStack(alignment: .top) {
-                        Text(viewModel.happiness.content)
-                            .font(.sejongGeulggot(16))
-                            .lineSpacing(10)
-                            .foregroundStyle(Color(UIColor.darkGray))
-                            .multilineTextAlignment(.leading)
-                            .padding(.horizontal, 16)
-                        
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(viewModel.happiness.content)
+                        .font(.sejongGeulggot(16))
+                        .lineSpacing(10)
+                        .foregroundStyle(Color(UIColor.darkGray))
+                        .multilineTextAlignment(.leading)
+                        .padding(.horizontal, 8)        // TODO: default랑 비교
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             .scrollIndicators(.hidden)
             .frame(maxWidth: .infinity)
             .background(Color.viewBackground)
             .padding()
+            .padding(.bottom, 32)           // TODO: 없는 거랑 비교
             .tabBarVisibility(false)
         }
         .background(Color.viewBackground.ignoresSafeArea())

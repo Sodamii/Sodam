@@ -40,7 +40,6 @@ final class SettingsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
-        //setupTableView()
         checkNotificationAuthorizationStatus()  // 뷰가 나타날 때마다 현재 알림 권한 상태를 체크하고 UI 업데이트
         settingView.tableView.reloadData()
     }
@@ -63,8 +62,14 @@ final class SettingsViewController: UIViewController {
                 self.settingViewModel.saveNotificationAuthorizationStatus(isAuthorized)
                 
                 if isAuthorized {
-                    self.settingViewModel.saveIsAppToggleNotification(true)
-                    self.settingViewModel.isToggleOn = true
+                    if self.settingViewModel.isToggleOn {
+                        self.settingViewModel.saveIsAppToggleNotification(true)
+                        self.settingViewModel.isToggleOn = true
+                    } else {
+                        self.settingViewModel.saveIsAppToggleNotification(false)
+                        self.settingViewModel.isToggleOn = false
+                    }
+                    
                 } else {
                     self.settingViewModel.saveIsAppToggleNotification(false)
                     self.settingViewModel.isToggleOn = false

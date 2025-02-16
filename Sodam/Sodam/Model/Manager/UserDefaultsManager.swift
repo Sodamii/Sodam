@@ -51,8 +51,9 @@ final class UserDefaultsManager {
         userDefaults.set(isAuthorized, forKey: Keys.notificationAuthorizationStatus)
     }
     
-    func saveIsFisrt(_ isFirst: Bool) {
-        userDefaults.set(isFirst, forKey: Keys.isFirst)
+    // 알림 초기 설정 완료 여부를 확인 (알림 설정이 처음 완료되었는지 여부)
+    func isNotificationSetupComplete() -> Bool {
+        return userDefaults.bool(forKey: Keys.notificationInitialSetupComplete)
     }
 
     // MARK: - UserDefaults에 저장된 값 얻어오기
@@ -76,10 +77,7 @@ final class UserDefaultsManager {
     func getImagePath() -> [String]? {
         userDefaults.stringArray(forKey: Keys.imagePath)
     }
-    
-    func getIsFirst() -> Bool {
-        userDefaults.bool(forKey: Keys.isFirst)
-    }
+
     // 임시 저장된 콘텐츠와 이미지 경로 삭제
     func deleteTemporaryPost() {
         print("[WriteView] 임시저장 됐던 content와 imagePath 삭제")
@@ -90,5 +88,10 @@ final class UserDefaultsManager {
     // 저장된 알림 권한 상태를 가져옴
     func getNotificaionAuthorizationStatus() -> Bool {
         return userDefaults.bool(forKey: Keys.notificationAuthorizationStatus)
+    }
+    
+    // 알림 초기 설정을 완료 표시 (첫 설정 후 완료 상태로 변경)
+    func markNotificationSetupAsComplete() {
+        userDefaults.set(true, forKey: Keys.notificationInitialSetupComplete)
     }
 }

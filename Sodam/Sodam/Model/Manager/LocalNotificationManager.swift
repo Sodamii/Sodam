@@ -43,10 +43,6 @@ final class LocalNotificationManager: NSObject {
             
         // 권한이 이미 허가되었거나 임시 허가된 경우 기본 알림 설정
         case .authorized, .provisional, .ephemeral:
-            if UserDefaultsManager.shared.getIsFirst() {
-                setNotificationState(true)
-                return
-            }
             let appToggle = UserDefaultsManager.shared.getAppNotificationToggleState()
             setNotificationState(appToggle)
             
@@ -71,7 +67,6 @@ final class LocalNotificationManager: NSObject {
             
             if granted {
                 // 권한이 허가여부를 UserDefaults에 저장(true가 허용)
-                //UserDefaultsManager.shared.saveNotificaionAuthorizationStatus(true)
                 completion(true)
             } else {
                 // 권한이 거부된 경우 안내 메시지 표시(false가 거부)
@@ -153,11 +148,9 @@ final class LocalNotificationManager: NSObject {
         // 이미 동일한 알림이 예약되어 있는지 확인
         let isAlreadyScheduled = existingRequests.contains { $0.identifier == identifier }
         DispatchQueue.main.async {
-            if UserDefaultsManager.shared.getIsFirst() {
-                // 알림이 새로 예약되었거나 시간이 변경되었음을 사용자에게 알림
-                let message = isAlreadyScheduled ? "알림 시간이 \(self.timeFormatted(time))로 변경되었습니다." : "기본 알림 시간 \(self.timeFormatted(time))로 설정되었습니다."
-                ToastManager.shared.showToastMessage(message: message)
-            }
+            // 알림이 새로 예약되었거나 시간이 변경되었음을 사용자에게 알림
+            let message = isAlreadyScheduled ? "알림 시간이 \(self.timeFormatted(time))로 변경되었습니다." : "기본 알림 시간 \(self.timeFormatted(time))로 설정되었습니다."
+            ToastManager.shared.showToastMessage(message: message)
         }
     }
     
@@ -174,7 +167,7 @@ final class LocalNotificationManager: NSObject {
 
 private extension LocalNotificationManager {
     func setNotificationState(_ status: Bool) {
-        guard !UserDefaultsManager.shared.getNotificaionAuthorizationStatus() else {
+        guard !UserDefaultsManager.shared.isNotificationSetupComplete() else {
             return
         }
 
@@ -182,20 +175,25 @@ private extension LocalNotificationManager {
         let defaultTime = calendar.date(bySettingHour: 21, minute: 0, second: 0, of: Date())!
 
         UserDefaultsManager.shared.saveNotificaionAuthorizationStatus(status)
-        print("status \(status)")
         UserDefaultsManager.shared.saveAppNotificationToggleState(status)
         UserDefaultsManager.shared.saveNotificationTime(defaultTime)
         
         setReservedNotification(defaultTime)  // 기본 알림 설정을 예약
         
         // 알림 권한 허용 메시지 표시
-        DispatchQueue.main.async {
-            ToastManager.shared.showToastMessage(message: "알림 권한이 허용되었습니다.")
-        }
+//        DispatchQueue.main.async {
+//            ToastManager.shared.showToastMessage(message: "알림 권한이 허용되었습니다.")
+//        }
+        UserDefaultsManager.shared.markNotificationSetupAsComplete()  // 기본 알림 설정 완료 상태를 저장
     }
     
     // 알림 권한이 거부된 경우 사용자에게 한 번만 안내 메시지 제공
     func showDeniedToastOnce() {
+        // 알림 권한 설정 확인
+        guard !UserDefaultsManager.shared.isNotificationSetupComplete() else {
+            return
+        }
+        
         // 권한이 거부된 상태를 UserDefaults에 저장
         UserDefaultsManager.shared.saveNotificaionAuthorizationStatus(false)
         UserDefaultsManager.shared.saveAppNotificationToggleState(false)
@@ -204,6 +202,7 @@ private extension LocalNotificationManager {
         DispatchQueue.main.async {
             ToastManager.shared.showToastMessage(message: "알림 권한이 거부되었습니다.")
         }
+        UserDefaultsManager.shared.markNotificationSetupAsComplete()  // 기본 알림 설정 완료 상태를 저장
     }
 }
 

@@ -32,7 +32,27 @@ final class HangdamStorageViewModel: ObservableObject {
         }
         
         self.happinessListViewModels = hangdams.map { hangdamDTO in
-            return HappinessListViewModel(hangdam: hangdamDTO)
+            // TODO: DI컨테이너를 만들어서 의존성 주입에 대한 개선 필요
+            let hangdamRepository: HangdamRepository = HangdamRepository()
+            let happinessRepository: HappinessRepository = HappinessRepository()
+            let mainViewModel: MainViewModel = MainViewModel(repository: hangdamRepository)
+            let storageViewModel: HangdamStorageViewModel = HangdamStorageViewModel(hangdamRepository: hangdamRepository)
+            
+            let detailViewOperator: DetailViewOperator = DetailViewOperator(happinessRepository: happinessRepository)
+            let listViewReloader: ListViewReloader = ListViewReloader(
+                happinessRepository: happinessRepository,
+                hangdamRepository: hangdamRepository,
+                hangdamID: hangdamDTO.id
+            )
+            let cellThumbnailFetcher: CellThumbnailFetcher = CellThumbnailFetcher(happinessRepository: happinessRepository)
+            let mapperFactory: DataMapperFactory = DataMapperFactory()
+            
+            return HappinessListViewModel(
+                detailViewOperator: detailViewOperator,
+                listViewReloader: listViewReloader,
+                cellThumbnailFetcher: cellThumbnailFetcher,
+                mapperFactory: mapperFactory
+            )
         }
     }
 }

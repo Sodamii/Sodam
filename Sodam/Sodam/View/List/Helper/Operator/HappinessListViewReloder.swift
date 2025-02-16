@@ -5,28 +5,32 @@
 //  Created by 박진홍 on 2/14/25.
 //
 
-typealias ListViewReloadData = (hangdam: HangdamDTO, happiness: [HappinessDTO])
+typealias ListViewConfigData = (hangdam: HangdamDTO, happiness: [HappinessDTO])
 
 protocol ListViewReloading {
-    func reloadData() -> ListViewReloadData
+    func reloadData() -> Result<ListViewConfigData, Error>
 }
 
 final class ListViewReloader: ListViewReloading {
     private let happinessRepository: HappinessRepository
-    private let hangdam: HangdamDTO
+    private let hangdamRepository: HangdamRepository
+    private let hangdamID: String?
     
-    init(happinessRepository: HappinessRepository, hangdam: HangdamDTO) {
+    init(happinessRepository: HappinessRepository, hangdamRepository: HangdamRepository, hangdamID: String?) {
         self.happinessRepository = happinessRepository
-        self.hangdam = hangdam
+        self.hangdamRepository = hangdamRepository
+        self.hangdamID = hangdamID
     }
     
-    func reloadData() -> ListViewReloadData {
-        return (
-            hangdam,
-            happinessRepository.getHappinesses(
-                of: hangdam.id
-            )
-        )
-        
+    func reloadData() -> Result<ListViewConfigData, Error> {
+        do {
+            let newHangdamData: HangdamDTO = try hangdamRepository.fetchHangdamByID(by: self.hangdamID).get()
+            return .success((
+                newHangdamData,
+                happinessRepository.getHappinesses(of: hangdamID)
+            ))
+        } catch {
+            return .failure(error)
+        }
     }
 }

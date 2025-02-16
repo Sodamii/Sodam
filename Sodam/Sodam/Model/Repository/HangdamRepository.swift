@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 /// CoreDataManager와 ViewModel 사이에서 행담이 데이터 처리를 맡는 객체
 final class HangdamRepository {
@@ -50,5 +51,19 @@ final class HangdamRepository {
         guard let id = IDConverter.toNSManagedObjectID(from: id, in: coreDataManager.context) else { return }
         
         coreDataManager.updateHangdam(with: id, updateCase: .name(name))
+    }
+}
+
+extension HangdamRepository {
+    func fetchHangdamByID(by id: String?) -> Result<HangdamDTO, DataError> {
+        guard let id: NSManagedObjectID = IDConverter.toNSManagedObjectID(from: id, in: coreDataManager.context) else {
+            return .failure(.fetchRequestFailed)
+        }
+        
+        guard let hangdamEntity: HangdamEntity = coreDataManager.fetchEntityByID(by: id) else {
+            return .failure(.fetchRequestFailed)
+        }
+        
+        return .success(dtoMapper.toDTO(from: hangdamEntity))
     }
 }

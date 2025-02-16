@@ -14,6 +14,8 @@ final class HappinessListViewModel: ObservableObject {
     @Published var listContent: HappinessListContent
     @Published var listConfigs: [HappinessListConfig]
     @Published var isCanDelete: Bool
+    @Published var isDataError: Bool
+    @Published var errorMessage: String?
     
     let detailViewOperator: DetailViewOperator
     let listViewReloader: ListViewReloader
@@ -37,25 +39,38 @@ final class HappinessListViewModel: ObservableObject {
         self.listContentMappper = mapperFactory.createHappinessListContentMapper()
         self.listConfigMapper = mapperFactory.createHappinessListConfigMapper()
         
-        let initialData: ListViewReloadData = listViewReloader.reloadData()
-        
-        self.statusContent = statusContentMapper.map(from: initialData.hangdam)
-        self.listContent = listContentMappper.map(from: initialData.hangdam)
-        self.listConfigs = listConfigMapper.map(from: initialData.happiness)
-        self.isCanDelete = (initialData.hangdam.endDate == nil ? false : true)
+        let result = listViewReloader.reloadData()
+        switch result {
+        case.success(let initialData):
+            self.statusContent = statusContentMapper.map(from: initialData.hangdam)
+            self.listContent = listContentMappper.map(from: initialData.hangdam)
+            self.listConfigs = listConfigMapper.map(from: initialData.happiness)
+            self.isCanDelete = (initialData.hangdam.endDate == nil ? false : true)
+            self.isDataError = false
+        case.failure(let error):
+            self.statusContent = StatusContent(level: 0, name: "", levelDescription: "", dateDescription: "")
+            self.listContent = HappinessListContent(title: "", emptyComment: "")
+            self.listConfigs = []
+            self.isCanDelete = false
+            self.isDataError = true
+            self.errorMessage = error.localizedDescription
+        }
     }
     
     func reloadData() {
-        let reloadData: ListViewReloadData = listViewReloader.reloadData()
-        
-        let newHappinesslist: [HappinessDTO] = reloadData.happiness
-        let newHangdam: HangdamDTO = reloadData.hangdam
-        
-        self.statusContent = statusContentMapper.map(from: newHangdam)
-        self.listContent = listContentMappper.map(from: newHangdam)
-        self.listConfigs = listConfigMapper.map(from: newHappinesslist)
-        self.isCanDelete = (newHangdam.endDate == nil ? false : true)
-
+        listViewReloader.reloadData().fold { initialData in
+            self.statusContent = statusContentMapper.map(from: initialData.hangdam)
+            self.listContent = listContentMappper.map(from: initialData.hangdam)
+            self.listConfigs = listConfigMapper.map(from: initialData.happiness)
+            self.isCanDelete = (initialData.hangdam.endDate == nil ? false : true)
+            self.isDataError = false
+        } onFailure: { error in
+            self.statusContent = StatusContent(level: 0, name: "", levelDescription: "", dateDescription: "")
+            self.listContent = HappinessListContent(title: "", emptyComment: "")
+            self.listConfigs = []
+            self.isCanDelete = false
+            self.isDataError = true
+        }
         print("[HappinessListViewModel] reloadeData 리로드")
     }
 }

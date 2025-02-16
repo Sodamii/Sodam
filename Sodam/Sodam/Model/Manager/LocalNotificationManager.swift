@@ -14,6 +14,7 @@ final class LocalNotificationManager: NSObject {
     private override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
+        UserDefaultsManager.shared.resetDiaryWrittenStatusAtMidnight()
     }
     
     // 초기 설정 체크
@@ -90,6 +91,14 @@ final class LocalNotificationManager: NSObject {
     func setReservedNotification(_ time: Date) {
         let identifier = "SelectedTimeNotification"
         
+        // 일기 작성 상태 확인
+        if UserDefaultsManager.shared.getDiaryWrittenStatus() {
+            DispatchQueue.main.async {
+                ToastManager.shared.showToastMessage(message: "오늘의 일기가 이미 작성되어\n 알림이 설정되지 않았습니다.")
+            }
+            return
+        }
+
         // 현재 대기 중인 알림 요청을 가져와서 새로운 알림 예약
         UNUserNotificationCenter.current().getPendingNotificationRequests { [weak self] requests in
             self?.scheduleNotification(time: time, identifier: identifier, existingRequests: requests)
@@ -177,14 +186,9 @@ private extension LocalNotificationManager {
         UserDefaultsManager.shared.saveNotificaionAuthorizationStatus(status)
         UserDefaultsManager.shared.saveAppNotificationToggleState(status)
         UserDefaultsManager.shared.saveNotificationTime(defaultTime)
+        UserDefaultsManager.shared.markNotificationSetupAsComplete()  // 기본 알림 설정 완료 상태를 저장
         
         setReservedNotification(defaultTime)  // 기본 알림 설정을 예약
-        
-        // 알림 권한 허용 메시지 표시
-//        DispatchQueue.main.async {
-//            ToastManager.shared.showToastMessage(message: "알림 권한이 허용되었습니다.")
-//        }
-        UserDefaultsManager.shared.markNotificationSetupAsComplete()  // 기본 알림 설정 완료 상태를 저장
     }
     
     // 알림 권한이 거부된 경우 사용자에게 한 번만 안내 메시지 제공
@@ -203,6 +207,15 @@ private extension LocalNotificationManager {
             ToastManager.shared.showToastMessage(message: "알림 권한이 거부되었습니다.")
         }
         UserDefaultsManager.shared.markNotificationSetupAsComplete()  // 기본 알림 설정 완료 상태를 저장
+    }
+    
+    // MARK: - Diary State Management
+    
+    func markDiaryAsWritten() {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: Date())
+        
+        UserDefaultsManager.shared.saveDiaryWrittenDate(startOfDay)
     }
 }
 

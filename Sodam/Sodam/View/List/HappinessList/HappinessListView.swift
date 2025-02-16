@@ -97,16 +97,6 @@ struct HappinessListView: View {
             .navigationBarBackButtonHidden(isBackButtonHidden)
         }
     }
-    
-    private func getRootTabBarController() -> UITabBarController? {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let sceneDelegate = scene.delegate as? SceneDelegate,
-              let rootViewController = sceneDelegate.window?.rootViewController else {
-            return nil
-        }
-        
-        return rootViewController as? UITabBarController
-    }
 }
 
 enum FontSize {

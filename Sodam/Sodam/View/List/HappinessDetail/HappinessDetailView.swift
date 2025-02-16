@@ -43,6 +43,7 @@ struct HappinessDetailView: View {
             .frame(maxWidth: .infinity)
             .background(Color.viewBackground)
             .padding()
+            .tabBarVisibility(false)
         }
         .background(Color.viewBackground.ignoresSafeArea())
         .ignoresSafeArea(edges: .bottom)

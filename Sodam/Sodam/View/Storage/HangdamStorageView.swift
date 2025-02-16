@@ -32,6 +32,7 @@ struct HangdamStorageView: View {
             }
             .padding(.horizontal)
             .background(Color.viewBackground)
+            .tabBarVisibility(true)
             .onAppear {
                 viewModel.loadHangdams()
             }

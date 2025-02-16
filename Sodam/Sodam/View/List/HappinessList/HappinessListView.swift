@@ -76,6 +76,7 @@ struct HappinessListView: View {
                         }
                     }
                 }
+                .tabBarVisibilityByTab()
             }
             .padding([.top, .horizontal])
             .background(Color.viewBackground)

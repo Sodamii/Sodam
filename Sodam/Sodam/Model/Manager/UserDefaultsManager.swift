@@ -34,7 +34,7 @@ final class UserDefaultsManager {
     
     // 앱 설정 알림 토글 상태 (ON/OFF)를 UserDefaults에 저장
     func saveAppNotificationToggleState(_ isOn: Bool) {
-        userDefaults.set(isOn, forKey: Keys.appSettingToggleState)
+        UserDefaults.standard.set(isOn, forKey: Keys.appSettingToggleState)
     }
     
     // 작성된 내용(content)을 UserDefaults에 저장

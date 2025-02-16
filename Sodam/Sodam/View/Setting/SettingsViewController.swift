@@ -31,17 +31,17 @@ final class SettingsViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .viewBackground
         setupTableView()
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(checkNotificationAuthorizationStatus),
-                                               name: UIApplication.willEnterForegroundNotification,
-                                               object: nil)
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
         checkNotificationAuthorizationStatus()  // 뷰가 나타날 때마다 현재 알림 권한 상태를 체크하고 UI 업데이트
-        settingView.tableView.reloadData()
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(checkNotificationAuthorizationStatus),
+                                               name: UIApplication.willEnterForegroundNotification,
+                                               object: nil)
     }
     
     deinit {
@@ -50,7 +50,6 @@ final class SettingsViewController: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         self.settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-        self.settingViewModel.isToggleOn = settingViewModel.getAppNotificationToggleState()
     }
     
     // 알림 권한 상태를 확인하는 메서드 추가
@@ -60,19 +59,17 @@ final class SettingsViewController: UIViewController {
                 guard let self = self else { return }
                 let isAuthorized = settings.authorizationStatus == .authorized
                 self.settingViewModel.saveNotificationAuthorizationStatus(isAuthorized)
+
+                let savedToggleState = self.settingViewModel.getAppNotificationToggleState()
                 
+                // 시스템 설정이 '허용' 상태일 때, 앱 내 토글 상태를 자동으로 'ON'으로 설정
                 if isAuthorized {
-                    if self.settingViewModel.isToggleOn {
-                        self.settingViewModel.saveIsAppToggleNotification(true)
-                        self.settingViewModel.isToggleOn = true
-                    } else {
-                        self.settingViewModel.saveIsAppToggleNotification(false)
-                        self.settingViewModel.isToggleOn = false
-                    }
-                    
+                    self.settingViewModel.isToggleOn = savedToggleState
+
                 } else {
-                    self.settingViewModel.saveIsAppToggleNotification(false)
                     self.settingViewModel.isToggleOn = false
+                    self.settingViewModel.saveNotificationAuthorizationStatus(false)
+                    print("시스템거부시\(self.settingViewModel.isToggleOn)")
                 }
                 
                 self.settingView.tableView.reloadData()
@@ -203,14 +200,13 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 guard let self = self else { return }
                 
                 if settings.authorizationStatus == .authorized {
-                    // 알림이 허용된 상태면 저장 및 UI 업데이트
-                    self.settingViewModel.saveIsAppToggleNotification(newState)
+                    // 알림이 허용된 상태라면 사용자 토글 상태 저장
                     self.settingViewModel.isToggleOn = newState
+                    self.settingViewModel.saveIsAppToggleNotification(newState)
+                    print("사용자 설정에 따른 토글 상태 저장: \(newState)")
                 } else {
-                    // 알림이 거부된 상태에서는 강제로 스위치를 OFF 하고, 상태 저장 X
+                    // 알림 권한이 없으면 스위치를 OFF로 하고, 사용자에게 알림 권한을 요청하도록 안내
                     sender.setOn(false, animated: true)
-                    
-                    // 상태를 저장하지 않고, 사용자가 설정을 변경할 수 있도록 안내
                     self.showNotificationPermissionAlert()
                 }
                 

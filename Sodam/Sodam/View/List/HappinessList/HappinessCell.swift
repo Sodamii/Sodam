@@ -5,52 +5,38 @@
 //  Created by EMILY on 05/02/2025.
 //
 
-// TODO:
-
 import SwiftUI
 
 struct HappinessCell: View {
+    let store: HappinessCellStore
     
-//    let happiness: HappinessDTO
-//    let happinessRepository: HappinessRepository
-//    let isCanDelete: Bool
-    
+    var body: some View {
+        HStack(alignment: .center, spacing: 16) {
+            if let image = store.image {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .clipShape(.rect(cornerRadius: 15))
+            }
+            VStack(alignment: .leading) {
+                Text(store.content)
+                    .font(.mapoGoldenPier(FontSize.body))
+                    .foregroundStyle(.black)
+                    .lineLimit(2)
+                    .padding(.bottom, 8)
+                
+                Text(store.date)
+                    .font(.mapoGoldenPier(FontSize.timeStamp))
+                    .foregroundStyle(.gray)
+            }
+        }
+        .frame(height: 100)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+struct HappinessCellStore {
     let image: UIImage?
     let content: String
     let date: String
-//    @State var viewModel: HappinessDetailViewModel?
-    
-    var body: some View {
-//        NavigationLink {
-//            if let viewModel = viewModel {
-//                HappinessDetailView(viewModel: viewModel, isCanDelete: isCanDelete)
-//            }
-//        } label: {
-            HStack(alignment: .center, spacing: 16) {
-                if let image = image { // 추후 이미지가 여럿 생기더라도 여긴 첫 이미지를 사용
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .clipShape(.rect(cornerRadius: 15))
-                }
-                VStack(alignment: .leading) {
-//                    Text(happiness.content)
-                    Text(content)
-                        .font(.sejongGeulggot(16))
-                        .foregroundStyle(.black)
-                        .lineLimit(2)
-                        .padding(.bottom, 8)
-//                    Text(happiness.formattedDate)
-                    Text(date)
-                        .font(.mapoGoldenPier(FontSize.timeStamp))
-                        .foregroundStyle(.gray)
-                }
-            }
-            .frame(height: 100)
-            .frame(maxWidth: .infinity, alignment: .leading)
-//            .onAppear {
-//                viewModel = HappinessDetailViewModel(happiness: happiness, happinessRepository: happinessRepository)
-//            }
-//        }
-    }
 }

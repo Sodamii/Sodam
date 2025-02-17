@@ -10,24 +10,20 @@ import Combine
 
 struct HappinessListView: View {
     
-    @StateObject var viewModel: HappinessListViewModel
     @Environment(\.dismiss) private var dismiss
-    @State var isBackButtonHidden: Bool // 기록 탭으로 진입하면 뒤로가기 숨기기
+    @ObservedObject var viewModel: HappinessListViewModel
     
+    var isBackButtonHidden: Bool = false // 기록 탭으로 진입하면 뒤로가기 숨기기
     private let cornerRadius: CGFloat = 15
-    
-    init(isBackButtonHidden: Bool = false) {
-        self._viewModel = StateObject(wrappedValue: HappinessListViewModel())
-        self._isBackButtonHidden = State(initialValue: isBackButtonHidden)
-    }
     
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
                 VStack(alignment: .center) {
-                    HangdamStatusView(size: geometry.size, hangdam: $viewModel.hangdam)
+                    HangdamStatusView(size: geometry.size, store: $viewModel.statusStore)
                         .clipShape(.rect(cornerRadius: cornerRadius))
-                    Text("\($viewModel.hangdam.wrappedValue.name ?? "행담이")가 먹은 기억들")
+                    
+                    Text(viewModel.title)
                         .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
                         .font(.mapoGoldenPier(FontSize.title2))
                         .lineLimit(1)
@@ -35,21 +31,18 @@ struct HappinessListView: View {
                         .foregroundStyle(Color.textAccent)
                         .padding(.vertical, 8)
                     
-                    if viewModel.happinessList.count > 0 {
+                    if !viewModel.happinessCellStores.isEmpty {
                         List {
-                            ForEach(viewModel.happinessList, id: \.self) { happiness in
-                                NavigationLink (destination: {
-                                    HappinessDetailView(
-                                        viewModel: HappinessDetailViewModel(happiness: happiness, happinessRepository: viewModel.getHappinessRepository()),
-                                        isCanDelete: viewModel.hangdam.endDate == nil ? false : true
-                                    )
-                                }, label: {
-                                    HappinessCell(
-                                        image: viewModel.getThumnail(from: happiness.imagePaths.first),
-                                        content: happiness.content,
-                                        date: happiness.formattedDate
-                                    )
-//                                    HappinessCell(happiness: happiness, happinessRepository: viewModel.getHappinessRepository(), isCanDelete: viewModel.hangdam.endDate == nil ? false : true, image: viewModel.getThumnail(from: happiness.imagePaths.first))
+                            ForEach(viewModel.happinessCellStores.indices, id: \.self) { i in
+                                NavigationLink(
+                                    destination: {
+                                        HappinessDetailView(
+                                            viewModel: viewModel.happinessDetailViewModels[i],
+                                            isCanDelete: false
+                                        )
+                                    },
+                                    label: {
+                                        HappinessCell(store: viewModel.happinessCellStores[i])
                                 })
                             }
                             .listRowSeparator(.hidden)
@@ -80,10 +73,6 @@ struct HappinessListView: View {
             }
             .padding([.top, .horizontal])
             .background(Color.viewBackground)
-            .onAppear {
-                viewModel.reloadData() // onAppear에서 실행
-                print("[HappinessListView] .onAppear - 데이터 리로드")
-            }
             .toolbar {
                 if !isBackButtonHidden { // ToolbarItem 자체를 조건문으로 감싸기
                     ToolbarItem(placement: .navigationBarLeading) {
@@ -96,6 +85,9 @@ struct HappinessListView: View {
                 }
             }
             .navigationBarBackButtonHidden(isBackButtonHidden)
+            .onAppear {
+                viewModel.reloadData()
+            }
         }
     }
 }

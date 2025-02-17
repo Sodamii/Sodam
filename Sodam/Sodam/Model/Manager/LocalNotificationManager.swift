@@ -94,7 +94,7 @@ final class LocalNotificationManager: NSObject {
         // 일기 작성 상태 확인
         if UserDefaultsManager.shared.getDiaryWrittenStatus() {
             DispatchQueue.main.async {
-                ToastManager.shared.showToastMessage(message: "오늘의 일기가 이미 작성되어\n 알림이 설정되지 않았습니다")
+                ToastManager.shared.showToastMessage(message: "알림 시간이\n\(self.timeFormatted(time))로 설정되었습니다")
             }
             return
         }
@@ -224,6 +224,7 @@ private extension LocalNotificationManager {
 extension LocalNotificationManager: UNUserNotificationCenterDelegate {
     // Foreground 상태에서 알림을 수신할 때 호출
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        UIApplication.shared.applicationIconBadgeNumber += 1  // 배지 번호를 증가시켜 앱 아이콘에 표시
         completionHandler([.banner, .badge, .sound, .list])
     }
     

@@ -51,7 +51,6 @@ final class HappinessListViewModel: ObservableObject {
         let tabHelper: TabBarHelper = .init()
         if let tabBarController = tabHelper.getRootTabBarController(),
            tabBarController.selectedIndex == 1 {
-            print("기록 탭 tapped")
             
             let hangdamRepository: HangdamRepository = .init()
             let hangdam = hangdamRepository.getCurrentHangdam()

@@ -10,27 +10,41 @@ import Combine
 import UIKit
 
 final class HappinessListViewModel: ObservableObject {
-    @Published var hangdam: HangdamDTO
-    @Published var happinessList: [HappinessDTO]
+    @Published var title: String
+    @Published var happinessCellStores: [HappinessCellStore]
+    @Published var happinessDetailViewModels: [HappinessDetailViewModel]
+    @Published var statusStore: HangdamStatusStore
     
     private let happinessRepository: HappinessRepository
-    private let hangdamRepository: HangdamRepository
     
-    init(happinessRepository: HappinessRepository = HappinessRepository(),
-         hangdamRepository: HangdamRepository = HangdamRepository()
-    ) {
+    init(hangdam: HangdamDTO, happinessRepository: HappinessRepository = HappinessRepository()) {
         self.happinessRepository = happinessRepository
-        self.hangdamRepository = hangdamRepository
-        self.hangdam = hangdamRepository.getCurrentHangdam()
-        self.happinessList = happinessRepository.getHappinesses(of: hangdamRepository.getCurrentHangdam().id)
-    }
-    
-    func reloadData() {
-        let newHangdam = hangdamRepository.getCurrentHangdam()
-        let newHappinesslist = happinessRepository.getHappinesses(of: hangdam.id)
-        self.happinessList = newHappinesslist
-        self.hangdam = newHangdam
-        print("[HappinessListViewModel] reloadeData 리로드")
+        self.title = "\(hangdam.name ?? "행담이")가 먹은 기억들"
+        let dateDescription = if let startDate = hangdam.startDate {
+            "\(startDate) ~ \(hangdam.endDate ?? "")"
+        } else {
+            ""
+        }
+        self.statusStore = HangdamStatusStore(
+            image: .hangdamImage(level: hangdam.level),
+            name: hangdam.name ?? "이름을 지어주세요!",
+            description: "Lv.\(hangdam.level) \(hangdam.levelName)",
+            dateDescription: dateDescription
+        )
+        let happinessList = happinessRepository.getHappinesses(of: hangdam.id)
+        self.happinessCellStores = happinessList.map {
+                HappinessCellStore(
+                    image: happinessRepository.getThumbnailImage(from: $0.imagePaths.first),
+                    content: $0.content,
+                    date: $0.formattedDate
+                )
+            }
+        self.happinessDetailViewModels = happinessList.map {
+            HappinessDetailViewModel(
+               happiness: $0,
+               happinessRepository: happinessRepository
+           )
+        }
     }
     
     func getHappinessRepository() -> HappinessRepository {

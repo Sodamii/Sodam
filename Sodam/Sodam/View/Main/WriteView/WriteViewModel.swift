@@ -63,6 +63,7 @@ extension WriteViewModel {
         happinessRepository.createHappiness(newHappiness)
         
         isPostSubmitted = true
+        UserDefaultsManager.shared.saveDiaryWrittenStatus(true)
         
         // post 초기화
         resetPost()

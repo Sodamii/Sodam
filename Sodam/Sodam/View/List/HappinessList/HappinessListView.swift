@@ -18,9 +18,7 @@ struct HappinessListView: View {
     init(viewModel: HappinessListViewModel, isBackButtonHidden: Bool) {
         self.viewModel = viewModel
         self.isBackButtonHidden = isBackButtonHidden
-
     }
-    
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -79,6 +77,7 @@ struct HappinessListView: View {
                         }
                     }
                 }
+                .tabBarVisibilityByTab()
             }
             .padding([.top, .horizontal])
             .background(Color.viewBackground)
@@ -87,16 +86,6 @@ struct HappinessListView: View {
                 print("[HappinessListView] .onAppear - 데이터 리로드")
             }
         }
-    }
-    
-    private func getRootTabBarController() -> UITabBarController? {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let sceneDelegate = scene.delegate as? SceneDelegate,
-              let rootViewController = sceneDelegate.window?.rootViewController else {
-            return nil
-        }
-        
-        return rootViewController as? UITabBarController
     }
 }
 

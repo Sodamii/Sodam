@@ -16,8 +16,8 @@ struct HappinessListView: View {
     
     private let cornerRadius: CGFloat = 15
     
-    init(hangdam: HangdamDTO, isBackButtonHidden: Bool = false) {
-        self._viewModel = StateObject(wrappedValue: HappinessListViewModel(hangdam: hangdam))
+    init(isBackButtonHidden: Bool = false) {
+        self._viewModel = StateObject(wrappedValue: HappinessListViewModel())
         self._isBackButtonHidden = State(initialValue: isBackButtonHidden)
     }
     
@@ -76,6 +76,7 @@ struct HappinessListView: View {
                         }
                     }
                 }
+                .tabBarVisibilityByTab()
             }
             .padding([.top, .horizontal])
             .background(Color.viewBackground)
@@ -97,16 +98,6 @@ struct HappinessListView: View {
             .navigationBarBackButtonHidden(isBackButtonHidden)
         }
     }
-    
-    private func getRootTabBarController() -> UITabBarController? {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let sceneDelegate = scene.delegate as? SceneDelegate,
-              let rootViewController = sceneDelegate.window?.rootViewController else {
-            return nil
-        }
-        
-        return rootViewController as? UITabBarController
-    }
 }
 
 enum FontSize {
@@ -117,7 +108,6 @@ enum FontSize {
 }
 
 #Preview {
-    let hangdamRepository: HangdamRepository = HangdamRepository()
-    HappinessListView(hangdam: hangdamRepository.getCurrentHangdam())
+    
 }
 

@@ -10,7 +10,7 @@ import UIKit
 final class SettingViewModel {
     private let userDefaultsManager = UserDefaultsManager.shared
     private let localNotificationManager = LocalNotificationManager.shared
-    
+
     var isToggleOn: Bool  // 앱 설정 알림 토글 상ㅌ
 
     let sectionType: [Setting.SetSection] = [.appSetting, .develop]  // 섹션 타입 설정
@@ -38,6 +38,11 @@ final class SettingViewModel {
     // 앱 설정 알림 토글 상태 저장
     func saveIsAppToggleNotification(_ sender: Bool) {
         userDefaultsManager.saveAppNotificationToggleState(sender)
+    }
+    
+    // 사용자가 한 번이라도 설정한 적이 있는지 여부 반환
+    func hasUserSetToggleBefore() -> Bool {
+        userDefaultsManager.hasUserSetToggleBefore()
     }
     
     func saveNotificationAuthorizationStatus(_ status: Bool) {

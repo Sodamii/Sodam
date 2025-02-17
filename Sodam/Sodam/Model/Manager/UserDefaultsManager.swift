@@ -20,6 +20,7 @@ final class UserDefaultsManager {
         static let content = "content"  // 작성 내용
         static let imagePath = "imagePath"  // 작성시 등록 이미지
         static let notificationAuthorizationStatus = "notificationAuthorizationStatus"  // 알림 권한 상태 (허용/거부)를 UserDefaults에 저장
+        static let toggleSetBeforeKey = "hasUserSetToggleBefore"  // 사용자가 한 번이라도 설정한 적이 있는지 여부 확인
         static let notificationInitialSetupComplete = "notificationInitialSetupComplete" // 앱 알림 초기 설정 여부 확인
         static let isDiaryWritten = "isDiaryWritten"  // 기록 작성 여부 확인
         static let diaryWrittenDateKey = "diaryWrittenDateKey"  // 기록 작성 시간
@@ -35,6 +36,11 @@ final class UserDefaultsManager {
     // 앱 설정 알림 토글 상태 (ON/OFF)를 UserDefaults에 저장
     func saveAppNotificationToggleState(_ isOn: Bool) {
         UserDefaults.standard.set(isOn, forKey: Keys.appSettingToggleState)
+    }
+    
+    // 사용자가 한 번이라도 설정한 적이 있는지 여부 반환
+    func hasUserSetToggleBefore() -> Bool {
+        return UserDefaults.standard.bool(forKey: Keys.toggleSetBeforeKey)
     }
     
     // 작성된 내용(content)을 UserDefaults에 저장

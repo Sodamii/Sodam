@@ -59,23 +59,29 @@ final class SettingsViewController: UIViewController {
                 guard let self = self else { return }
                 let isAuthorized = settings.authorizationStatus == .authorized
                 self.settingViewModel.saveNotificationAuthorizationStatus(isAuthorized)
-
+                
                 let savedToggleState = self.settingViewModel.getAppNotificationToggleState()
                 
-                // 시스템 설정이 '허용' 상태일 때, 앱 내 토글 상태를 자동으로 'ON'으로 설정
                 if isAuthorized {
-                    self.settingViewModel.isToggleOn = savedToggleState
-
+                    // 사용자가 설정한 기록이 있는 경우 → 기존 설정 유지
+                    // 설정한 기록이 없고 시스템이 새롭게 ON으로 변경된 경우 → 기본값 ON
+                    if self.settingViewModel.hasUserSetToggleBefore() {
+                        self.settingViewModel.isToggleOn = savedToggleState
+                    } else {
+                        self.settingViewModel.isToggleOn = true
+                        self.settingViewModel.saveIsAppToggleNotification(true)
+                    }
                 } else {
+                    // 시스템이 OFF일 경우, 무조건 OFF
                     self.settingViewModel.isToggleOn = false
-                    self.settingViewModel.saveNotificationAuthorizationStatus(false)
-                    print("시스템거부시\(self.settingViewModel.isToggleOn)")
+                    self.settingViewModel.saveIsAppToggleNotification(false)
                 }
                 
                 self.settingView.tableView.reloadData()
             }
         }
     }
+
 }
 
 // MARK: - Private Method

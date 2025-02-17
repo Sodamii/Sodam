@@ -94,7 +94,7 @@ final class LocalNotificationManager: NSObject {
         // 일기 작성 상태 확인
         if UserDefaultsManager.shared.getDiaryWrittenStatus() {
             DispatchQueue.main.async {
-                ToastManager.shared.showToastMessage(message: "오늘의 일기가 이미 작성되어\n 알림이 설정되지 않았습니다.")
+                ToastManager.shared.showToastMessage(message: "오늘의 일기가 이미 작성되어\n 알림이 설정되지 않았습니다")
             }
             return
         }
@@ -158,7 +158,7 @@ final class LocalNotificationManager: NSObject {
         let isAlreadyScheduled = existingRequests.contains { $0.identifier == identifier }
         DispatchQueue.main.async {
             // 알림이 새로 예약되었거나 시간이 변경되었음을 사용자에게 알림
-            let message = isAlreadyScheduled ? "알림 시간이 \(self.timeFormatted(time))로 변경되었습니다." : "기본 알림 시간 \(self.timeFormatted(time))로 설정되었습니다."
+            let message = isAlreadyScheduled ? "알림 시간이 \(self.timeFormatted(time))로 변경되었습니다" : "알림 시간이\n\(self.timeFormatted(time))로 설정되었습니다"
             ToastManager.shared.showToastMessage(message: message)
         }
     }
@@ -204,7 +204,7 @@ private extension LocalNotificationManager {
         
         // 알림 권한 거부 메시지 표시
         DispatchQueue.main.async {
-            ToastManager.shared.showToastMessage(message: "알림 권한이 거부되었습니다.")
+            ToastManager.shared.showToastMessage(message: "알림 권한이 거부되었습니다")
         }
         UserDefaultsManager.shared.markNotificationSetupAsComplete()  // 기본 알림 설정 완료 상태를 저장
     }

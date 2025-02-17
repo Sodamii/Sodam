@@ -31,7 +31,7 @@ struct HappinessDetailView: View {
                         .lineSpacing(10)
                         .foregroundStyle(Color(UIColor.darkGray))
                         .multilineTextAlignment(.leading)
-                        .padding(.horizontal, 8)        // TODO: default랑 비교
+                        .padding(.horizontal, 8)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
@@ -39,7 +39,7 @@ struct HappinessDetailView: View {
             .frame(maxWidth: .infinity)
             .background(Color.viewBackground)
             .padding()
-            .padding(.bottom, 32)           // TODO: 없는 거랑 비교
+            .padding(.bottom, 32)
             .tabBarVisibility(false)
         }
         .background(Color.viewBackground.ignoresSafeArea())

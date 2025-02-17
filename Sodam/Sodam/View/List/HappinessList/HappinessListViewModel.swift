@@ -46,4 +46,42 @@ final class HappinessListViewModel: ObservableObject {
            )
         }
     }
+    
+    func reloadData() {
+        let tabHelper: TabBarHelper = .init()
+        if let tabBarController = tabHelper.getRootTabBarController(),
+           tabBarController.selectedIndex == 1 {
+            print("기록 탭 tapped")
+            
+            let hangdamRepository: HangdamRepository = .init()
+            let hangdam = hangdamRepository.getCurrentHangdam()
+            
+            self.title = "\(hangdam.name ?? "행담이")가 먹은 기억들"
+            let dateDescription = if let startDate = hangdam.startDate {
+                "\(startDate) ~ \(hangdam.endDate ?? "")"
+            } else {
+                ""
+            }
+            self.statusStore = HangdamStatusStore(
+                image: .hangdamImage(level: hangdam.level),
+                name: hangdam.name ?? "이름을 지어주세요!",
+                description: "Lv.\(hangdam.level) \(hangdam.levelName)",
+                dateDescription: dateDescription
+            )
+            let happinessList = happinessRepository.getHappinesses(of: hangdam.id)
+            self.happinessCellStores = happinessList.map {
+                HappinessCellStore(
+                    image: happinessRepository.getThumbnailImage(from: $0.imagePaths.first),
+                    content: $0.content,
+                    date: $0.formattedDate
+                )
+            }
+            self.happinessDetailViewModels = happinessList.map {
+                HappinessDetailViewModel(
+                    happiness: $0,
+                    happinessRepository: happinessRepository
+                )
+            }
+        }
+    }
 }

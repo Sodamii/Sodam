@@ -85,6 +85,9 @@ struct HappinessListView: View {
                 }
             }
             .navigationBarBackButtonHidden(isBackButtonHidden)
+            .onAppear {
+                viewModel.reloadData()
+            }
         }
     }
 }

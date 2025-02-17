@@ -33,7 +33,7 @@ final class TabBarHelper {
         }
     }
     
-    private func getRootTabBarController() -> UITabBarController? {
+    func getRootTabBarController() -> UITabBarController? {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let sceneDelegate = scene.delegate as? SceneDelegate,
               let rootViewController = sceneDelegate.window?.rootViewController else {

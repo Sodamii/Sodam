@@ -23,9 +23,9 @@ final class HappinessListViewModel: ObservableObject {
     let listViewReloader: ListViewReloader
     let cellThumbnailFetcher: CellThumbnailFetcher
     
-    private let statusContentMapper: AnyDataMapper<HangdamDTO, StatusContent>
-    private let listContentMapper: AnyDataMapper<HangdamDTO, HappinessListContent>
-    private let listConfigMapper: AnyDataMapper<[HappinessDTO], [HappinessListConfig]>
+    private let statusContentMapper: ViewDataMapper<HangdamDTO, StatusContent>
+    private let listContentMapper: ViewDataMapper<HangdamDTO, HappinessListContent>
+    private let listConfigMapper: ViewDataMapper<[HappinessDTO], [HappinessListConfig]>
     
     init(
         detailViewOperator: DetailViewOperator,

@@ -10,7 +10,7 @@
  타입소거하여 구체적인 매퍼를 숨기고 호출부에서는 Input과 Output만으로 매퍼를 받아 데이터 처리
  */
 
-struct AnyDataMapper<Input, Output>: DataMapping {
+struct ViewDataMapper<Input, Output>: DataMapping {
     private let _map: (Input) -> Output //mapper의 map을 담아둘 내부 변수
     
     init<M:DataMapping>(mapper: M) where M.Input == Input, M.Output == Output {
@@ -47,12 +47,12 @@ final class DataMapperFactory {
     
     private func register<M: DataMapping>(mapper: M) { // 현재는 초기화 시에만 등록해서 private걸어둠
         let key = MapperKey(input: M.Input.self, output: M.Output.self)
-        registry[key] = AnyDataMapper(mapper: mapper)
+        registry[key] = ViewDataMapper(mapper: mapper)
     }
     
-    func createAnyMapper<Input, Output>(inputType: Input.Type, outputType: Output.Type) -> Result<AnyDataMapper<Input, Output>, FacotoryError> {
+    func createAnyMapper<Input, Output>(inputType: Input.Type, outputType: Output.Type) -> Result<ViewDataMapper<Input, Output>, FacotoryError> {
         let key = MapperKey(input: inputType, output: outputType)
-        guard let mapper = registry[key] as? AnyDataMapper<Input, Output> else { return .failure(.failedToCreate) }
+        guard let mapper = registry[key] as? ViewDataMapper<Input, Output> else { return .failure(.failedToCreate) }
         
         return .success(mapper)
     }

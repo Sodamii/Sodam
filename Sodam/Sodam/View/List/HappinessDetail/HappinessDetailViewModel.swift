@@ -9,7 +9,7 @@ import Combine
 import UIKit
 import Foundation
 
-final class HappinessDetailViewModel {
+final class HappinessDetailViewModel: ObservableObject {
     let id: HappinessID?
     let isCanDelete: Bool
     @Published var content: HappinessDetailContent
@@ -20,6 +20,7 @@ final class HappinessDetailViewModel {
         self.isCanDelete = isCanDelete
         self.content = content
         self.detailViewOperator = detailViewOperator
+        print("[DetailViewModel] init")
     }
     
     func deleteHappiness() {

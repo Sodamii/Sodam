@@ -66,7 +66,7 @@ final class HangdamStorageViewModel: ObservableObject {
             let hangdamRepository: HangdamRepository = HangdamRepository()
             let happinessRepository: HappinessRepository = HappinessRepository()
             let detailViewOperator: DetailViewOperator = DetailViewOperator(happinessRepository: happinessRepository)
-            let listViewReloader: ListViewReloader = ListViewReloader(
+            let listViewReloader: ListViewReloading = ListViewReloader(
                 happinessRepository: happinessRepository,
                 hangdamRepository: hangdamRepository,
                 hangdamID: hangdamDTO.id
@@ -81,6 +81,7 @@ final class HangdamStorageViewModel: ObservableObject {
                 mapperFactory: mapperFactory
             )
         }
+        print("[Happiness data reload")
     }
 }
 

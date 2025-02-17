@@ -41,12 +41,9 @@ struct HappinessListView: View {
                                 NavigationLink (
                                     destination: {
                                         HappinessDetailView(
-                                            viewModel: HappinessDetailViewModel(
-                                                id: config.detailContentID,
-                                                isCanDelete: viewModel.isCanDelete,
-                                                content: config.detailContent,
-                                                detailViewOperator: viewModel.detailViewOperator
-                                            )
+                                            viewModel: viewModel.detailViewModel(for: config
+                                                                                
+                                                                                )
                                         )
                                     },
                                     label: {

@@ -14,7 +14,7 @@ import UIKit
 final class HappinessListViewModel: ObservableObject {
     @Published var statusContent: StatusContent
     @Published var listContent: HappinessListContent
-    var listConfigs: [HappinessListConfig]
+    @Published var listConfigs: [HappinessListConfig]
     @Published var isCanDelete: Bool
     @Published var isDataError: Bool
     @Published var errorMessage: String?
@@ -26,6 +26,8 @@ final class HappinessListViewModel: ObservableObject {
     private let statusContentMapper: ViewDataMapper<HangdamDTO, StatusContent>
     private let listContentMapper: ViewDataMapper<HangdamDTO, HappinessListContent>
     private let listConfigMapper: ViewDataMapper<[HappinessDTO], [HappinessListConfig]>
+    
+    private var detailViewModelCache: [HappinessID: HappinessDetailViewModel] = [:] // 만들어진 뷰모델이 있을 때 재사용
     
     init(
         detailViewOperator: DetailViewOperator,
@@ -60,6 +62,31 @@ final class HappinessListViewModel: ObservableObject {
             self.isCanDelete = false
             self.isDataError = true
             self.errorMessage = error.localizedDescription
+        }
+    }
+    
+    /// DetailViewModel을 생성 추후 팩토리로 별도 분리 필요함
+    func detailViewModel(for config: HappinessListConfig) -> HappinessDetailViewModel {
+        if let id = config.detailContentID {
+            if let cached = detailViewModelCache[id] {
+                return cached
+            } else {
+                let detailViewModel = HappinessDetailViewModel(
+                    id: id,
+                    isCanDelete: self.isCanDelete,
+                    content: config.detailContent,
+                    detailViewOperator: self.detailViewOperator
+                )
+                detailViewModelCache[id] = detailViewModel
+                return detailViewModel
+            }
+        } else { // 에러 처리 필요할 듯
+            return HappinessDetailViewModel(
+                id: nil,
+                isCanDelete: self.isCanDelete,
+                content: config.detailContent,
+                detailViewOperator: self.detailViewOperator
+            )
         }
     }
     

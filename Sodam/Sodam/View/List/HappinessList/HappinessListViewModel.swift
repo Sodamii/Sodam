@@ -14,7 +14,7 @@ import UIKit
 final class HappinessListViewModel: ObservableObject {
     @Published var statusContent: StatusContent
     @Published var listContent: HappinessListContent
-    @Published var listConfigs: [HappinessListConfig]
+    var listConfigs: [HappinessListConfig]
     @Published var isCanDelete: Bool
     @Published var isDataError: Bool
     @Published var errorMessage: String?

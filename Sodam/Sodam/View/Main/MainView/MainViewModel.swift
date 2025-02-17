@@ -66,9 +66,9 @@ final class MainViewModel: ObservableObject {
     
     /// 오늘 작성했다고 UserDefaults에 lastWrittenDate라는 키로 저장
     func markAsWrittenToday() {
-        let today = Calendar.current.startOfDay(for: Date())  // 시간을 00:00:00으로 초기화
-        UserDefaults.standard.set(today, forKey: "lastWrittenDate") // UserDefaults에 저장
-        print("오늘 작성 기록 저장됨: \(today)")
+//        let today = Calendar.current.startOfDay(for: Date())  // 시간을 00:00:00으로 초기화
+//        UserDefaults.standard.set(today, forKey: "lastWrittenDate") // UserDefaults에 저장
+//        print("오늘 작성 기록 저장됨: \(today)")
     }
     
     /// 행담이가 레벨업 할 때 메세지를 업데이트 함

@@ -89,18 +89,6 @@ struct HappinessListView: View {
                 viewModel.reloadData() // onAppear에서 실행
                 print("[HappinessListView] .onAppear - 데이터 리로드")
             }
-            .toolbar {
-                if !isBackButtonHidden { // ToolbarItem 자체를 조건문으로 감싸기
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: {
-                            dismiss()
-                        }) {
-                            
-                        }
-                    }
-                }
-            }
-            .navigationBarBackButtonHidden(isBackButtonHidden)
         }
     }
     

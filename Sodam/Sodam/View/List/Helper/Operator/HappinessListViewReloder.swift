@@ -34,3 +34,26 @@ final class ListViewReloader: ListViewReloading {
         }
     }
 }
+
+final class CurrentListViewReloader: ListViewReloading {
+    private let happinessRepository: HappinessRepository
+    private let hangdamRepository: HangdamRepository
+    
+    init(happinessRepository: HappinessRepository, hangdamRepository: HangdamRepository) {
+        self.happinessRepository = happinessRepository
+        self.hangdamRepository = hangdamRepository
+    }
+    
+    func reloadData() -> Result<ListViewConfigData, Error> {
+        let hangdamID: String? = hangdamRepository.getCurrentHangdam().id
+        do {
+            let newHangdamData: HangdamDTO = try hangdamRepository.fetchHangdamByID(by: hangdamID).get()
+            return .success((
+                newHangdamData,
+                happinessRepository.getHappinesses(of: hangdamID)
+            ))
+        } catch {
+            return .failure(error)
+        }
+    }
+}

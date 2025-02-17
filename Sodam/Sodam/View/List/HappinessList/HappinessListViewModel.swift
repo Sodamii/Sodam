@@ -20,7 +20,7 @@ final class HappinessListViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     let detailViewOperator: DetailViewOperator
-    let listViewReloader: ListViewReloader
+    let listViewReloader: ListViewReloading
     let cellThumbnailFetcher: CellThumbnailFetcher
     
     private let statusContentMapper: ViewDataMapper<HangdamDTO, StatusContent>
@@ -29,7 +29,7 @@ final class HappinessListViewModel: ObservableObject {
     
     init(
         detailViewOperator: DetailViewOperator,
-        listViewReloader: ListViewReloader,
+        listViewReloader: ListViewReloading,
         cellThumbnailFetcher: CellThumbnailFetcher,
         mapperFactory: DataMapperFactory
     ) {

@@ -10,13 +10,11 @@ import SwiftUI
 struct HangdamStatusView: View {
     
     let size: CGSize
-    
-    @Binding var hangdam: HangdamDTO
+    @Binding var store: HangdamStatusStore
     
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
-            Image
-                .hangdamImage(level: hangdam.level)
+            store.image
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: size.width / 3)
@@ -24,18 +22,16 @@ struct HangdamStatusView: View {
                 .clipShape(.circle)
             
             VStack(alignment: .leading, spacing: 10) {
-                Text(hangdam.name ?? "이름을 지어주세요!")
-                    .font(.maruburiot(type: .bold, size: hangdam.name == nil ? 18 : 25))
-                Text("Lv.\(hangdam.level) \(hangdam.levelName)")
+                Text(store.name)
+                    .font(.maruburiot(type: .bold, size: store.hasName ? 25.0 : 18.0))
+                
+                Text(store.description)
                     .font(.maruburiot(type: .semiBold, size: 17))
-                if let startDate = hangdam.startDate {
-                    Text("\(startDate) ~ \(hangdam.endDate ?? "")")
-                        .font(.maruburiot(type: .regular, size: 16))
-                        .minimumScaleFactor(0.7)
-                        .lineLimit(1)
-                } else {
-                    Text("")
-                }
+                
+                Text(store.dateDescription)
+                    .font(.maruburiot(type: .regular, size: 16))
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
             }
             .foregroundStyle(Color(uiColor: .white))
         }
@@ -46,7 +42,41 @@ struct HangdamStatusView: View {
     }
 }
 
+struct HangdamStatusStore {
+    let image: Image
+    let name: String
+    let description: String
+    let dateDescription: String
+    
+    var hasName: Bool {
+        name != "이름을 지어주세요!"
+    }
+}
+
 #Preview {
-    let hangdamRepository: HangdamRepository = HangdamRepository()
-    HangdamStatusView(size: CGSize(width: 402, height: 716), hangdam: .constant(hangdamRepository.getCurrentHangdam()))
+    Group {
+        HangdamStatusView(
+            size: CGSize(width: 402, height: 716),
+            store: .constant(
+                HangdamStatusStore(
+                    image: .hangdamImage(level: 1),
+                    name: "a name",
+                    description: "a description",
+                    dateDescription: "a date description"
+                )
+            )
+        )
+        
+        HangdamStatusView(
+            size: CGSize(width: 402, height: 716),
+            store: .constant(
+                HangdamStatusStore(
+                    image: .hangdamImage(level: 1),
+                    name: "a name",
+                    description: "a description",
+                    dateDescription: ""
+                )
+            )
+        )
+    }
 }

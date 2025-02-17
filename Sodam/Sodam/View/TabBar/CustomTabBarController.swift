@@ -37,7 +37,8 @@ final class CustomTabBarController: UITabBarController {
             selectedImage: UIImage(named: "main.fill"))
         
         // 기록 탭
-        let happinessListViewController = UIHostingController(rootView: HappinessListView(hangdam: mainViewModel.hangdam, isBackButtonHidden: true))
+        let happinessListViewController = UIHostingController(rootView: HappinessListView(viewModel: HappinessListViewModel(hangdam: mainViewModel.hangdam), isBackButtonHidden: true))
+        
         happinessListViewController.tabBarItem = UITabBarItem(
             title: "기록",
             image: UIImage(named: "book"),

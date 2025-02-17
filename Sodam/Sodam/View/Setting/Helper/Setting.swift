@@ -20,5 +20,6 @@ enum Setting {
         case setTime = "시간"
         case appReview = "앱 리뷰 남기기" // 앱 리뷰 남기러 가기
         case appVersion = "앱 버전"     // 앱 버전
+        case feedback = "버그제보 / 문의" // 사용자 피드백
     }
 }

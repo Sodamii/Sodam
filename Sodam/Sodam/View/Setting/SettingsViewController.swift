@@ -106,7 +106,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         case .appSetting:
             return settingViewModel.isToggleOn ? 2 : 1
         case .develop:
-            return 2
+            return 3
         }
     }
     
@@ -168,6 +168,13 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                                timeAction: nil,
                                version: "")
             } else if indexPath.row == 1 {
+                cell.versionLabel.isHidden = true
+                cell.arrowImage.isHidden = false
+                cell.configure(title: "\(Setting.SetCell.feedback.rawValue)",
+                               switchAction: nil,
+                               timeAction: nil,
+                               version: "")
+            } else if indexPath.row == 2 {
                 cell.versionLabel.isHidden = false
                 cell.arrowImage.isHidden = true
                 cell.configure(title: "\(Setting.SetCell.appVersion.rawValue)",
@@ -186,6 +193,8 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         case .develop:
             if indexPath.row == 0 {
                 settingViewModel.openURL("https://apps.apple.com/us/app/sodam/id6741320265")
+            } else if indexPath.row == 1 {
+                settingViewModel.openURL("https://forms.gle/GKAfcPZL9cenQxx78")
             }
         default:
             break

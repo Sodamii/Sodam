@@ -164,9 +164,8 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5PK5H7T5K9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Sodam/Configuration/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "앱에서 사진을 촬영하기 위해 카메라 접근 권한이 필요합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "앱에서 찍은 사진을 앨범에 추가하기 위해 권한이 필요합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "앱에서 사진을 선택하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "행복 작성에 사진을 첨부하려면 카메라 접근 권한이 필요합니다. 허용하시겠습니까?";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "행복 작성에 사진을 첨부하려면 사진 라이브러리 접근 권한이 필요합니다. 허용하시겠습니까?";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -177,7 +176,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sodam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -204,9 +203,8 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5PK5H7T5K9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Sodam/Configuration/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "앱에서 사진을 촬영하기 위해 카메라 접근 권한이 필요합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "앱에서 찍은 사진을 앨범에 추가하기 위해 권한이 필요합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "앱에서 사진을 선택하기 위해 사진 라이브러리 접근 권한이 필요합니다.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "행복 작성에 사진을 첨부하려면 카메라 접근 권한이 필요합니다. 허용하시겠습니까?";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "행복 작성에 사진을 첨부하려면 사진 라이브러리 접근 권한이 필요합니다. 허용하시겠습니까?";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -217,7 +215,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sodam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -26,7 +26,7 @@ struct HappinessMapper {
               let date = entity.date,
               let imagePaths = entity.imagePaths?.toStringArray
         else { return nil }
-        
+
         return HappinessDTO(
             id: IDConverter.toStringID(from: entity.objectID),
             content: content,
@@ -35,19 +35,19 @@ struct HappinessMapper {
             hangdamID: IDConverter.toStringID(from: entity.hangdam?.objectID)
         )
     }
-    
+
     func toEntity(from dto: HappinessDTO, context: NSManagedObjectContext) -> Result<HappinessEntity, DataError> {
         guard let data = try? NSKeyedArchiver.archivedData(withRootObject: dto.imagePaths, requiringSecureCoding: true)
         else {
             print(DataError.convertImagePathsFailed.localizedDescription)
             return .failure(DataError.convertImagePathsFailed)
         }
-        
+
         let entity = HappinessEntity(context: context)
         entity.content = dto.content
         entity.date = dto.date
         entity.imagePaths = data
-        
+
         return .success(entity)
     }
 }

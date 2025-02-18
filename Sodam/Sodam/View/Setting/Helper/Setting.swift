@@ -13,7 +13,7 @@ enum Setting {
         case appSetting = "앱 설정"
         case develop = "환경 설정"
     }
-    
+
     // 설정 Cell
     enum SetCell: String {
         case notification = "알림 설정"  // 알림 스위치

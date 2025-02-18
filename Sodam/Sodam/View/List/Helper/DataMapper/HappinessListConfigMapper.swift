@@ -7,9 +7,9 @@
 
 final class HappinessListConfigMapper: DataMapping {
     typealias Input = [HappinessDTO]
-    
+
     typealias Output = [HappinessListConfig]
-    
+
     func map(from input: [HappinessDTO]) -> [HappinessListConfig] {
         return input.map { happiness in
             HappinessListConfig(

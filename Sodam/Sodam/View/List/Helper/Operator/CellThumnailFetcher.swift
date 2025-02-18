@@ -13,11 +13,11 @@ protocol ThumbnailFetching {
 
 final class CellThumbnailFetcher: ThumbnailFetching {
     private let happinessRepository: HappinessRepository
-    
+
     init(happinessRepository: HappinessRepository) {
         self.happinessRepository = happinessRepository
     }
-    
+
     func fetchThumbnail(from path: String?) -> UIImage? {
         return happinessRepository.getThumbnailImage(from: path)
     }

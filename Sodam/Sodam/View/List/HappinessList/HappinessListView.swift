@@ -11,10 +11,10 @@ import Combine
 struct HappinessListView: View {
     @ObservedObject private var viewModel: HappinessListViewModel
     @Environment(\.dismiss) private var dismiss
-    
+
     private let isBackButtonHidden: Bool // 기록 탭으로 진입하면 뒤로가기 숨기기
     private let cornerRadius: CGFloat = 15
-    
+
     init(viewModel: HappinessListViewModel, isBackButtonHidden: Bool) {
         self.viewModel = viewModel
         self.isBackButtonHidden = isBackButtonHidden
@@ -32,16 +32,14 @@ struct HappinessListView: View {
                         .minimumScaleFactor(0.5)
                         .foregroundStyle(Color.textAccent)
                         .padding(.vertical, 8)
-                    
+
                     if !viewModel.listConfigs.isEmpty {
                         List {
                             ForEach(viewModel.listConfigs, id: \.self) { config in
-                                NavigationLink (
+                                NavigationLink(
                                     destination: {
                                         HappinessDetailView(
-                                            viewModel: viewModel.detailViewModel(for: config
-                                                                                
-                                                                                )
+                                            viewModel: viewModel.detailViewModel(for: config)
                                         )
                                     },
                                     label: {
@@ -64,7 +62,7 @@ struct HappinessListView: View {
                         .listRowSpacing(16)
                         .listStyle(.plain)
                     } else {
-                        VStack(alignment:.center) {
+                        VStack(alignment: .center) {
                             Spacer()
                             Text(viewModel.listContent.emptyComment)
                                 .frame(maxWidth: .infinity, maxHeight: 35, alignment: .center)

@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct HangdamGridView: View {
-    
+
     @ObservedObject var viewModel: HangdamStorageViewModel
-    
+
     let columns = Array(repeating: GridItem(spacing: 16), count: 2)
-    
+
     var body: some View {
         LazyVGrid(columns: columns, spacing: 16) {
             ForEach(viewModel.hangdamGridStores.indices, id: \.self) { index in
@@ -26,9 +26,9 @@ struct HangdamGridView: View {
     }
 }
 
-fileprivate struct HangdamGrid: View {
+private struct HangdamGrid: View {
     let store: HangdamGridStore
-    
+
     var body: some View {
         VStack(spacing: 1) {
             Image(.level4)
@@ -37,7 +37,7 @@ fileprivate struct HangdamGrid: View {
                 .background(Color.imageBackground)
                 .clipShape(.rect(cornerRadius: 15))
                 .padding()
-            
+
             VStack(alignment: .leading, spacing: 8) {
                 Text(store.name)
                     .font(.maruburiot(type: .bold, size: 16))

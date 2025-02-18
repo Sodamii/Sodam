@@ -7,9 +7,9 @@
 
 final class HappinessListContentMapper: DataMapping {
     typealias Input = HangdamDTO
-    
+
     typealias Output = HappinessListContent
-    
+
     func map(from input: HangdamDTO) -> HappinessListContent {
         let name: String = {
             guard let name = input.name else {
@@ -17,7 +17,7 @@ final class HappinessListContentMapper: DataMapping {
             }
             return name
         }()
-        
+
         return HappinessListContent(
             title: "\(name)가 먹은 기억들",
             emptyComment: "아직 가진 기억이 없어요😢"

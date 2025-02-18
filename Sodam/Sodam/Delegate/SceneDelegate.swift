@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // 메인 ViewController 설정
         let mainViewController = CustomTabBarController()
-        
+
         window.backgroundColor = .white
 
         // 페이드인/페이드아웃 오버레이 설정
@@ -39,7 +39,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         UIView.animate(withDuration: 0.8, delay: 1.5, options: .curveEaseOut, animations: {
             overlayView.alpha = 0.0 // 페이드아웃
         }, completion: { _ in
-            
+
             // 메인 화면으로 전환
             self.window?.rootViewController = mainViewController
 

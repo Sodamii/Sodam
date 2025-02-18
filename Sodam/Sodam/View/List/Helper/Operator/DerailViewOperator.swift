@@ -12,20 +12,20 @@ protocol  HappinessImageFetching {
 }
 
 protocol HappinessContentDeleting {
-    func deleteContent(id: String?, path: String?) -> Void
+    func deleteContent(id: String?, path: String?)
 }
 
 final class DetailViewOperator: HappinessImageFetching, HappinessContentDeleting {
     private let happinessRepository: HappinessRepository
-    
+
     init(happinessRepository: HappinessRepository) {
         self.happinessRepository = happinessRepository
     }
-    
+
     func fetchImage(from path: String?) -> UIImage? {
         return happinessRepository.getContentImage(from: path)
     }
-    
+
     func deleteContent(id: String?, path: String?) {
         happinessRepository.deleteHappiness(with: id, path: path)
     }

@@ -35,15 +35,15 @@ extension UIImage {
         var duration = 0.0 // 애니메이션 총 지속 시간 (0으로 하면 반복됨)
 
         // 각 프레임을 순회하며 이미지와 지속 시간을 계산
-        for i in 0..<count {
-            if let cgImage = CGImageSourceCreateImageAtIndex(source, i, nil) {
+        for index in 0..<count {
+            if let cgImage = CGImageSourceCreateImageAtIndex(source, index, nil) {
 
                 // CGImage를 UIImage로 변환하여 배열에 추가
                 let image = UIImage(cgImage: cgImage)
                 images.append(image)
 
                 // GIF 속성에서 지연 시간을 가져와 총 지속 시간에 추가
-                if let properties = CGImageSourceCopyPropertiesAtIndex(source, i, nil) as? [String: Any],
+                if let properties = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [String: Any],
                    let gifProperties = properties[kCGImagePropertyGIFDictionary as String] as? [String: Any] {
                     if let delayTime = gifProperties[kCGImagePropertyGIFDelayTime as String] as? Double {
                         duration += delayTime

@@ -8,13 +8,13 @@
 import Foundation
 
 enum CustomFont: String {
-    case MapoGoldenPier
-    case SejongGeulggot
-    case MaruBuriot
-    case GyeonggiBatang
-    case GowunBatang
-    case NanumSquareNeo
-    case JGaegujaengyi
+    case mapoGoldenPier = "MapoGoldenPier"
+    case sejongGeulggot = "SejongGeulggot"
+    case maruBuriot = "MaruBuriot"
+    case gyeonggiBatang = "GyeonggiBatang"
+    case gowunBatang = "GowunBatang"
+    case nanumSquareNeo = "NanumSquareNeo"
+    case jGaegujaengyi = "JGaegujaengyi"
 }
 
 enum FontType: String {

@@ -39,9 +39,7 @@ struct HappinessListView: View {
                                 NavigationLink(
                                     destination: {
                                         HappinessDetailView(
-                                            viewModel: viewModel.detailViewModel(for: config
-
-                                                                                )
+                                            viewModel: viewModel.detailViewModel(for: config)
                                         )
                                     },
                                     label: {

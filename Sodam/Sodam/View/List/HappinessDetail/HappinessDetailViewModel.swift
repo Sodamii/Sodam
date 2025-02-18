@@ -14,7 +14,7 @@ final class HappinessDetailViewModel: ObservableObject {
     let isCanDelete: Bool
     @Published var content: HappinessDetailContent
     private let detailViewOperator: DetailViewOperator
-    
+
     init(id: HappinessID?, isCanDelete: Bool, content: HappinessDetailContent, detailViewOperator: DetailViewOperator) {
         self.id = id
         self.isCanDelete = isCanDelete
@@ -22,11 +22,11 @@ final class HappinessDetailViewModel: ObservableObject {
         self.detailViewOperator = detailViewOperator
         print("[DetailViewModel] init")
     }
-    
+
     func deleteHappiness() {
         self.detailViewOperator.deleteContent(id: id, path: content.happinessImagePath)
     }
-    
+
     func getImage(from imagePath: String) -> UIImage {
         guard let image = detailViewOperator.fetchImage(from: content.happinessImagePath)
         else {

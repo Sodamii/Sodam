@@ -12,7 +12,7 @@ enum FileError: Error {
     case imageFetchFailed
     case imageSearchFailed
     case imageDeleteFailed
-    
+
     // 디버깅용 print 구문
     var localizedDescription: String {
         switch self {
@@ -22,7 +22,7 @@ enum FileError: Error {
         case .imageDeleteFailed: "[FileManager Error] image 삭제 실패"
         }
     }
-    
+
     // 사용자에게 띄울 alert에 넣을 구문
     var alertDescription: String {
         switch self {

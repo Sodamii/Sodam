@@ -9,4 +9,3 @@ struct HappinessListContent {
     let title: String
     let emptyComment: String /*= */
 }
-

@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct HangdamStorageView: View {
-    
+
     @ObservedObject var viewModel: HangdamStorageViewModel
-    
+
     var body: some View {
         NavigationStack {
             VStack(alignment: .center) {
                 HStack(alignment: .bottom) {
                     HangdamStorageTitle()
-                    
+
                     HangdamCountTitle(count: viewModel.hangdamGridStores.count)
                 }
-                
+
                 if viewModel.hangdamGridStores.isEmpty {
                     HangdamEmptyView()
                 } else {
@@ -42,7 +42,7 @@ struct HangdamStorageView: View {
     }
 }
 
-fileprivate struct HangdamStorageTitle: View {
+private struct HangdamStorageTitle: View {
     var body: some View {
         Text("행담이 보관함")
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -52,10 +52,10 @@ fileprivate struct HangdamStorageTitle: View {
     }
 }
 
-fileprivate struct HangdamCountTitle: View {
-    
+private struct HangdamCountTitle: View {
+
     let count: Int
-    
+
     var body: some View {
         Text("다 자란 행담이 : \(count)")
             .font(.mapoGoldenPier(15))

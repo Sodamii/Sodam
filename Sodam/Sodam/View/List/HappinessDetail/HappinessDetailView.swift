@@ -64,19 +64,22 @@ struct HappinessDetailView: View {
             }
         }
         
-        .alert("정말 삭제하시겠습니까?", isPresented: $isAlertPresented) {
-            Button("취소", role: .cancel) { }
-            Button("삭제", role: .destructive) {
-                viewModel.deleteHappiness()
-                dismiss()
+        .alert(
+            "정말 삭제하시겠습니까?",
+            isPresented: $isAlertPresented,
+            actions: {
+                Button("취소", role: .cancel) { }
+                Button("삭제", role: .destructive) {
+                    viewModel.deleteHappiness()
+                    dismiss()
+                }
+            },
+            message: {
+                Text("삭제한 행복은 되돌릴 수 없습니다.")
             }
-        } message: {
-            Text("삭제한 행복은 되돌릴 수 없습니다.")
-        }
+        )
     }
-    
 }
 
 #Preview {
 }
-

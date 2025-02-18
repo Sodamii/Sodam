@@ -11,23 +11,23 @@ import SwiftUI
 final class CustomAlertViewController: UIViewController {
     private let config: AlertConfiguration
     private var textField: UITextField?
-    
+
     init(config: AlertConfiguration) {
         self.config = config
         super.init()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError()
     }
-    
+
     override func viewDidLoad() {
         setupUI()
     }
-    
+
     private func setupUI() {
         view.backgroundColor = UIColor.black.withAlphaComponent(0.5) // 알럿 창 뒤를 살짝 어둡게 처리
-        
+
         let alertView: UIView = {
             let instance: UIView = UIView()
             instance.backgroundColor = config.backgroundColor
@@ -35,7 +35,7 @@ final class CustomAlertViewController: UIViewController {
             instance.translatesAutoresizingMaskIntoConstraints = false
             return instance
         }()
-        
+
         let stackView: UIStackView = {
             let instance: UIStackView = UIStackView()
             instance.axis = .vertical
@@ -43,7 +43,7 @@ final class CustomAlertViewController: UIViewController {
             instance.translatesAutoresizingMaskIntoConstraints = false
             return instance
         }()
-        
+
         if let title = config.title {
             let titleLabel: UILabel = {
                 let instance: UILabel = UILabel()
@@ -53,10 +53,10 @@ final class CustomAlertViewController: UIViewController {
                 instance.textAlignment = .center
                 return instance
             }()
-            
+
             stackView.addArrangedSubview(titleLabel)
         }
-        
+
         if let message = config.message {
             let messageLabel: UILabel = {
                 let instance: UILabel = UILabel()
@@ -66,10 +66,10 @@ final class CustomAlertViewController: UIViewController {
                 instance.textAlignment = .center
                 return instance
             }()
-            
+
             stackView.addArrangedSubview(messageLabel)
         }
-        
+
         if let placeHoler = config.textFieldPlaceHolder {
             let textField: UITextField = {
                 let instance: UITextField = UITextField()
@@ -77,11 +77,11 @@ final class CustomAlertViewController: UIViewController {
                 instance.borderStyle = .roundedRect
                 return instance
             }()
-            
+
             self.textField = textField
             stackView.addArrangedSubview(textField)
         }
-        
+
         let buttonStack: UIStackView = {
             let instance: UIStackView = UIStackView()
             instance.axis = .horizontal
@@ -89,7 +89,7 @@ final class CustomAlertViewController: UIViewController {
             instance.spacing = 8
             return instance
         }()
-        
+
         for action in config.actions {
             let button: UIButton = {
                 let instance: UIButton = UIButton()
@@ -100,36 +100,36 @@ final class CustomAlertViewController: UIViewController {
                 } ?? 0
                 return instance
             }()
-            
+
             switch action.style {
             case .onlyYes:
                 button.setTitleColor(.textAccent, for: .normal)
             case .canCancle:
                 button.setTitleColor(.systemRed, for: .normal)
             }
-            
+
             buttonStack.addArrangedSubview(button)
         }
-        
+
         stackView.addArrangedSubview(buttonStack)
         alertView.addSubview(stackView)
         view.addSubview(alertView)
-        
+
         NSLayoutConstraint.activate([
             alertView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             alertView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             alertView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7),
-            
+
             stackView.topAnchor.constraint(equalTo: alertView.topAnchor, constant: 20),
             stackView.bottomAnchor.constraint(equalTo: alertView.bottomAnchor, constant: -20),
             stackView.leadingAnchor.constraint(equalTo: alertView.leadingAnchor, constant: 16),
             stackView.trailingAnchor.constraint(equalTo: alertView.trailingAnchor, constant: -1)
         ])
     }
-    
+
     @objc private func handlerAction(sender: UIButton) {
         let action = config.actions[sender.tag]
-        dismiss(animated: true){
+        dismiss(animated: true) {
             action.handler(self.textField?.text)
         }
     }
@@ -139,9 +139,9 @@ final class CustomAlertViewController: UIViewController {
 struct CustomAlertRepresentable: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
     }
-    
+
     let alertBuilder: CustomAlertBuilder
-    
+
     func makeUIViewController(context: Context) -> some UIViewController {
         alertBuilder.build()
     }

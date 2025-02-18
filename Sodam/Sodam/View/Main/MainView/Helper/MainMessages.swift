@@ -38,10 +38,10 @@ enum MainMessages: String, CaseIterable {
     case message28 = "오늘도 행복을 모으러 왔군요! \n 역시 성실해요~"
     case message29 = "오늘 꽤 괜찮은 하루였나봐요! \n 다행이에요~"
     case message30 = "오늘은 어떤 행복을 가져왔을까? \n 정말 궁금하네요!"
-    
+
     // 첫번쨔 메세지는 별도로 관리
     static let firstMessage = "소소하고 확실한 행복으로 \n 행담이를 깨워볼까요?"
-    
+
     static func messageForLevel(_ level: Int, name: String) -> String {
         switch level {
         case 1:
@@ -58,7 +58,7 @@ enum MainMessages: String, CaseIterable {
             return "행복의 새로운 단계를 향해 \n 나아가고 있어요!"
         }
     }
-    
+
     // 랜덤으로 메세지 반환하기 (firstMessage는 제외하기)
     static func getRandomMessage() -> String {
         let randomMessages = Self.allCases.map { $0.rawValue }

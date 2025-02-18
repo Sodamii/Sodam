@@ -13,13 +13,13 @@ final class SettingView: UIView {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         return tableView
     }()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUI()
         setConstraint()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -33,7 +33,7 @@ private extension SettingView {
         tableView.backgroundColor = .clear
         addSubview(tableView)
     }
-    
+
     func setConstraint() {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()

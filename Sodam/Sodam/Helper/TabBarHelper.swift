@@ -14,7 +14,7 @@ final class TabBarHelper {
     func setTabBarVisibilityByTab() {
         withAnimation {
             guard let tabBarController = getRootTabBarController() else { return }
-            
+
             switch tabBarController.selectedIndex {
             case 2:
                 tabBarController.tabBar.isHidden = true
@@ -23,7 +23,7 @@ final class TabBarHelper {
             }
         }
     }
-    
+
     /// 파라미터의 bool 값에 따라 tabbar를 보이고/숨기는 메소드
     func setTabBarVisibility(_ isVisible: Bool) {
         withAnimation {
@@ -32,14 +32,14 @@ final class TabBarHelper {
             }
         }
     }
-    
+
     func getRootTabBarController() -> UITabBarController? {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let sceneDelegate = scene.delegate as? SceneDelegate,
               let rootViewController = sceneDelegate.window?.rootViewController else {
             return nil
         }
-        
+
         return rootViewController as? UITabBarController
     }
 }
@@ -48,7 +48,7 @@ final class TabBarHelper {
 struct TabBarVisibilityModifier: ViewModifier {
     let isTabBarVisible: Bool
     var tabBarHelper: TabBarHelper = .init()
-    
+
     func body(content: Content) -> some View {
         content
             .onAppear {
@@ -60,7 +60,7 @@ struct TabBarVisibilityModifier: ViewModifier {
 /// TabBarHelper의 setTabBarVisibilityByTab 메소드를 호출하는 modifier를 만드는 구조체
 struct TabBarVisibilityForListViewModifier: ViewModifier {
     var tabBarHelper: TabBarHelper = .init()
-    
+
     func body(content: Content) -> some View {
         content
             .onAppear {
@@ -74,7 +74,7 @@ extension View {
     func tabBarVisibility(_ isTabBarVisible: Bool) -> some View {
         modifier(TabBarVisibilityModifier(isTabBarVisible: isTabBarVisible))
     }
-    
+
     func tabBarVisibilityByTab() -> some View {
         modifier(TabBarVisibilityForListViewModifier())
     }

@@ -15,13 +15,13 @@ final class ListViewReloader: ListViewReloading {
     private let happinessRepository: HappinessRepository
     private let hangdamRepository: HangdamRepository
     private let hangdamID: String?
-    
+
     init(happinessRepository: HappinessRepository, hangdamRepository: HangdamRepository, hangdamID: String?) {
         self.happinessRepository = happinessRepository
         self.hangdamRepository = hangdamRepository
         self.hangdamID = hangdamID
     }
-    
+
     func reloadData() -> Result<ListViewConfigData, Error> {
         do {
             let newHangdamData: HangdamDTO = try hangdamRepository.fetchHangdamByID(by: self.hangdamID).get()
@@ -38,12 +38,12 @@ final class ListViewReloader: ListViewReloading {
 final class CurrentListViewReloader: ListViewReloading {
     private let happinessRepository: HappinessRepository
     private let hangdamRepository: HangdamRepository
-    
+
     init(happinessRepository: HappinessRepository, hangdamRepository: HangdamRepository) {
         self.happinessRepository = happinessRepository
         self.hangdamRepository = hangdamRepository
     }
-    
+
     func reloadData() -> Result<ListViewConfigData, Error> {
         let hangdamID: String? = hangdamRepository.getCurrentHangdam().id
         do {

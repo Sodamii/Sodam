@@ -8,30 +8,30 @@
 import SwiftUI
 
 struct HangdamStatusView: View {
-    
+
     let size: CGSize
-    
+
     @Binding var content: StatusContent
-    
+
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
             Image
-                .hangdamImage(level:content.level)
+                .hangdamImage(level: content.level)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: size.width / 3)
                 .background(Color.imageBackground)
                 .clipShape(.circle)
-            
+
             VStack(alignment: .leading, spacing: 10) {
                 Text(content.name)
                     .font(.maruburiot(type: .bold, size: 25))
                     .minimumScaleFactor(0.7)
                     .lineLimit(1)
-                
+
                 Text(content.levelDescription)
                     .font(.maruburiot(type: .semiBold, size: 17))
-                
+
                 Text(content.dateDescription)
                     .font(.maruburiot(type: .regular, size: 16))
                     .minimumScaleFactor(0.7)

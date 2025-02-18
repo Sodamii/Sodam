@@ -55,6 +55,13 @@ final class MainViewModel: ObservableObject {
         self.hangdam = hangdamRepository.getCurrentHangdam()
     }
 
+    /// LocalNotificationManager 접근하여 알림 권한 체크 설정
+    func checkNotificationAuthorization() {
+        LocalNotificationManager.shared.checkAuthorization { [weak self] _ in
+            guard self != nil else { return }
+        }
+    }
+
     // MARK: - TodayWriteUserDefaults(테스트 하는 동안 주석처리)
 
     /// 오늘 작성했는지 확인하는 메서드

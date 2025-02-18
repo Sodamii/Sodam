@@ -29,63 +29,83 @@ final class SettingsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .viewBackground
-        setupTableView()
-
+        setupUI()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
-        checkNotificationAuthorizationStatus()  // 뷰가 나타날 때마다 현재 알림 권한 상태를 체크하고 UI 업데이트
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(checkNotificationAuthorizationStatus),
-                                               name: UIApplication.willEnterForegroundNotification,
-                                               object: nil)
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(
-            self,
-            name: UIApplication.willEnterForegroundNotification,
-            object: nil
-        )
+        setupObservers()
+        setupChekNotification()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
+        removeObservers()
         self.settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
-
-    // 알림 권한 상태를 확인하는 메서드 추가
-    @objc func checkNotificationAuthorizationStatus() {
-        UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                let isAuthorized = settings.authorizationStatus == .authorized
-                self.settingViewModel.saveNotificationAuthorizationStatus(isAuthorized)
-
-                let savedToggleState = self.settingViewModel.getAppNotificationToggleState()
-                self.settingViewModel.isToggleOn = isAuthorized ? savedToggleState : false
-
-                self.settingView.tableView.reloadData()
-            }
-        }
-    }
-
 }
 
-// MARK: - Private Method
+// MARK: - Private Setup Method
 
 private extension SettingsViewController {
+    // UI Set
+    func setupUI() {
+        view.backgroundColor = .viewBackground
+        setupTableView()
+    }
+
+    // TableView Set
     func setupTableView() {
         settingView.tableView.dataSource = self
         settingView.tableView.delegate = self
         settingView.tableView.separatorInset.right = 15
+        
+        settingView.tableView.register(SettingTableViewCell.self, forCellReuseIdentifier: SettingTableViewCell.reuseIdentifier)
+    }
 
-        settingView.tableView.register(
-            SettingTableViewCell.self,
-            forCellReuseIdentifier: SettingTableViewCell.reuseIdentifier
-        )
+    // BadgeNumber Init
+    func initBadgeNumber() {
+        UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
+    }
+
+    // NotificationCenter Observer Set
+    func setupObservers() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(updateNotificationStatus),
+                                               name: UIApplication.willEnterForegroundNotification,
+                                               object: nil)
+    }
+
+    // NotificationCenter Remove
+    func removeObservers() {
+        NotificationCenter.default.removeObserver(self,
+                                                  name: UIApplication.willEnterForegroundNotification,
+                                                  object: nil)
+    }
+
+    // Check Notification Set
+        func setupChekNotification() {
+            UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
+            updateNotificationStatus()  // 뷰가 나타날 때마다 현재 알림 권한 상태를 체크하고 UI 업데이트
+        }
+
+    // NotificationStatus Check
+    @objc func updateNotificationStatus() {
+        settingViewModel.checkNotificationStatus { [weak self] isAuthorized in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                // 현재 시스템 설정이 꺼져있으면 앱 토글도 강제로 꺼짐
+                if !isAuthorized {
+                    self.settingViewModel.isToggleOn = isAuthorized
+                    self.settingViewModel.saveAppToggleState(false)
+                }
+                self.updateToggleState()
+            }
+        }
+    }
+
+    func updateToggleState() {
+        settingViewModel.isToggleOn = settingViewModel.getToggleState()
+        settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
 }
 
@@ -122,10 +142,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let sectionType = settingViewModel.sectionType[safe: indexPath.section],
-              let cell = tableView.dequeueReusableCell(
-                withIdentifier: SettingTableViewCell.reuseIdentifier,
-                for: indexPath
-              ) as? SettingTableViewCell else {
+              let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.reuseIdentifier, for: indexPath) as? SettingTableViewCell else {
             return UITableViewCell()
         }
 
@@ -144,7 +161,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                                timeAction: nil, version: "")
                 cell.switchButton.isOn = settingViewModel.isToggleOn
 
-            } else if indexPath.row == 1 && settingViewModel.getAppNotificationToggleState() {
+            } else if indexPath.row == 1 {
                 // 두 번째 셀: 시간 설정 (스위치가 켜졌을 때만 표시)
                 cell.timePicker.isHidden = false
                 cell.switchButton.isHidden = true
@@ -205,82 +222,50 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
 
     // 알림 스위치의 상태가 변경되었을 때 호출되는 액션
     @objc func didToggleSwitch(_ sender: UISwitch) {
-        let newState = sender.isOn
-        UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
+        let toggleState = sender.isOn
+        settingViewModel.requestNotificationStatus { [weak self] status in
+            guard let self = self else { return }
             DispatchQueue.main.async {
-                guard let self = self else { return }
+                // 시스템 설정 확인 후 허용시,
+                if status {
+                    if toggleState {
+                        // 알림이 허용되고 스위치가 ON이면 사용자 토글 상태 저장
+                        self.settingViewModel.isToggleOn = toggleState
+                        self.settingViewModel.saveAppToggleState(toggleState)
+                        
+                        // 알림 예약을 다시 설정 (스위치가 켜졌을 때만)
+                        if let notificationTime = self.settingViewModel.getNotificationTime() {
+                            self.settingViewModel.setReservedNotificaion(notificationTime)
+                        }
+                        
+                    } else {
+                        // 알림이 허용되고 스위치가 OFF이면 알림 삭제
+                        self.settingViewModel.isToggleOn = toggleState
+                        self.settingViewModel.saveAppToggleState(toggleState)
+                        
+                        // 알림을 취소
+                        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+                    }
 
-                if settings.authorizationStatus == .authorized {
-                    // 알림이 허용된 상태라면 사용자 토글 상태 저장
-                    self.handleToggleStateChange(to: newState)
+                // 시스템 설정 확인 후 거부시, 설정으로 이동 알럿
                 } else {
-                    // 알림 권한이 없으면 스위치를 OFF로 하고, 사용자에게 알림 권한을 요청하도록 안내
                     sender.setOn(false, animated: true)
-                    self.settingViewModel.saveIsAppToggleNotification(false)
-                    self.showNotificationPermissionAlert()
+                    self.settingViewModel.saveAppToggleState(false)
+                    self.settingViewModel.showNotificationPermissionAlert(viewController: self)
                 }
-
-                self.settingView.tableView.reloadData()
+                self.updateToggleState()
             }
         }
     }
-
+    
     // 사용자가 DatePicker를 통해 알림 시간을 선택했을 때 호출되는 액션
     @objc func userScheduleNotification(_ sender: UIDatePicker) {
-        // 선택한 시간을 뷰모델에 저장하고, 알림 스위치가 켜진 경우 알림 예약을 업데이트
+        //선택한 시간을 뷰모델에 저장하고, 알림 스위치가 켜진 경우 알림 예약을 업데이트
         settingViewModel.saveNotificationTime(sender.date)
-
+        
         if settingViewModel.isToggleOn {
             settingViewModel.setReservedNotificaion(sender.date)
         }
-    }
-
-    private func handleToggleStateChange(to newState: Bool) {
-        if newState {
-            // 알림이 허용되고 스위치가 ON이면 사용자 토글 상태 저장
-            self.settingViewModel.isToggleOn = true
-            self.settingViewModel.saveIsAppToggleNotification(true)
-
-            // 알림 예약을 다시 설정 (스위치가 켜졌을 때만)
-            if let notificationTime = self.settingViewModel.getNotificationTime() {
-                self.settingViewModel.setReservedNotificaion(notificationTime)
-            }
-        } else {
-            // 알림이 허용되고 스위치가 OFF이면 알림 삭제
-            self.settingViewModel.isToggleOn = false
-            self.settingViewModel.saveIsAppToggleNotification(false)
-
-            // 알림을 취소
-            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        }
-    }
-
-    // 알림 권한이 없는 경우 사용자에게 알림 권한 설정을 요청하는 알럿띄움 함수
-    private func showNotificationPermissionAlert() {
-        let alertController = UIAlertController(
-            title: "알림 권한 필요",
-            message: "앱의 알림을 받으려면 설정에서 알림을 허용해주세요.",
-            preferredStyle: .alert
-        )
-
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel) { [weak self] _ in
-            self?.settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-        }
-
-        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { [weak self] _ in
-            if let url = URL(string: UIApplication.openSettingsURLString),
-               UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url, options: [:]) { _ in
-                    // 설정에서 돌아올 때 상태 업데이트
-                    self?.checkNotificationAuthorizationStatus()
-                }
-            }
-        }
-
-        alertController.addAction(cancelAction)
-        alertController.addAction(settingsAction)
-
-        present(alertController, animated: true)
     }
 }
 

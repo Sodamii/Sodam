@@ -29,7 +29,8 @@ final class ImageManager {
     }
     
     /// 이미지 불러오는 함수
-    func getImage(with imagePath: String) -> UIImage? {
+    func getImage(with imagePath: String?) -> UIImage? {
+        guard let imagePath = imagePath else { return nil }
         let result = loadImageFile(imagePath: imagePath)
         
         switch result {

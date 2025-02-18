@@ -36,9 +36,5 @@ struct HappinessCellView: View {
         }
         .frame(height: 100)
         .frame(maxWidth: .infinity, alignment: .leading)
-        //            .onAppear {
-        //                viewModel = HappinessDetailViewModel(happiness: happiness, happinessRepository: happinessRepository)
-        //            }
-        //        }
     }
 }

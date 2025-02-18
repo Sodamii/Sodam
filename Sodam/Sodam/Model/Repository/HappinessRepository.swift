@@ -80,7 +80,7 @@ final class HappinessRepository {
         return imageManager.getThumbnailImage(with: path)
     }
     
-    func getContentImage(from path: String) -> UIImage? {
+    func getContentImage(from path: String?) -> UIImage? {
         return imageManager.getImage(with: path)
     }
 }

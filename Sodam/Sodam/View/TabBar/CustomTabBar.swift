@@ -12,12 +12,8 @@ final class CustomTabBar: UITabBar {
         var newSize = super.sizeThatFits(size)
 
         // 기기 화면 높이에 따라 탭바 높이 계산하기
-        let padding: CGFloat = if UIScreen.isiPhoneSE {
-            20
-        } else {
-            0
-        }
-        newSize.height = newSize.height + padding
+        let padding: CGFloat = UIScreen.isiPhoneSE ? 20 : 0
+        newSize.height += padding
         return newSize
     }
 

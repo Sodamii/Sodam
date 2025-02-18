@@ -108,6 +108,7 @@ final class MainViewController: UIViewController {
         let writeViewController = WriteViewController(writeViewModel: .init(currentHangdamID: viewModel.hangdam.id))
         writeViewController.delegate = self                                     // Delegate 연결
         writeViewController.modalTransitionStyle = .coverVertical               // 모달 스타일 설정
+        writeViewController.modalPresentationCapturesStatusBarAppearance = true // writeViewController의 상태바 스타일을 따르도록 설정
         present(writeViewController, animated: true)                            // 모달 표시
     }
     

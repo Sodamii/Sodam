@@ -172,6 +172,9 @@ extension WriteViewController {
             return
         }
         
+        // 키보드 내림
+        writeView.dismissKeyboard()
+        
         // 작성 완료 알림 표시
         alertManager.showCompletionAlert {
             self.writeViewModel.submitPost {

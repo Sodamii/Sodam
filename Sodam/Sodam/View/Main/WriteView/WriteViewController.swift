@@ -73,7 +73,7 @@ final class WriteViewController: UIViewController {
         setupActions()
 
         // UITextView의 delegate 설정
-        writeView.setTextViewDeleaget(delegate: self)
+        writeView.setTextViewDelegate(delegate: self)
     }
 
     // 모달 dismiss 될 때 호출될 메서드

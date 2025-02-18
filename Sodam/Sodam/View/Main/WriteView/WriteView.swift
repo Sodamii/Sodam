@@ -272,7 +272,7 @@ extension WriteView {
     }
 
     // 텍스트뷰 delegate 설정 메서드
-    func setTextViewDeleaget(delegate: UITextViewDelegate) {
+    func setTextViewDelegate(delegate: UITextViewDelegate) {
         textView.delegate = delegate
     }
 

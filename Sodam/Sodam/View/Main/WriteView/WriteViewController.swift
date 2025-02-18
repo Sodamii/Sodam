@@ -13,7 +13,16 @@ protocol WriteViewControllerDelegate: AnyObject {
 }
 
 final class WriteViewController: UIViewController {
+<<<<<<< HEAD
 
+=======
+    
+    // 상태 바 스타일을 검은색으로 고정
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .darkContent
+    }
+    
+>>>>>>> 4e440e3b70ef1352b31a8f88e3e5e6f5dfc6ba2b
     weak var delegate: WriteViewControllerDelegate?
 
     private let writeViewModel: WriteViewModel
@@ -178,11 +187,14 @@ extension WriteViewController {
             return
         }
 
+        // 키보드 내림
+        writeView.dismissKeyboard()
+
         // 작성 완료 알림 표시
-        alertManager.showCompletionAlert {
-            self.writeViewModel.submitPost {
+        alertManager.showCompletionAlert { [weak self] in
+            self?.writeViewModel.submitPost {
                 NotificationCenter.default.post(name: Notification.didWriteToday, object: nil)
-                self.dismiss(animated: true, completion: nil)
+                self?.dismiss(animated: true, completion: nil)
             }
         }
     }

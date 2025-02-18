@@ -287,6 +287,11 @@ extension WriteView {
         updatePlaceholderVisibility() // 텍스트 변경 시 Placeholder 업데이트
         updateTextViewAttributes() // 텍스트 변경 시 스타일 적용
     }
+    
+    // 텍스트뷰 입력 활성화 해제 메서드 (키보드 내리기 위함) - 작성 완료 버튼 액션 함수에서 호출
+    func dismissKeyboard() {
+        textView.resignFirstResponder()
+    }
 }
 
 // MARK: - 버튼 액션 설정

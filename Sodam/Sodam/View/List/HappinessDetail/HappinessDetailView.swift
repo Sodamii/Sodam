@@ -45,22 +45,8 @@ struct HappinessDetailView: View {
         .background(Color.viewBackground.ignoresSafeArea())
         .ignoresSafeArea(edges: .bottom)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
+        .tint(.textAccent)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                            .foregroundStyle(Color.textAccent) // 색상 지정 안해주면 파란색으로 나옴
-                        Text("기억들")
-                            .font(.maruburiot(type: .bold, size: 16))
-                            .foregroundStyle(Color.textAccent)
-                    }
-                }
-            }
-            
             ToolbarItem(placement: .principal) {
                 Text(viewModel.content.happinessDate)
                     .font(.maruburiot(type: .bold, size: 20))

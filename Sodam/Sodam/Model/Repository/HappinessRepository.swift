@@ -27,7 +27,12 @@ final class HappinessRepository {
 
     /// 행복한 기억 생성
     func createHappiness(_ happiness: HappinessDTO) {
-        guard let hangdamID = IDConverter.toNSManagedObjectID(from: happiness.hangdamID, in: coreDataManager.context) else { return }
+        guard let hangdamID = IDConverter.toNSManagedObjectID(
+            from: happiness.hangdamID,
+            in: coreDataManager.context
+        ) else {
+            return
+        }
 
         /// 날짜 업데이트 필요성 체크
         updateHangdamIfNeeded(hangdamID: hangdamID)
@@ -36,8 +41,10 @@ final class HappinessRepository {
         coreDataManager.createHappiness(happiness, to: hangdamID)
     }
 
-    /// 행담이가 가진 기존 행복 개수 체크하여 경우에 따라 이벤트 발생 또는 데이터 업데이트
-    private func updateHangdamIfNeeded(hangdamID: NSManagedObjectID) {  /// createHappiness에서 guard문으로 이미 NSManagedObjectID type으로 변환한 값을 전달 받음
+    /// 행담이가 가진 기존 행복 개수 체크하여 경우에 따라 이벤트 발생 또는 데이터
+    ///
+    /// createHappiness에서 guard문으로 이미 NSManagedObjectID type으로 변환한 값을 전달 받음
+    private func updateHangdamIfNeeded(hangdamID: NSManagedObjectID) {
         guard let count = coreDataManager.checkHappinessCount(with: hangdamID) else { return }
 
         switch count {

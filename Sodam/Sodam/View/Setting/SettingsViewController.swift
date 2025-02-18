@@ -45,7 +45,11 @@ final class SettingsViewController: UIViewController {
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -78,7 +82,10 @@ private extension SettingsViewController {
         settingView.tableView.delegate = self
         settingView.tableView.separatorInset.right = 15
 
-        settingView.tableView.register(SettingTableViewCell.self, forCellReuseIdentifier: SettingTableViewCell.reuseIdentifier)
+        settingView.tableView.register(
+            SettingTableViewCell.self,
+            forCellReuseIdentifier: SettingTableViewCell.reuseIdentifier
+        )
     }
 }
 
@@ -115,7 +122,10 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let sectionType = settingViewModel.sectionType[safe: indexPath.section],
-              let cell = tableView.dequeueReusableCell(withIdentifier: SettingTableViewCell.reuseIdentifier, for: indexPath) as? SettingTableViewCell else {
+              let cell = tableView.dequeueReusableCell(
+                withIdentifier: SettingTableViewCell.reuseIdentifier,
+                for: indexPath
+              ) as? SettingTableViewCell else {
             return UITableViewCell()
         }
 

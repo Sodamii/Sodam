@@ -8,10 +8,12 @@
 import UIKit
 
 extension UIFont {
-    static let mapoGoldenPier: (CGFloat) -> UIFont = { size in UIFont(name: CustomFont.MapoGoldenPier.rawValue, size: size) ?? UIFont()
+    static let mapoGoldenPier: (CGFloat) -> UIFont = {
+        size in UIFont(name: CustomFont.MapoGoldenPier.rawValue, size: size) ?? UIFont()
     }
 
-    static let sejongGeulggot: (CGFloat) -> UIFont = { size in UIFont(name: CustomFont.SejongGeulggot.rawValue, size: size) ?? UIFont()
+    static let sejongGeulggot: (CGFloat) -> UIFont = {
+        size in UIFont(name: CustomFont.SejongGeulggot.rawValue, size: size) ?? UIFont()
     }
 
     static func gyeonggiBatang(type: FontType, size: CGFloat) -> UIFont {

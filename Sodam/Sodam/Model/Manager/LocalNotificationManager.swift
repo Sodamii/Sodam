@@ -121,7 +121,11 @@ final class LocalNotificationManager: NSObject {
                     }
                 } else {
                     // 알림이 성공적으로 등록된 후 후속 처리
-                    self?.handleNotificationScheduling(identifier: identifier, time: time, existingRequests: existingRequests)
+                    self?.handleNotificationScheduling(
+                        identifier: identifier,
+                        time: time,
+                        existingRequests: existingRequests
+                    )
                 }
             }
         }
@@ -153,7 +157,11 @@ final class LocalNotificationManager: NSObject {
 
     // MARK: - 알림 예약 후 처리
 
-    private func handleNotificationScheduling(identifier: String, time: Date, existingRequests: [UNNotificationRequest]) {
+    private func handleNotificationScheduling(
+        identifier: String,
+        time: Date,
+        existingRequests: [UNNotificationRequest]
+    ) {
         // 이미 동일한 알림이 예약되어 있는지 확인
         let isAlreadyScheduled = existingRequests.contains { $0.identifier == identifier }
         DispatchQueue.main.async {
@@ -223,13 +231,21 @@ private extension LocalNotificationManager {
 
 extension LocalNotificationManager: UNUserNotificationCenterDelegate {
     // Foreground 상태에서 알림을 수신할 때 호출
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
         UIApplication.shared.applicationIconBadgeNumber += 1  // 배지 번호를 증가시켜 앱 아이콘에 표시
         completionHandler([.banner, .badge, .sound, .list])
     }
 
     // Background에서 알림을 클릭했을 때 호출
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
         completionHandler() // 응답 처리 완료
     }
 }

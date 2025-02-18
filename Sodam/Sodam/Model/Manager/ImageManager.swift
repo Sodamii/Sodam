@@ -74,7 +74,10 @@ final class ImageManager {
 
     /// 이미지 삭제하는 함수
     func deleteImage(_ imagePath: String) {
-        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appending(path: "\(imagePath).jpeg") else {
+        guard let url = FileManager.default.urls(
+            for: .documentDirectory,
+            in: .userDomainMask
+        ).first?.appending(path: "\(imagePath).jpeg") else {
             print(FileError.imageSearchFailed)
             return
         }
@@ -134,7 +137,12 @@ extension ImageManager {
 
     /// FileManager를 통해 이미지를 불러오는 함수
     private func loadImageFile(imagePath: String) -> Result<UIImage?, FileError> {
-        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appending(component: "\(imagePath).jpeg"),
+        guard let url = FileManager.default.urls(
+            for: .documentDirectory,
+            in: .userDomainMask
+        ).first?.appending(
+            component: "\(imagePath).jpeg"
+        ),
               let data = FileManager.default.contents(atPath: url.path())
         else {
             return .failure(FileError.imageFetchFailed)

@@ -53,7 +53,12 @@ final class CustomTabBarController: UITabBarController {
             selectedImage: UIImage(named: "main.fill"))
 
         // 기록 탭
-        let happinessListViewController = UIHostingController(rootView: HappinessListView(viewModel: listViewModel, isBackButtonHidden: false))
+        let happinessListViewController = UIHostingController(
+            rootView: HappinessListView(
+                viewModel: listViewModel,
+                isBackButtonHidden: false
+            )
+        )
         happinessListViewController.tabBarItem = UITabBarItem(
             title: "기록",
             image: UIImage(named: "book"),
@@ -74,7 +79,12 @@ final class CustomTabBarController: UITabBarController {
             image: UIImage(named: "gear"),
             selectedImage: UIImage(named: "gear.fill"))
 
-        viewControllers = [mainViewController, happinessListViewController, storageViewController, settingsViewController]
+        viewControllers = [
+            mainViewController,
+            happinessListViewController,
+            storageViewController,
+            settingsViewController
+        ]
     }
 
     private func setupTabBarAppearance() {

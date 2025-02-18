@@ -40,9 +40,18 @@ final class HappinessListViewModel: ObservableObject {
         self.cellThumbnailFetcher = cellThumbnailFetcher
 
         do {
-            self.statusContentMapper = try mapperFactory.createAnyMapper(inputType: HangdamDTO.self, outputType: StatusContent.self).get()
-            self.listContentMapper = try mapperFactory.createAnyMapper(inputType: HangdamDTO.self, outputType: HappinessListContent.self).get()
-            self.listConfigMapper = try mapperFactory.createAnyMapper(inputType: [HappinessDTO].self, outputType: [HappinessListConfig].self).get()
+            self.statusContentMapper = try mapperFactory.createAnyMapper(
+                inputType: HangdamDTO.self,
+                outputType: StatusContent.self
+            ).get()
+            self.listContentMapper = try mapperFactory.createAnyMapper(
+                inputType: HangdamDTO.self,
+                outputType: HappinessListContent.self
+            ).get()
+            self.listConfigMapper = try mapperFactory.createAnyMapper(
+                inputType: [HappinessDTO].self,
+                outputType: [HappinessListConfig].self
+            ).get()
         } catch {
             fatalError("[ListViewModel] 매퍼 주입 실패") // 실패한 채로 실행되는 경우가 없게 개발단계에서 확실히 확인하도록 fatalError처리 해보았음.
         }

@@ -37,7 +37,9 @@ final class HangdamStorageViewModel: ObservableObject {
                 hangdamRepository: hangdamRepository,
                 hangdamID: hangdamDTO.id
             )
-            let cellThumbnailFetcher: CellThumbnailFetcher = CellThumbnailFetcher(happinessRepository: happinessRepository)
+            let cellThumbnailFetcher: CellThumbnailFetcher = CellThumbnailFetcher(
+                happinessRepository: happinessRepository
+            )
             let mapperFactory: DataMapperFactory = DataMapperFactory()
 
             return HappinessListViewModel(
@@ -71,7 +73,9 @@ final class HangdamStorageViewModel: ObservableObject {
                 hangdamRepository: hangdamRepository,
                 hangdamID: hangdamDTO.id
             )
-            let cellThumbnailFetcher: CellThumbnailFetcher = CellThumbnailFetcher(happinessRepository: happinessRepository)
+            let cellThumbnailFetcher: CellThumbnailFetcher = CellThumbnailFetcher(
+                happinessRepository: happinessRepository
+            )
             let mapperFactory: DataMapperFactory = DataMapperFactory()
 
             return HappinessListViewModel(

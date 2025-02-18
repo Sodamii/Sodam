@@ -101,8 +101,14 @@ extension WriteViewController: UICollectionViewDataSource {
         return writeViewModel.imageCount
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCell.identifier, for: indexPath) as? ImageCollectionViewCell else {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ImageCollectionViewCell.identifier,
+            for: indexPath
+        ) as? ImageCollectionViewCell else {
             return UICollectionViewCell()
         }
 
@@ -194,8 +200,22 @@ extension WriteViewController {
 extension WriteViewController {
     // 키보드 감지
     private func setupKeyboardNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow(_:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(
+                keyboardWillHide(
+                    _:
+                )
+            ),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
 
     // 키보드 내리기 구현

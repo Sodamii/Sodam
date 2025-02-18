@@ -9,24 +9,26 @@ import Combine
 import UIKit
 import Foundation
 
-final class HappinessDetailViewModel {
-    let happiness: HappinessDTO
+final class HappinessDetailViewModel: ObservableObject {
+    let id: HappinessID?
+    let isCanDelete: Bool
+    @Published var content: HappinessDetailContent
+    private let detailViewOperator: DetailViewOperator
     
-    private let happinessRepository: HappinessRepository
-    
-    init(happiness: HappinessDTO,
-         happinessRepository: HappinessRepository
-    ) {
-        self.happiness = happiness
-        self.happinessRepository = happinessRepository
+    init(id: HappinessID?, isCanDelete: Bool, content: HappinessDetailContent, detailViewOperator: DetailViewOperator) {
+        self.id = id
+        self.isCanDelete = isCanDelete
+        self.content = content
+        self.detailViewOperator = detailViewOperator
+        print("[DetailViewModel] init")
     }
     
     func deleteHappiness() {
-        self.happinessRepository.deleteHappiness(with: self.happiness.id, path: happiness.imagePaths.first)
+        self.detailViewOperator.deleteContent(id: id, path: content.happinessImagePath)
     }
     
     func getImage(from imagePath: String) -> UIImage {
-        guard let image =  self.happinessRepository.getContentImage(from: imagePath)
+        guard let image = detailViewOperator.fetchImage(from: content.happinessImagePath)
         else {
             print("[HappinessDetailViewModel] getImage 메서드 동작 실패")
             return UIImage()

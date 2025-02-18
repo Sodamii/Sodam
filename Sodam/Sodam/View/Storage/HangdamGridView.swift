@@ -17,7 +17,7 @@ struct HangdamGridView: View {
         LazyVGrid(columns: columns, spacing: 16) {
             ForEach(viewModel.hangdamGridStores.indices, id: \.self) { index in
                 NavigationLink {
-                    HappinessListView(viewModel: viewModel.happinessListViewModels[index])
+                    HappinessListView(viewModel: viewModel.happinessListViewModels[index], isBackButtonHidden: true)
                 } label: {
                     HangdamGrid(store: viewModel.hangdamGridStores[index])
                 }
@@ -27,7 +27,6 @@ struct HangdamGridView: View {
 }
 
 fileprivate struct HangdamGrid: View {
-    
     let store: HangdamGridStore
     
     var body: some View {

@@ -180,3 +180,9 @@ fileprivate enum CDKey: String {
     case happinessEntity = "HappinessEntity"
     case date
 }
+
+extension CoreDataManager {
+    func fetchEntityByID<T: NSManagedObject>(by id: NSManagedObjectID) -> T? {
+        return context.object(with: id) as? T
+    }
+}

@@ -59,7 +59,7 @@ final class HappinessRepository {
     }
     
     /// 행담이가 가진 기억들 호출
-    func getHappinesses(of hangdamID: String) -> [HappinessDTO] {
+    func getHappinesses(of hangdamID: String?) -> [HappinessDTO] {
         guard let id = IDConverter.toNSManagedObjectID(from: hangdamID, in: coreDataManager.context) else { return [] }
         return coreDataManager.getHappinesses(of: id).compactMap { dtoMapper.toDTO(from: $0) }
     }

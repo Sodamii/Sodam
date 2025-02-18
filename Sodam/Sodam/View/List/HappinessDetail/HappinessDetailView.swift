@@ -9,16 +9,15 @@ import SwiftUI
 
 struct HappinessDetailView: View {
     
-    let viewModel: HappinessDetailViewModel
+    @ObservedObject var viewModel: HappinessDetailViewModel
     @State private var isAlertPresented: Bool = false
-    let isCanDelete: Bool
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    if let imagePath = viewModel.happiness.imagePaths.first {
+                    if let imagePath = viewModel.content.happinessImagePath {
                         Image(uiImage: self.viewModel.getImage(from: imagePath))
                             .resizable()
                             .scaledToFit()
@@ -26,13 +25,14 @@ struct HappinessDetailView: View {
                             .padding()
                             .background(RoundedRectangle(cornerRadius: 15).foregroundStyle(Color.cellBackground))
                     }
-                    Text(viewModel.happiness.content)
-                        .font(.sejongGeulggot(16))
-                        .lineSpacing(10)
-                        .foregroundStyle(Color(UIColor.darkGray))
-                        .multilineTextAlignment(.leading)
-                        .padding(.horizontal, 8)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                        Text(viewModel.content.happinessContent)
+                            .font(.sejongGeulggot(16))
+                            .lineSpacing(10)
+                            .foregroundStyle(Color(UIColor.darkGray))
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal, 16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             .scrollIndicators(.hidden)
@@ -62,11 +62,11 @@ struct HappinessDetailView: View {
             }
             
             ToolbarItem(placement: .principal) {
-                Text(viewModel.happiness.formattedDate)
+                Text(viewModel.content.happinessDate)
                     .font(.maruburiot(type: .bold, size: 20))
                     .foregroundStyle(Color.textAccent)
             }
-            if isCanDelete {
+            if viewModel.isCanDelete {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button( action: {
                         isAlertPresented = true

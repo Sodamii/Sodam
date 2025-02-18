@@ -30,6 +30,7 @@ struct HangdamStorageView: View {
                     .scrollIndicators(.hidden)
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(.horizontal)
             .background(Color.viewBackground)
             .tabBarVisibility(true)

@@ -26,13 +26,13 @@ struct HappinessDetailView: View {
                             .background(RoundedRectangle(cornerRadius: 15).foregroundStyle(Color.cellBackground))
                     }
                     
-                        Text(viewModel.content.happinessContent)
-                            .font(.sejongGeulggot(16))
-                            .lineSpacing(10)
-                            .foregroundStyle(Color(UIColor.darkGray))
-                            .multilineTextAlignment(.leading)
-                            .padding(.horizontal, 16)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(viewModel.content.happinessContent)
+                        .font(.sejongGeulggot(16))
+                        .lineSpacing(10)
+                        .foregroundStyle(Color(UIColor.darkGray))
+                        .multilineTextAlignment(.leading)
+                        .padding(.horizontal, 8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             .scrollIndicators(.hidden)

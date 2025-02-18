@@ -23,7 +23,7 @@ final class DetailViewOperator: HappinessImageFetching, HappinessContentDeleting
     }
     
     func fetchImage(from path: String?) -> UIImage? {
-        return happinessRepository.getThumbnailImage(from: path)
+        return happinessRepository.getContentImage(from: path)
     }
     
     func deleteContent(id: String?, path: String?) {

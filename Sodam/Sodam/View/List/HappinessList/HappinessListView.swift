@@ -86,6 +86,7 @@ struct HappinessListView: View {
                 print("[HappinessListView] .onAppear - 데이터 리로드")
             }
         }
+        .tint(.textAccent)
     }
 }
 

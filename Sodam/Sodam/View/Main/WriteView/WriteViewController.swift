@@ -176,10 +176,10 @@ extension WriteViewController {
         writeView.dismissKeyboard()
         
         // 작성 완료 알림 표시
-        alertManager.showCompletionAlert {
-            self.writeViewModel.submitPost {
+        alertManager.showCompletionAlert { [weak self] in
+            self?.writeViewModel.submitPost {
                 NotificationCenter.default.post(name: Notification.didWriteToday, object: nil)
-                self.dismiss(animated: true, completion: nil)
+                self?.dismiss(animated: true, completion: nil)
             }
         }
     }

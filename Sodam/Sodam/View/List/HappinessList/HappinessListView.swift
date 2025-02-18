@@ -89,10 +89,3 @@ struct HappinessListView: View {
         .tint(.textAccent)
     }
 }
-
-enum FontSize {
-    static let title: CGFloat = 27
-    static let title2: CGFloat = 24
-    static let body: CGFloat = 16
-    static let timeStamp: CGFloat = 14
-}

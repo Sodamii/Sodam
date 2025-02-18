@@ -16,6 +16,7 @@ enum AlertMessage {
     case writeCompleted
     case cameraPermission
     case imagePermission
+    case textLimit
 
     var title: String {
         switch self {
@@ -31,6 +32,8 @@ enum AlertMessage {
             return "현재 카메라 사용에 대한 접근 권한이 없습니다."
         case .imagePermission:
             return "현재 사진 라이브러리 접근에 대한 권한이 없습니다."
+        case .textLimit:
+            return "글자 수 제한 초과"
         }
     }
 
@@ -46,6 +49,8 @@ enum AlertMessage {
             return "글이 성공적으로 작성되었습니다!"
         case .cameraPermission, .imagePermission:
             return "설정 > Sodam 탭에서 접근 권한을 활성화 해주세요."
+        case .textLimit:
+            return "최대 입력 글자는 500자 입니다."
         }
     }
 }

@@ -16,7 +16,7 @@ enum AlertMessage {
     case writeCompleted
     case cameraPermission
     case imagePermission
-    
+
     var title: String {
         switch self {
         case .emptyText:
@@ -33,7 +33,7 @@ enum AlertMessage {
             return "현재 사진 라이브러리 접근에 대한 권한이 없습니다."
         }
     }
-    
+
     var message: String {
         switch self {
         case .emptyText:

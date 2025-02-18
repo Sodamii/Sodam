@@ -14,7 +14,7 @@ enum DataError: Error {
     case searchEntityFailed
     case convertIDFailed
     case convertImagePathsFailed
-    
+
     // 디버깅용 print 구문
     var localizedDescription: String {
         switch self {
@@ -26,7 +26,7 @@ enum DataError: Error {
         case .convertImagePathsFailed: "[CoreData Error] DTO [String] >>> Data 변환 실패"
         }
     }
-    
+
     // 사용자에게 띄울 alert에 넣을 구문
     var alertDescription: String {
         switch self {

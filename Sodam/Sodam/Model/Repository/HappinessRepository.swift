@@ -14,7 +14,7 @@ final class HappinessRepository {
     private let coreDataManager: CoreDataManager
     private let imageManager: ImageManager
     private let dtoMapper: HappinessMapper
-    
+
     init(
         coreDataManager: CoreDataManager = CoreDataManager.shared,
         imageManager: ImageManager = ImageManager(),
@@ -24,22 +24,22 @@ final class HappinessRepository {
         self.imageManager = imageManager
         self.dtoMapper = dtoMapper
     }
-    
+
     /// 행복한 기억 생성
     func createHappiness(_ happiness: HappinessDTO) {
         guard let hangdamID = IDConverter.toNSManagedObjectID(from: happiness.hangdamID, in: coreDataManager.context) else { return }
-        
+
         /// 날짜 업데이트 필요성 체크
         updateHangdamIfNeeded(hangdamID: hangdamID)
-        
+
         /// 기억생성
         coreDataManager.createHappiness(happiness, to: hangdamID)
     }
-    
+
     /// 행담이가 가진 기존 행복 개수 체크하여 경우에 따라 이벤트 발생 또는 데이터 업데이트
     private func updateHangdamIfNeeded(hangdamID: NSManagedObjectID) {  /// createHappiness에서 guard문으로 이미 NSManagedObjectID type으로 변환한 값을 전달 받음
         guard let count = coreDataManager.checkHappinessCount(with: hangdamID) else { return }
-        
+
         switch count {
         case 0:     // 행담이 startDate 업데이트, 레벨 1로 성장
             coreDataManager.updateHangdam(with: hangdamID, updateCase: .startDate(Date.now))
@@ -57,29 +57,29 @@ final class HappinessRepository {
             return
         }
     }
-    
+
     /// 행담이가 가진 기억들 호출
     func getHappinesses(of hangdamID: String?) -> [HappinessDTO] {
         guard let id = IDConverter.toNSManagedObjectID(from: hangdamID, in: coreDataManager.context) else { return [] }
         return coreDataManager.getHappinesses(of: id).compactMap { dtoMapper.toDTO(from: $0) }
     }
-    
+
     /// 기억 삭제
     func deleteHappiness(with id: String?, path: String?) {
         guard let id = IDConverter.toNSManagedObjectID(from: id, in: coreDataManager.context) else { return }
-        
+
         coreDataManager.deleteHappiness(with: id)
         print("[HappinessRepository] deleteHappiness - 행복 삭제 완료")
-        
+
         guard let path = path else { return }
         imageManager.deleteImage(path)
         print("[HappinessRepository] deleteHappiness - 이미지 삭제 완료")
     }
-    
+
     func getThumbnailImage(from path: String?) -> UIImage? {
         return imageManager.getThumbnailImage(with: path)
     }
-    
+
     func getContentImage(from path: String?) -> UIImage? {
         return imageManager.getImage(with: path)
     }

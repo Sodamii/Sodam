@@ -17,10 +17,10 @@ enum IDConverter {
             print(DataError.convertIDFailed.localizedDescription)
             return nil
         }
-        
+
         return convertedID
     }
-    
+
     static func toStringID(from id: NSManagedObjectID?) -> String {
         guard let id = id else { return "" }
         return id.uriRepresentation().absoluteString

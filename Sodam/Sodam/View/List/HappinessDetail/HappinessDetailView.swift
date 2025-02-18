@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct HappinessDetailView: View {
-    
+
     @ObservedObject var viewModel: HappinessDetailViewModel
     @State private var isAlertPresented: Bool = false
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -25,7 +25,7 @@ struct HappinessDetailView: View {
                             .padding()
                             .background(RoundedRectangle(cornerRadius: 15).foregroundStyle(Color.cellBackground))
                     }
-                    
+
                     Text(viewModel.content.happinessContent)
                         .font(.sejongGeulggot(16))
                         .lineSpacing(10)
@@ -63,7 +63,7 @@ struct HappinessDetailView: View {
                 }
             }
         }
-        
+
         .alert("정말 삭제하시겠습니까?", isPresented: $isAlertPresented) {
             Button("취소", role: .cancel) { }
             Button("삭제", role: .destructive) {
@@ -74,9 +74,8 @@ struct HappinessDetailView: View {
             Text("삭제한 행복은 되돌릴 수 없습니다.")
         }
     }
-    
+
 }
 
 #Preview {
 }
-

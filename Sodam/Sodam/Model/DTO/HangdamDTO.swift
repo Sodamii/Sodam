@@ -13,7 +13,7 @@ struct HangdamDTO {
     var happinessCount: Int
     var startDate: String?
     var endDate: String?
-    
+
     var level: Int {
         if endDate != nil {
             return 5
@@ -28,7 +28,7 @@ struct HangdamDTO {
             }
         }
     }
-    
+
     var levelName: String {
         switch level {
         case 1: "애기 행담이"

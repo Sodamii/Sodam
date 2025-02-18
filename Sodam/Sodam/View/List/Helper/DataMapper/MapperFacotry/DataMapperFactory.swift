@@ -11,9 +11,9 @@
  */
 
 struct ViewDataMapper<Input, Output>: DataMapping {
-    private let _map: (Input) -> Output //mapper의 map을 담아둘 내부 변수
-    
-    init<M:DataMapping>(mapper: M) where M.Input == Input, M.Output == Output {
+    private let _map: (Input) -> Output // mapper의 map을 담아둘 내부 변수
+
+    init<M: DataMapping>(mapper: M) where M.Input == Input, M.Output == Output {
         self._map = mapper.map
     }
     func map(from input: Input) -> Output {
@@ -24,7 +24,7 @@ struct ViewDataMapper<Input, Output>: DataMapping {
 struct MapperKey: Hashable {
     let input: ObjectIdentifier
     let output: ObjectIdentifier
-    
+
     init<Input, Output>(input: Input.Type, output: Output.Type) {
         self.input = ObjectIdentifier(input)
         self.output = ObjectIdentifier(output)
@@ -38,22 +38,22 @@ enum FacotoryError: Error {
 
 final class DataMapperFactory {
     private var registry: [MapperKey: Any] = [:]
-    
+
     init() { // 사용하는 매퍼를 초기화 시 기본적으로 등록해두었음. 추후 개선
         register(mapper: StatusContentMapper())
         register(mapper: HappinessListConfigMapper())
         register(mapper: HappinessListContentMapper())
     }
-    
+
     private func register<M: DataMapping>(mapper: M) { // 현재는 초기화 시에만 등록해서 private걸어둠
         let key = MapperKey(input: M.Input.self, output: M.Output.self)
         registry[key] = ViewDataMapper(mapper: mapper)
     }
-    
+
     func createAnyMapper<Input, Output>(inputType: Input.Type, outputType: Output.Type) -> Result<ViewDataMapper<Input, Output>, FacotoryError> {
         let key = MapperKey(input: inputType, output: outputType)
         guard let mapper = registry[key] as? ViewDataMapper<Input, Output> else { return .failure(.failedToCreate) }
-        
+
         return .success(mapper)
     }
 }

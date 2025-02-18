@@ -9,11 +9,11 @@ import SwiftUI
 
 struct HappinessCellView: View {
     private let viewModel: HappinessCellViewModel
-    
+
     init(viewModel: HappinessCellViewModel) {
         self.viewModel = viewModel
     }
-    
+
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
             if let image = viewModel.getThumbnail() { // 추후 이미지가 여럿 생기더라도 여긴 첫 이미지를 사용

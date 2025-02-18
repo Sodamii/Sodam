@@ -14,6 +14,11 @@ protocol WriteViewControllerDelegate: AnyObject {
 
 final class WriteViewController: UIViewController {
     
+    // 상태 바 스타일을 검은색으로 고정
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .darkContent
+    }
+    
     weak var delegate: WriteViewControllerDelegate?
     
     private let writeViewModel: WriteViewModel

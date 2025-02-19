@@ -70,7 +70,7 @@ private extension SettingsViewController {
     // NotificationCenter Observer Set
     func setupObservers() {
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(updateNotificationStatus),
+                                               selector: #selector(checkNotificationStatus),
                                                name: UIApplication.willEnterForegroundNotification,
                                                object: nil)
     }
@@ -85,11 +85,11 @@ private extension SettingsViewController {
     // Check Notification Set
         func setupChekNotification() {
             UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
-            updateNotificationStatus()  // 뷰가 나타날 때마다 현재 알림 권한 상태를 체크하고 UI 업데이트
+            checkNotificationStatus()  // 뷰가 나타날 때마다 현재 알림 권한 상태를 체크하고 UI 업데이트
         }
 
     // NotificationStatus Check
-    @objc func updateNotificationStatus() {
+    @objc func checkNotificationStatus() {
         settingViewModel.checkNotificationStatus { [weak self] isAuthorized in
             guard let self = self else { return }
             DispatchQueue.main.async {
@@ -223,7 +223,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     // 알림 스위치의 상태가 변경되었을 때 호출되는 액션
     @objc func didToggleSwitch(_ sender: UISwitch) {
         let toggleState = sender.isOn
-        settingViewModel.requestNotificationStatus { [weak self] status in
+        settingViewModel.checkNotificationStatus { [weak self] status in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 // 시스템 설정 확인 후 허용시,

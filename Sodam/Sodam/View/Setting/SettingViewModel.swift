@@ -115,14 +115,7 @@ extension SettingViewModel {
 // MARK: - LocalNotificationManger Methods
 
 extension SettingViewModel {
-    // 최근 요청한 알림 권한 상태 가져오기
-    func requestNotificationStatus(completion: @escaping (Bool) -> Void) {
-        localNotificationManager.requestAuthorization { status in
-            completion(status)
-        }
-    }
-    
-    // 실시간 알림 권한 상태 가져오기
+    // 요청한 알림 권한 상태 가져오기
     func checkNotificationStatus(completion: @escaping (Bool) -> Void) {
         localNotificationManager.checkAuthorization { status in
             completion(status)

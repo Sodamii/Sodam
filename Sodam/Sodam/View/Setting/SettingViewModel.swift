@@ -60,10 +60,6 @@ extension SettingViewModel {
         userDefaultsManager.saveAppToggleState(isOn)
     }
     
-    func saveNotificationAuthorizationStatus(_ status: Bool) {
-        userDefaultsManager.saveNotificaionAuthorizationStatus(status)
-    }
-    
     // MARK: - Get Methods
     
     // 저장된 알림 시간 가져오기

@@ -52,23 +52,6 @@ final class UserDefaultsManager {
     func saveAppToggleState(_ isOn: Bool) {
         userDefaults.set(isOn, forKey: Keys.appSettingToggleState)
     }
-    
-    // 알림 권한 상태 (허용/거부)를 UserDefaults에 저장
-    func saveNotificaionAuthorizationStatus(_ isAuthorized: Bool) {
-        userDefaults.set(isAuthorized, forKey: Keys.notificationAuthorizationStatus)
-    }
-
-    // 오늘 일기 작성했는지 확인하는 메서드
-    func hasAlreadyWrittenToday() -> Bool {
-        let lastWrittenDate = UserDefaults.standard.object(forKey: "lastWrittenDate") as? Date ?? Date.distantPast
-        let calendar = Calendar.current
-        return calendar.isDateInToday(lastWrittenDate)
-    }
-
-    // 알림 초기 설정 완료 여부를 확인 (알림 설정이 처음 완료되었는지 여부)
-    func isNotificationSetupComplete() -> Bool {
-        return userDefaults.bool(forKey: Keys.notificationInitialSetupComplete)
-    }
 
     // MARK: - 작성 뷰 Get
 
@@ -88,14 +71,32 @@ final class UserDefaultsManager {
         userDefaults.removeObject(forKey: Keys.content)
         userDefaults.removeObject(forKey: Keys.imagePath)
     }
-
-    // MARK: - Local Notification Get
-
+    
     // 알림 초기 설정을 완료 표시 (true가 완료, false가 미완료)
     func markNotificationSetupAsComplete() {
         userDefaults.set(true, forKey: Keys.notificationInitialSetupComplete)
     }
 
+    // 오늘 작성했다고 UserDefaults에 저장 (시간 포함)
+    func markAsWrittenToday() {
+        let today = Calendar.current.startOfDay(for: Date())  // 시간을 00:00:00으로 초기화
+        UserDefaults.standard.set(today, forKey: "lastWrittenDate") // UserDefaults에 저장
+    }
+
+    // MARK: - Local Notification Get
+
+    // 오늘 일기 작성했는지 확인하는 메서드
+    func hasAlreadyWrittenToday() -> Bool {
+        let lastWrittenDate = UserDefaults.standard.object(forKey: "lastWrittenDate") as? Date ?? Date.distantPast
+        let calendar = Calendar.current
+        return calendar.isDateInToday(lastWrittenDate)
+    }
+    
+    // 알림 초기 설정 완료 여부를 확인 (알림 설정이 처음 완료되었는지 여부)
+    func isNotificationSetupComplete() -> Bool {
+        return userDefaults.bool(forKey: Keys.notificationInitialSetupComplete)
+    }
+    
     // 앱 설정 알림 토글 상태 (ON/OFF)를 가져옴
     func getAppToggleState() -> Bool {
         userDefaults.bool(forKey: Keys.appSettingToggleState)
@@ -109,11 +110,5 @@ final class UserDefaultsManager {
     // 저장된 알림 시간을 가져옴
     func getNotificationTime() -> Date? {
         userDefaults.object(forKey: Keys.notificationTime) as? Date
-    }
-
-    // 오늘 작성했다고 UserDefaults에 저장 (시간 포함)
-    func markAsWrittenToday() {
-        let today = Calendar.current.startOfDay(for: Date())  // 시간을 00:00:00으로 초기화
-        UserDefaults.standard.set(today, forKey: "lastWrittenDate") // UserDefaults에 저장
     }
 }

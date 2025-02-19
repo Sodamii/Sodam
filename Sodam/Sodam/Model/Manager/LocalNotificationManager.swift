@@ -88,12 +88,7 @@ final class LocalNotificationManager: NSObject {
         if isGranted {
             print("알림이 허용되었습니다.\(isGranted)")
             // 허용한 경우 UserDefault에 시스템 상태 true, 앱 토글 true로 저장
-            UserDefaultsManager.shared.saveNotificaionAuthorizationStatus(isGranted)
             UserDefaultsManager.shared.saveAppToggleState(isGranted)
-            
-            // 알림 초기 설정을 완료
-            UserDefaultsManager.shared.markNotificationSetupAsComplete()
-            
             // 처음 시스템 허용한 경우 오후 9시 기본 알림 시간 설정
             setDefaultNotification()
 
@@ -111,11 +106,8 @@ final class LocalNotificationManager: NSObject {
             return
         }
 
-        // UserDefault에 시스템 상태 false, 앱 토글 false로 저장
-        UserDefaultsManager.shared.saveNotificaionAuthorizationStatus(false)
+        // UserDefault에 앱 토글 false로 저장
         UserDefaultsManager.shared.saveAppToggleState(false)
-        // 알림 초기 설정을 완료
-        UserDefaultsManager.shared.markNotificationSetupAsComplete()
         
         // 알림 권한 거부 메시지 표시
         DispatchQueue.main.async {

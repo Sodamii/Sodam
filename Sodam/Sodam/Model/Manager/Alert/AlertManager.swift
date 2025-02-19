@@ -165,16 +165,9 @@ final class AlertManager {
             preferredStyle: .alert
         )
         
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel) { [weak self] _ in
-            guard self != nil else {
-                return
-            }
-        }
-        
-        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { [weak self] _ in
-            guard self != nil else {
-                return
-            }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+
+        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { _ in
             if let url = URL(string: UIApplication.openSettingsURLString),
                UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url, options: [:])

@@ -235,7 +235,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                         
                         // 알림 예약을 다시 설정 (스위치가 켜졌을 때만)
                         if let notificationTime = self.settingViewModel.getNotificationTime() {
-                            self.settingViewModel.setReservedNotificaion(notificationTime)
+                            self.settingViewModel.setUserNotification(notificationTime)
                         }
                         
                     } else {
@@ -264,7 +264,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         settingViewModel.saveNotificationTime(sender.date)
         
         if settingViewModel.isToggleOn {
-            settingViewModel.setReservedNotificaion(sender.date)
+            settingViewModel.setUserNotification(sender.date)
         }
     }
 }

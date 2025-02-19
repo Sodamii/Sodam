@@ -52,13 +52,13 @@ extension SettingViewModel {
         )
         
         let cancelAction = UIAlertAction(title: "취소", style: .cancel) { [weak self] _ in
-            guard let self = self else {
+            guard self != nil else {
                 return
             }
         }
         
         let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { [weak self] _ in
-            guard let self = self else {
+            guard self != nil else {
                 return
             }
             if let url = URL(string: UIApplication.openSettingsURLString),
@@ -107,8 +107,8 @@ extension SettingViewModel {
     }
     
     // 사용자가 설정한 예약된 알림 설정
-    func setReservedNotificaion(_ sender: Date) {
-        localNotificationManager.setReservedNotification(sender)
+    func setUserNotification(_ sender: Date) {
+        localNotificationManager.setUserNotification(time: sender, showToast: false)
     }
 }
 

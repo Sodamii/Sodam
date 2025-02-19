@@ -95,17 +95,9 @@ final class LocalNotificationManager: NSObject {
             UserDefaultsManager.shared.markNotificationSetupAsComplete()
             
             // 처음 시스템 허용한 경우 오후 9시 기본 알림 시간 설정
-            let calendar = Calendar.current
-            let defaultTime = calendar.date(bySettingHour: 21, minute: 0, second: 0, of: Date())!
-            //setReservedNotification(defaultTime)
-            UserDefaultsManager.shared.saveNotificationTime(defaultTime)
-            
-            // 알림 권한 거부 메시지 표시
-            DispatchQueue.main.async {
-                ToastManager.shared.showToastMessage(message: "알림 권한이 허용되었습니다")
-            }
+            setDefaultNotification()
 
-            // 거부인 경우
+        // 거부인 경우
         } else {
             print("알림이 거부되었습니다.")
             showNotificationDeniedAlert()
@@ -130,28 +122,30 @@ final class LocalNotificationManager: NSObject {
             ToastManager.shared.showToastMessage(message: "알림 권한이 거부되었습니다")
         }
     }
+    
+    // 앱 초기 실행 시 기본 알림 설정
+    func setDefaultNotification() {
+        let identifier = "SelectedTimeNotification"
+        let calendar = Calendar.current
+        let defaultTime = calendar.date(bySettingHour: 21, minute: 0, second: 0, of: Date())! // 오후 9시
+        UserDefaultsManager.shared.saveNotificationTime(defaultTime)
+        scheduleNotification(time: defaultTime, identifier: identifier)  // 알림 예약
+    }
 }
 
     // MARK: - 알림 예약 관련 시간/내용/트리거 설정
 
 extension LocalNotificationManager {
-    // 알림 시간 설정
-    func setReservedNotification(_ time: Date) {
+    // datePicker에서 사용자가 알림 시간을 설정할 때 호출
+    func setUserNotification(time: Date, showToast: Bool) {
         let identifier = "SelectedTimeNotification"
-                
-        // 일기가 작성된 경우 알림 울리지않도록 return
-        if UserDefaultsManager.shared.hasAlreadyWrittenToday() {
-            return
-        }
-
-        // 현재 대기 중인 알림 요청을 가져와서 새로운 알림 예약
-        UNUserNotificationCenter.current().getPendingNotificationRequests { [weak self] requests in
-            self?.scheduleNotification(time: time, identifier: identifier, existingRequests: requests)
-        }
+        // 기존 알림이 있으면 삭제
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: [identifier])
+        scheduleNotification(time: time, identifier: identifier)
     }
 
     // 알림 예약
-    private func scheduleNotification(time: Date, identifier: String, existingRequests: [UNNotificationRequest]) {
+    private func scheduleNotification(time: Date, identifier: String, showToast: Bool = true) {
         createNotificationContent { content in
             // 알림을 트리거할 시간 설정
             let trigger = self.createNotificationTrigger(for: time)
@@ -164,9 +158,13 @@ extension LocalNotificationManager {
                     DispatchQueue.main.async {
                         ToastManager.shared.showToastMessage(message: "알림 등록 실패: \(error.localizedDescription)")
                     }
-                } else {
+                } else if showToast {
                     // 알림이 성공적으로 등록된 후 후속 처리
-                    self?.handleNotificationScheduling(identifier: identifier, time: time, existingRequests: existingRequests)
+                    DispatchQueue.main.async {
+                        // String Interpolation을 사용하여 옵셔널 값을 안전하게 처리
+                        let formattedTime = self?.timeFormatted(time) ?? "알 수 없는 시간"
+                        ToastManager.shared.showToastMessage(message: "알림 시간이 \(formattedTime)로 설정되었습니다")
+                    }
                 }
             }
         }
@@ -193,18 +191,7 @@ extension LocalNotificationManager {
     private func createNotificationTrigger(for time: Date) -> UNCalendarNotificationTrigger {
         let calendar = Calendar.current
         let components = calendar.dateComponents([.hour, .minute], from: time)
-        return UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
-    }
-
-    // MARK: - 알림 예약 후 처리
-
-    private func handleNotificationScheduling(identifier: String, time: Date, existingRequests: [UNNotificationRequest]) {
-        // 이미 동일한 알림이 예약되어 있는지 확인
-        let isAlreadyScheduled = existingRequests.contains { $0.identifier == identifier }
-        DispatchQueue.main.async {
-            // 알림 권한이 처음 허용되었을 때만 메시지 표시
-            ToastManager.shared.showToastMessage(message: "알림 시간이 \(self.timeFormatted(time))로 설정되었습니다")
-        }
+        return UNCalendarNotificationTrigger(dateMatching: components, repeats: true)  // repaets가 true 이므로 매일 같은 시간에 자동으로 울리는 구조
     }
 
     // MARK: - 시간을 "HH:mm" 형식으로 변환
@@ -214,6 +201,29 @@ extension LocalNotificationManager {
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: time)
     }
+    
+    // MARK: - 행복 작성 여부 확인 후 알림 취소
+    func checkDiaryAndCancelNotification() {
+        // 오늘 일기를 썼으면 알림 삭제
+        if UserDefaultsManager.shared.hasAlreadyWrittenToday() {
+            // 당일 예약된 알림만 삭제됨
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["SelectedTimeNotification"])
+            return
+        }
+        
+        // 기존 알림이 있는지 확인 후 없을 때만 예약
+        notificationCenter.getPendingNotificationRequests { requests in
+            let isNotificationScheduled = requests.contains { $0.identifier == "SelectedTimeNotification" }
+            
+            if !isNotificationScheduled {
+                DispatchQueue.main.async {
+                    let now = Date()
+                    self.setUserNotification(time: now, showToast: false) // Foreground에서는 토스트 메시지 표시 안 함
+                    UserDefaultsManager.shared.saveNotificationTime(now)
+                }
+            }
+        }
+    }
 }
 
 // MARK: - UNUserNotificationCenterDelegate
@@ -221,12 +231,21 @@ extension LocalNotificationManager {
 extension LocalNotificationManager: UNUserNotificationCenterDelegate {
     // Foreground 상태에서 알림을 수신할 때 호출
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        UIApplication.shared.applicationIconBadgeNumber += 1  // 배지 번호를 증가시켜 앱 아이콘에 표시
-        completionHandler([.banner, .badge, .sound, .list])
+        checkDiaryAndCancelNotification() // Foreground 상태에서 일기 작성 여부 확인
+        // 오늘 일기를 썼으면
+        if UserDefaultsManager.shared.hasAlreadyWrittenToday() {
+            completionHandler([]) //  알림 표시 안 함
+        
+        // 오늘 일기를 안 썼으면
+        } else {
+            UIApplication.shared.applicationIconBadgeNumber += 1  // 배지 번호를 증가시켜 앱 아이콘에 표시
+            completionHandler([.banner, .badge, .sound, .list]) // 알림 표시
+        }
     }
 
-    // Background에서 알림을 클릭했을 때 호출
+    // 알림에 대해 사용자가 반응하면 실행됨 (Background,Foreground 모두 실행)
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        checkDiaryAndCancelNotification() // Background/종료 상태에서 일기 작성 여부 확인
         completionHandler() // 응답 처리 완료
     }
 }

@@ -70,9 +70,6 @@ extension WriteViewModel {
 
         // 작성 완료 알림 표시 후 모달 닫기
         completion()
-        
-        // 오늘 작성했다고 기록
-        UserDefaultsManager.shared.markAsWrittenToday()
     }
 
     /// 작성 취소 이벤트 처리 메서드

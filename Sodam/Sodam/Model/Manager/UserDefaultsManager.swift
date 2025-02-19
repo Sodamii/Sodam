@@ -26,7 +26,6 @@ final class UserDefaultsManager {
         static let appSettingToggleState = "appSettingToggleState"  // 앱 설정 토글 상태
         static let notificationAuthorizationStatus = "notificationAuthorizationStatus"  // 알림 권한 상태 (허용/거부)를 UserDefaults에 저장
         static let notificationInitialSetupComplete = "notificationInitialSetupComplete" // 앱 알림 초기 설정 여부 확인
-        static let diaryWrittenTime = "diaryWrittenTime"  // 기록 작성 시간 확인
         static let lastWrittenDate = "lastWrittenDate"  // 기록 작성 여부 확인
     }
 
@@ -59,13 +58,11 @@ final class UserDefaultsManager {
         userDefaults.set(isAuthorized, forKey: Keys.notificationAuthorizationStatus)
     }
 
-    // 오늘 작성했는지 확인하는 메서드
+    // 오늘 일기 작성했는지 확인하는 메서드
     func hasAlreadyWrittenToday() -> Bool {
-        guard let lastWrittenTimestamp = userDefaults.object(forKey: Keys.lastWrittenDate) as? TimeInterval else {
-            return false
-        }
-        let lastWrittenDate = Date(timeIntervalSince1970: lastWrittenTimestamp)
-        return Calendar.current.isDateInToday(lastWrittenDate)
+        let lastWrittenDate = UserDefaults.standard.object(forKey: "lastWrittenDate") as? Date ?? Date.distantPast
+        let calendar = Calendar.current
+        return calendar.isDateInToday(lastWrittenDate)
     }
 
     // 알림 초기 설정 완료 여부를 확인 (알림 설정이 처음 완료되었는지 여부)
@@ -116,18 +113,7 @@ final class UserDefaultsManager {
 
     // 오늘 작성했다고 UserDefaults에 저장 (시간 포함)
     func markAsWrittenToday() {
-        let now = Date() // 현재 시간 저장
-        let todayStart = Calendar.current.startOfDay(for: now) // 날짜만 저장 (00:00:00)
-        
-        userDefaults.set(todayStart.timeIntervalSince1970, forKey: Keys.lastWrittenDate) // 날짜만 저장
-        userDefaults.set(now.timeIntervalSince1970, forKey: Keys.diaryWrittenTime) // 정확한 작성 시간 저장
-    }
-    
-    // 저장된 일기 작성 시간 가져오기
-    func getDiaryWrittenTime() -> Date? {
-        guard let timestamp = userDefaults.object(forKey: Keys.diaryWrittenTime) as? TimeInterval else {
-            return nil
-        }
-        return Date(timeIntervalSince1970: timestamp)
+        let today = Calendar.current.startOfDay(for: Date())  // 시간을 00:00:00으로 초기화
+        UserDefaults.standard.set(today, forKey: "lastWrittenDate") // UserDefaults에 저장
     }
 }

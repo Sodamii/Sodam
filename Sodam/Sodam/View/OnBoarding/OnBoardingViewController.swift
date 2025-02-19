@@ -46,7 +46,12 @@ final class OnBoardingViewController: UIViewController {
     }
     
     @objc private func nextButtonTapped() {
-        changePageInDirection(.left)
+        if currentPage == infoData.count - 1 {
+            UserDefaultsManager.shared.saveFirstLaunchCompleted(true)
+            navigateToRootViewController()
+        } else {
+            changePageInDirection(.left)
+        }
     }
     
     @objc private func skipButtonTapped() {
@@ -80,14 +85,17 @@ final class OnBoardingViewController: UIViewController {
         let text = infoData[currentPage].text
         let totalPage = infoData.count
         
-        onBoardingView.updatePage(
-            image: image,
-            text: text,
-            buttonTitle: buttonTitle,
-            isLastPage: isLastPage,
-            currentPage: currentPage,
-            totalPage: totalPage
-        )
+        UIView.transition(with: onBoardingView, duration: 0.3, options: .transitionCrossDissolve, animations: { [weak self] in
+            guard let self = self else { return }
+            self.onBoardingView.updatePage(
+                image: image,
+                text: text,
+                buttonTitle: buttonTitle,
+                isLastPage: isLastPage,
+                currentPage: self.currentPage,
+                totalPage: totalPage
+            )
+        }, completion: nil)
     }
     
     private func navigateToRootViewController() {

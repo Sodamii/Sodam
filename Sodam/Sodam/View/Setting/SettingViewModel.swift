@@ -42,36 +42,6 @@ extension SettingViewModel {
         }
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
-    
-    // 시스템 설정 거부 상태시 토글 on 할때 시스템 설정으로 이동을 요청 팝업
-    func showNotificationPermissionAlert(viewController: UIViewController) {
-        let alertController = UIAlertController(
-            title: "알림 권한 필요",
-            message: "앱의 알림을 받으려면 설정에서 알림을 허용해주세요.",
-            preferredStyle: .alert
-        )
-        
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel) { [weak self] _ in
-            guard self != nil else {
-                return
-            }
-        }
-        
-        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { [weak self] _ in
-            guard self != nil else {
-                return
-            }
-            if let url = URL(string: UIApplication.openSettingsURLString),
-               UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url, options: [:])
-            }
-        }
-        
-        alertController.addAction(cancelAction)
-        alertController.addAction(settingsAction)
-        
-        viewController.present(alertController, animated: true)
-    }
 }
 
 // MARK: - UserDefaultsManager Methods

@@ -35,7 +35,7 @@ final class OnBoardingViewController: UIViewController {
         updatePage()
     }
     
-    // MARK: - 버튼 탭과 제스처 액션 정의
+    // MARK: - 버튼 탭과 스와이프 제스처 이벤트 설정
     private func setupAction() {
         onBoardingView.setNextButtonAction(target: self, nextButtonSelector: #selector(nextButtonTapped))
         onBoardingView.setSkipButtonAction(target: self, skipButtonSelector: #selector(skipButtonTapped))
@@ -49,6 +49,8 @@ final class OnBoardingViewController: UIViewController {
         onBoardingView.addGestureRecognizer(rightSwipeGesture)
     }
     
+    // MARK: - 버튼 탭, 스와이프 제스처 이벤트 처리
+    /// 다음 버튼 탭할 때 호출되는 메서드
     @objc private func nextButtonTapped() {
         if currentPage == infoData.count - 1 {
             UserDefaultsManager.shared.saveFirstLaunchCompleted(true)
@@ -58,16 +60,18 @@ final class OnBoardingViewController: UIViewController {
         }
     }
     
+    /// 건너뛰기 버튼 탭할 때 호출되는 메서드
     @objc private func skipButtonTapped() {
         UserDefaultsManager.shared.saveFirstLaunchCompleted(true)
         navigateToRootViewController()
     }
     
+    /// 스와이프 제스처 할 때 호출되는 메서드
     @objc private func handleSwipeGesture(_ gesture: UISwipeGestureRecognizer) {
         changePageInDirection(gesture.direction)
     }
     
-    // 제스처 동작에 따른 현재 페이지 카운트 증감
+    /// 제스처 동작에 따른 현재 페이지 카운트 증감
     private func changePageInDirection(_ direction: UISwipeGestureRecognizer.Direction) {
         switch direction {
         // 왼쪽으로 이동 할 때 currentPage 감소
@@ -87,7 +91,7 @@ final class OnBoardingViewController: UIViewController {
         updatePage()
     }
     
-    // 현재페이지 데이터 업데이트 메서드
+    // MARK: - 햔재 페이지 데이터 업데이트
     private func updatePage() {
         let isLastPage = currentPage == infoData.count - 1 // 마지막 페이지 여부
         let buttonTitle = isLastPage ? "시작하기" : "다음" // 마지막 페이지 여부에 따른 버튼 타이틀
@@ -114,7 +118,7 @@ final class OnBoardingViewController: UIViewController {
             completion: nil)
     }
     
-    // 온보딩 화면 후 메인 화면 진입
+    // MARK: - 온보딩 화면 종료 후 메인 화면 이동
     private func navigateToRootViewController() {
         let mainViewController = CustomTabBarController()
         let window = UIApplication.shared.windows.first

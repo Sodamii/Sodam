@@ -12,26 +12,29 @@ final class OnBoardingView: UIView {
     
     private let imageView: UIImageView = {
         let imageView: UIImageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
+        imageView.backgroundColor = .imageBackground
         return imageView
     }()
     
     private let infoTextView: UIView = {
         let view: UIView = UIView()
         view.backgroundColor = .imageBackground
-        view.layer.shadowColor = UIColor.systemBackground.cgColor
-        view.layer.shadowOpacity = 0.25
-        view.layer.shadowRadius = 5
-        view.layer.shadowOffset = .init(width: 0, height: -2)
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.25 // 그림자 투명도 25%
+        view.layer.shadowRadius = 5 // 블러 효과
+        view.layer.shadowOffset = .init(width: 0, height: -5) // 그림자 위치
         return view
     }()
     
     private let infoLabel: UILabel = {
         let label: UILabel = UILabel()
-        label.font = .mapoGoldenPier(20)
+        label.font = .mapoGoldenPier(18)
         label.textColor = .darkGray
         label.numberOfLines = 2
         label.textAlignment = .center
+        label.minimumScaleFactor = 0.7
+        label.adjustsFontSizeToFitWidth = true
         return label
     }()
     
@@ -61,7 +64,7 @@ final class OnBoardingView: UIView {
     private let pageControl: UIPageControl = {
         let pageControl: UIPageControl = UIPageControl()
         pageControl.pageIndicatorTintColor = .lightGray // 페이지 인디케이터 틴트 색상을 lightGray로 설정
-        pageControl.currentPageIndicatorTintColor = .buttonBackground // 현재 페이지 인디케이터 틴트 색상 설정
+        pageControl.currentPageIndicatorTintColor = .textAccent // 현재 페이지 인디케이터 틴트 색상 설정
         return pageControl
     }()
     
@@ -82,7 +85,7 @@ extension OnBoardingView {
         
         imageView.snp.makeConstraints { make in
             make.horizontalEdges.bottom.equalToSuperview()
-            make.top.equalTo(safeAreaLayoutGuide)
+            make.top.equalToSuperview().offset(UIScreen.isiPhoneSE ? -20 : 0)
         }
         
         infoTextView.snp.makeConstraints { make in
@@ -92,19 +95,19 @@ extension OnBoardingView {
         
         infoLabel.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(20)
-            make.top.equalTo(infoTextView.snp.top).inset(10)
-            make.height.equalTo(50)
+            make.top.equalTo(infoTextView.snp.top).offset(8)
+            make.height.equalTo(infoTextView).dividedBy(3)
         }
         
         pageControl.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(infoLabel.snp.bottom).offset(10)
+            make.top.equalTo(infoLabel.snp.bottom)
             make.height.equalTo(12)
         }
         
         nextButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(pageControl.snp.bottom).offset(10)
+            make.top.equalTo(pageControl.snp.bottom).offset(UIScreen.isiPhoneSE ? 8 : 16)
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(48)
         }
@@ -112,7 +115,7 @@ extension OnBoardingView {
         skipButton.snp.makeConstraints { make in
             make.horizontalEdges.equalTo(nextButton)
             make.height.equalTo(20)
-            make.bottom.equalTo(safeAreaLayoutGuide).inset(16)
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(UIScreen.isiPhoneSE ? 8 : 0)
         }
     }
 }

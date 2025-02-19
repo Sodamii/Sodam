@@ -11,7 +11,7 @@ import CoreData
 
 final class CoreDataManager {
     static let shared = CoreDataManager()
-    private let persistentContainer: NSPersistentContainer
+    let persistentContainer: NSPersistentContainer
 
     private init() {
         persistentContainer = NSPersistentContainer(name: CDKey.container.rawValue)
@@ -23,6 +23,8 @@ final class CoreDataManager {
                 print("[CoreData] container 로드 완료")
             }
         }
+        // background에서 일어나는 작업을 자동으로 main 컨텍스트에 병합해주는 설정
+        persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
     }
 
     var context: NSManagedObjectContext {

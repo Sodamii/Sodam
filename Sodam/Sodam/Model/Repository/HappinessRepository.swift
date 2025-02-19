@@ -98,7 +98,7 @@ final class HappinessRepository {
 }
 
 extension HappinessRepository {
-    private func postNotification(level: Int) {
+    func postNotification(level: Int) {
         NotificationCenter.default.post(name: Notification.levelUP, object: nil, userInfo: ["level": level])
     }
 }

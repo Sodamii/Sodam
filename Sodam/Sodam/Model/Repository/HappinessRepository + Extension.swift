@@ -65,4 +65,47 @@ extension HappinessRepository {
         guard let path = path else { return }
         imageManager.deleteImage(path)
     }
+
+    func updateHangdamIfNeededAsync(hangdamId: String?) async throws {
+        let count: Int? = try await self.checkHappinessCountAsync(with: hangdamId)
+
+        switch count {
+        case 0:     // 행담이 startDate 업데이트, 레벨 1로 성장
+            try await coreDataManager.performBackgroundTaskAsync { [weak self] context in
+                guard let self = self else { throw DataError.selfIsNil }
+                let hangdam: HangdamEntity = try await self.coreDataManager.fetchEntityByIdAsync(
+                    id: hangdamId,
+                    context: context
+                )
+                hangdam.startDate = Date.now
+            }
+            postNotification(level: 1)
+        case 3:     // 행담이 레벨 2로 성장
+            postNotification(level: 2)
+        case 10:    // 행담이 레벨 3으로 성장
+            postNotification(level: 3)
+        case 24:    // 행담이 레벨 4로 성장
+            postNotification(level: 4)
+        case 29:    // 행담이 endDate 업데이트, 최종 성장(보관함 이동)
+            try await coreDataManager.performBackgroundTaskAsync { [weak self] context in
+                guard let self = self else { throw DataError.selfIsNil }
+                let hangdam: HangdamEntity = try await self.coreDataManager.fetchEntityByIdAsync(
+                    id: hangdamId,
+                    context: context
+                )
+                hangdam.endDate = Date.now
+            }
+            postNotification(level: 5)
+        default:
+            return
+        }
+    }
+
+    func checkHappinessCountAsync(with hangdamId: String?) async throws -> Int? {
+        let hangdam: HangdamEntity = try await coreDataManager.fetchEntityByIdAsync(
+            id: hangdamId,
+            context: coredataContext
+        )
+        return hangdam.happinesses?.count
+    }
 }

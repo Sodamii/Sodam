@@ -87,19 +87,21 @@ extension CoreDataManager {
         }
     }
 
-    func performBackgroundTaskAsync<T>(operation: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
+    func performBackgroundTaskAsync<T>(operation: @escaping (NSManagedObjectContext) async  throws -> T) async throws -> T {
         try await withCheckedThrowingContinuation { continuation in
             persistentContainer.performBackgroundTask { context in
                 context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-                do {
-                    let result = try operation(context)
-                    if context.hasChanges {
-                        try context.save()
+                Task {
+                    do {
+                        let result = try await operation(context)
+                        if context.hasChanges {
+                            try context.save()
+                        }
+                        
+                        continuation.resume(returning: result)
+                    } catch {
+                        continuation.resume(throwing: DataError.backgroundTaskFailed)
                     }
-
-                    continuation.resume(returning: result)
-                } catch {
-                    continuation.resume(throwing: DataError.backgroundTaskFailed)
                 }
             }
         }

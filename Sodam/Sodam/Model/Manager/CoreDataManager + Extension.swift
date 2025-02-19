@@ -62,10 +62,13 @@ extension CoreDataManager {
         }
     }
     
-    func deleteEntityByIdAsync<T: NSManagedObject>(id: NSManagedObjectID, type: T.Type, context: NSManagedObjectContext) async throws {
+    func deleteEntityByIdAsync<T: NSManagedObject>(id: String?, type: T.Type, context: NSManagedObjectContext) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             context.perform {
-                guard let entity = context.object(with: id) as? T else {
+                guard let _id: NSManagedObjectID = IDConverter.toNSManagedObjectID(from: id, in: context) else {
+                    return continuation.resume(throwing: DataError.convertIDFailed)
+                }
+                guard let entity = context.object(with: _id) as? T else {
                     return continuation.resume(throwing: DataError.deleteEnitityFailed)
                 }
                 

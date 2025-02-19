@@ -6,12 +6,12 @@
 //
 
 extension Result {
-    func fold<T>(onSuccess: (Success) -> T, onFailure: (Failure) -> T) -> T {
+    func fold<T>(onSuccess: (Success) throws-> T, onFailure: (Failure) throws -> T) rethrows -> T {
         switch self {
         case .success(let value):
-            return onSuccess(value)
+            return try onSuccess(value)
         case .failure(let error):
-            return onFailure(error)
+            return try onFailure(error)
         }
     }
 }

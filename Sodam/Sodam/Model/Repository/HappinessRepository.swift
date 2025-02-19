@@ -11,9 +11,10 @@ import CoreData
 
 /// CoreDataManager와 ViewModel 사이에서 행복한 기억 데이터 처리를 맡는 객체
 final class HappinessRepository {
-    private let coreDataManager: CoreDataManager
-    private let imageManager: ImageManager
-    private let dtoMapper: HappinessMapper
+    let coreDataManager: CoreDataManager
+    let imageManager: ImageManager
+    let dtoMapper: HappinessMapper
+    let happinessType: HappinessEntity.Type = HappinessEntity.self
 
     init(
         coreDataManager: CoreDataManager = CoreDataManager.shared,
@@ -44,7 +45,7 @@ final class HappinessRepository {
     /// 행담이가 가진 기존 행복 개수 체크하여 경우에 따라 이벤트 발생 또는 데이터
     ///
     /// createHappiness에서 guard문으로 이미 NSManagedObjectID type으로 변환한 값을 전달 받음
-    private func updateHangdamIfNeeded(hangdamID: NSManagedObjectID) {
+    func updateHangdamIfNeeded(hangdamID: NSManagedObjectID) {
         guard let count = coreDataManager.checkHappinessCount(with: hangdamID) else { return }
 
         switch count {

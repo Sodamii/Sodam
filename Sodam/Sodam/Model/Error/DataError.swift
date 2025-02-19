@@ -16,6 +16,7 @@ enum DataError: Error {
     case convertImagePathsFailed
     case deleteEnitityFailed
     case backgroundTaskFailed
+    case selfIsNil
 
     // 디버깅용 print 구문
     var localizedDescription: String {
@@ -28,6 +29,7 @@ enum DataError: Error {
         case .convertImagePathsFailed: "[CoreData Error] DTO [String] >>> Data 변환 실패"
         case .deleteEnitityFailed: "[CoreData Error] enitity 삭제 실패"
         case .backgroundTaskFailed: "[CoreData Error] background task 메서드 실패"
+        case .selfIsNil: "[CoreData Error] self가 없음"
         }
     }
 

@@ -20,7 +20,7 @@ struct HangdamMapper {
     }
 }
 
-struct HappinessMapper {
+struct HappinessMapper { // DTO <> Enitity 양방향으로 변환 시켜주니 Converter라는 이름도 잘 맞을 듯
     func toDTO(from entity: HappinessEntity) -> HappinessDTO? {
         guard let content = entity.content,
               let date = entity.date,

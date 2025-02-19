@@ -17,8 +17,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // 메인 ViewController 설정
         if isFirstLaunch() {
+            // 첫 실행 시 온보딩 화면으로 시작
             window.rootViewController = OnBoardingViewController()
         } else {
+            // 첫 실행 아닐 땐 기존대로 커스텀탭바 컨트롤러로 시작
             window.rootViewController = CustomTabBarController()
         }
 
@@ -53,11 +55,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         })
     }
     
+    // 첫 실행인지 확인하는 메서드
     private func isFirstLaunch() -> Bool {
         let isFirstLaunch = !UserDefaultsManager.shared.getHasLaunchedBefor()
         if isFirstLaunch {
+            // 첫 실행이면 UserDefaults에 true 저장
             UserDefaultsManager.shared.saveFirstLaunchCompleted(true)
         }
+        // 첫 실행 여부 반환
         return isFirstLaunch
     }
 }

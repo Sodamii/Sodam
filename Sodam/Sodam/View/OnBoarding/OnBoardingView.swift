@@ -10,6 +10,7 @@ import SnapKit
 
 final class OnBoardingView: UIView {
     
+    // MARK: - UI 컴포넌트 선언
     private let imageView: UIImageView = {
         let imageView: UIImageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -68,6 +69,7 @@ final class OnBoardingView: UIView {
         return pageControl
     }()
     
+    // MARK: - 초기화
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -78,6 +80,7 @@ final class OnBoardingView: UIView {
     }
 }
 
+// MARK: - UI 레이아웃 셋업
 extension OnBoardingView {
     func setupUI() {
         backgroundColor = .buttonBackground
@@ -120,6 +123,7 @@ extension OnBoardingView {
     }
 }
 
+// MARK: - 버튼 액션 설정
 extension OnBoardingView {
     func setNextButtonAction(target: Any, nextButtonSelector: Selector) {
         nextButton.addTarget(target, action: nextButtonSelector, for: .touchUpInside)
@@ -129,6 +133,7 @@ extension OnBoardingView {
     }
 }
 
+// MARK: - 온보딩 데이터 업데이트
 extension OnBoardingView {
     func updatePage(
         image: UIImage?,

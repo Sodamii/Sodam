@@ -74,6 +74,7 @@ final class UserDefaultsManager {
         return userDefaults.bool(forKey: Keys.notificationInitialSetupComplete)
     }
     
+    // 첫 실행 여부 저장
     func saveFirstLaunchCompleted(_ isFirstLaunch: Bool) {
         UserDefaults.standard.set(isFirstLaunch, forKey: Keys.hasLaunchedBefor)
     }
@@ -137,6 +138,7 @@ final class UserDefaultsManager {
         }
     }
     
+    // 첫 실행 여부 반환
     func getHasLaunchedBefor() -> Bool {
         return UserDefaults.standard.bool(forKey: Keys.hasLaunchedBefor)
     }

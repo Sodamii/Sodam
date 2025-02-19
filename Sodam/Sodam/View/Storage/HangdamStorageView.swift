@@ -46,7 +46,7 @@ private struct HangdamStorageTitle: View {
     var body: some View {
         Text("행담이 보관함")
             .frame(maxWidth: .infinity, alignment: .leading)
-            .font(.mapoGoldenPier(27))
+            .font(.appFont(size: .title1))
             .foregroundStyle(Color.textAccent)
             .padding(.top)
     }
@@ -58,7 +58,7 @@ private struct HangdamCountTitle: View {
 
     var body: some View {
         Text("다 자란 행담이 : \(count)")
-            .font(.mapoGoldenPier(15))
+            .font(.appFont(size: .body2))
             .foregroundStyle(Color.white)
             .padding(.vertical, 7)
             .padding(.horizontal, 12)

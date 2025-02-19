@@ -12,7 +12,7 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
     let baseView = UIView()
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .mapoGoldenPier(16)
+        label.font = .appFont(size: .body2)
         label.textColor = .darkGray
         return label
     }()
@@ -52,7 +52,7 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
 
     let versionLabel: UILabel = {
         let label = UILabel()
-        label.font = .mapoGoldenPier(16)
+        label.font = .appFont(size: .body2)
         label.textColor = .darkGray
         return label
     }()

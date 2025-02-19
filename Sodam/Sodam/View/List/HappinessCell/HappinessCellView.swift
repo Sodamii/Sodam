@@ -24,13 +24,13 @@ struct HappinessCellView: View {
             }
             VStack(alignment: .leading) {
                 Text(viewModel.content.happinessContent)
-                    .font(.sejongGeulggot(16))
+                    .font(.appFont(size: .body2))
                     .foregroundStyle(.black)
                     .lineLimit(2)
                     .padding(.bottom, 8)
-                //                    Text(happiness.formattedDate)
+                
                 Text(viewModel.content.date)
-                    .font(.mapoGoldenPier(FontSize.timeStamp))
+                    .font(.appFont(size: .caption))
                     .foregroundStyle(.gray)
             }
         }

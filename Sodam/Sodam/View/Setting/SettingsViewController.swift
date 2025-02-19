@@ -35,7 +35,7 @@ final class SettingsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupObservers()
-        setupChekNotification()
+        setupCheckNotification()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -83,7 +83,7 @@ private extension SettingsViewController {
     }
 
     // Check Notification Set
-        func setupChekNotification() {
+        func setupCheckNotification() {
             UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
             checkNotificationStatus()  // 뷰가 나타날 때마다 현재 알림 권한 상태를 체크하고 UI 업데이트
         }

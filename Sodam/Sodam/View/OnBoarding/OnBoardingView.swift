@@ -10,29 +10,6 @@ import SnapKit
 
 final class OnBoardingView: UIView {
     
-//    private let leftSwipeGesture: UISwipeGestureRecognizer = {
-//        let gesture = UISwipeGestureRecognizer()
-//        gesture.direction = .left
-//        return gesture
-//    }()
-//
-//    private let rightSwipeGesture: UISwipeGestureRecognizer = {
-//        let gesture = UISwipeGestureRecognizer()
-//        gesture.direction = .right
-//        return gesture
-//    }()
-//
-//    private var currentPage: Int = 0
-//    
-//    private let infoData: [(image: UIImage?, text: String)] = [
-//        (UIImage(named: "page1"), "하루에 한번씩만 행복을 작성해요"),
-//        (UIImage(named: "page2"), "소소한 행복을 사진과 함께 기록할 수 있어요\n☝🏻 지나간 기억은 바꿀 수 없답니다"),
-//        (UIImage(named: "page3"), "기록한 행복 개수에 따라 성장하는\n귀여운 행담이를 만나보세요"),
-//        (UIImage(named: "page4"), "내가 기록한 행복을 돌아볼 수 있어요"),
-//        (UIImage(named: "page5"), "성장을 마친 행담이는 보관함에 들어가요\n보관된 행담이가 가진 기억도 다시 볼 수 있어요"),
-//        (UIImage(named: "page6"), "원하는 시간에 알림을 받아보세요\n마음에 드는 폰트를 선택할 수 있어요")
-//    ]
-    
     private let imageView: UIImageView = {
         let imageView: UIImageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -128,8 +105,8 @@ extension OnBoardingView {
         nextButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(pageControl.snp.bottom).offset(10)
-            make.width.equalToSuperview().multipliedBy(2/3)
-            make.height.equalTo(60)
+            make.width.equalToSuperview().multipliedBy(0.8)
+            make.height.equalTo(48)
         }
         
         skipButton.snp.makeConstraints { make in
@@ -141,18 +118,30 @@ extension OnBoardingView {
 }
 
 extension OnBoardingView {
+    func setNextButtonAction(target: Any, nextButtonSelector: Selector) {
+        nextButton.addTarget(target, action: nextButtonSelector, for: .touchUpInside)
+    }
+    func setSkipButtonAction(target: Any, skipButtonSelector: Selector) {
+        skipButton.addTarget(target, action: skipButtonSelector, for: .touchUpInside)
+    }
+}
+
+extension OnBoardingView {
     func updatePage(
         image: UIImage?,
         text: String,
         buttonTitle: String,
         isLastPage: Bool,
-        currentPage: Int
+        currentPage: Int,
+        totalPage: Int
     ) {
         imageView.image = image
         infoLabel.text = text
         nextButton.setTitle(buttonTitle, for: .normal)
         skipButton.isHidden = isLastPage
         pageControl.currentPage = currentPage
+        pageControl.numberOfPages = totalPage
+        
         layoutIfNeeded()
     }
 }

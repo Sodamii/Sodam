@@ -24,6 +24,7 @@ final class UserDefaultsManager {
         static let notificationInitialSetupComplete = "notificationInitialSetupComplete" // 앱 알림 초기 설정 여부 확인
         static let isDiaryWritten = "isDiaryWritten"  // 기록 작성 여부 확인
         static let diaryWrittenDateKey = "diaryWrittenDateKey"  // 기록 작성 시간
+        static let hasLaunchedBefor = "hasLaunchedBefore" // 앱 설치 후 첫 실행인지 확인(온보딩 띄우기용)
     }
 
     // MARK: - UserDefaults에 저장
@@ -71,6 +72,10 @@ final class UserDefaultsManager {
     // 알림 초기 설정 완료 여부를 확인 (알림 설정이 처음 완료되었는지 여부)
     func isNotificationSetupComplete() -> Bool {
         return userDefaults.bool(forKey: Keys.notificationInitialSetupComplete)
+    }
+    
+    func saveFirstLaunchCompleted(_ isFirstLaunch: Bool) {
+        UserDefaults.standard.set(isFirstLaunch, forKey: Keys.hasLaunchedBefor)
     }
 
     // MARK: - UserDefaults에 저장된 값 얻어오기
@@ -130,5 +135,9 @@ final class UserDefaultsManager {
         Timer.scheduledTimer(withTimeInterval: nextMidnight.timeIntervalSinceNow, repeats: false) { _ in
             self.saveDiaryWrittenStatus(false)
         }
+    }
+    
+    func getHasLaunchedBefor() -> Bool {
+        return UserDefaults.standard.bool(forKey: Keys.hasLaunchedBefor)
     }
 }

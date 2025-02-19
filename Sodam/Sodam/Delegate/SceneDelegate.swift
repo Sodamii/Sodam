@@ -16,7 +16,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
 
         // 메인 ViewController 설정
-        let mainViewController = CustomTabBarController()
+        if isFirstLaunch() {
+            window.rootViewController = OnBoardingViewController()
+        } else {
+            window.rootViewController = CustomTabBarController()
+        }
 
         window.backgroundColor = .white
 
@@ -28,7 +32,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         overlayView.addSubview(imageView)
 
         overlayView.alpha = 1.0 // 처음에 보이는 상태로 시작 함
-        window.rootViewController = UIViewController()
+
         self.window = window
         window.makeKeyAndVisible()
 
@@ -40,16 +44,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             overlayView.alpha = 0.0 // 페이드아웃
         }, completion: { _ in
 
-            // 메인 화면으로 전환
-            self.window?.rootViewController = mainViewController
-
             // 메인 뷰 페이드인 애니메이션
-            mainViewController.view.alpha = 0.0
             UIView.animate(withDuration: 0.7, animations: {
-                mainViewController.view.alpha = 1.0 // 메인 뷰 서서히 나타남
+                window.rootViewController?.view.alpha = 1.0 // 메인 뷰 서서히 나타남
             })
 
             overlayView.removeFromSuperview() // 오버레이 제거
         })
+    }
+    
+    private func isFirstLaunch() -> Bool {
+        let isFirstLaunch = !UserDefaultsManager.shared.getHasLaunchedBefor()
+        if isFirstLaunch {
+            UserDefaultsManager.shared.saveFirstLaunchCompleted(true)
+        }
+        return isFirstLaunch
     }
 }

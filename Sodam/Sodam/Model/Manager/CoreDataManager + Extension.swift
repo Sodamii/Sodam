@@ -26,11 +26,14 @@ extension CoreDataManager {
         }
     }
 
-    func fetchEntityByIdAsync<T: NSManagedObject>(id: NSManagedObjectID) async throws -> T {
+    func fetchEntityByIdAsync<T: NSManagedObject>(id: String?) async throws -> T {
         try await withCheckedThrowingContinuation { continuation in
             persistentContainer.performBackgroundTask { context in
+                guard let _id: NSManagedObjectID = IDConverter.toNSManagedObjectID(from: id, in: context) else {
+                    return continuation.resume(throwing: DataError.convertIDFailed)
+                }
                 context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-                guard let entity = context.object(with: id) as? T else {
+                guard let entity = context.object(with: _id) as? T else {
                     return continuation.resume(throwing: DataError.fetchRequestFailed)
                 }
                 continuation.resume(returning: entity)

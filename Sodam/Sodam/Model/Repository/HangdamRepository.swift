@@ -10,8 +10,9 @@ import CoreData
 
 /// CoreDataManager와 ViewModel 사이에서 행담이 데이터 처리를 맡는 객체
 final class HangdamRepository {
-    private let coreDataManager: CoreDataManager
-    private let dtoMapper: HangdamMapper
+    let coreDataManager: CoreDataManager
+    let dtoMapper: HangdamMapper
+    let hangdamType: HangdamEntity.Type = HangdamEntity.self
 
     init(
         coreDataManager: CoreDataManager = CoreDataManager.shared,

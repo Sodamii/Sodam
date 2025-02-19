@@ -138,14 +138,14 @@ extension LocalNotificationManager {
     // 알림 시간 설정
     func setReservedNotification(_ time: Date) {
         let identifier = "SelectedTimeNotification"
-
-        // 일기 작성 상태 확인
-        if UserDefaultsManager.shared.getDiaryWrittenStatus() {
-            // 일기 작성 시간이 현재 시간 이후인 경우 알림을 울리지 않음
-            if let diaryWrittenTime = UserDefaultsManager.shared.markDiaryAsWritten() as? Date {
-                if Calendar.current.isDateInToday(diaryWrittenTime) && diaryWrittenTime > time {
-                    return // 일기 작성 시간이 알림 시간 이후면 알림 예약하지 않음
-                }
+                
+        // 저장된 일기 작성 시간 가져오기
+        if let diaryWrittenTime = UserDefaultsManager.shared.getDiaryWrittenTime() {
+            print("저장된 일기 작성 시간: \(self.timeFormatted(diaryWrittenTime))")
+            
+            // 일기 작성 시간이 알림 시간보다 같거나 빠르면 알림 예약하지 않음
+            if diaryWrittenTime <= time {
+                return
             }
         }
 

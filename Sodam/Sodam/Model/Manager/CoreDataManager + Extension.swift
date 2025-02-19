@@ -31,7 +31,6 @@ extension CoreDataManager {
                 guard let _id: NSManagedObjectID = IDConverter.toNSManagedObjectID(from: id, in: context) else {
                     return continuation.resume(throwing: DataError.convertIDFailed)
                 }
-                context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
                 guard let entity = context.object(with: _id) as? T else {
                     return continuation.resume(throwing: DataError.fetchRequestFailed)
                 }

@@ -10,11 +10,10 @@
 import CoreData
 
 extension CoreDataManager {
-
-    func createEntityAsync<T: NSManagedObject>(type: T.Type) async throws-> T {
+    
+    func createEntityAsync<T: NSManagedObject>(type: T.Type, context: NSManagedObjectContext) async throws-> T {
         try await withCheckedThrowingContinuation { continuation in
-            persistentContainer.performBackgroundTask { context in
-                context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+            context.perform {
                 let newEntity = T(context: context)
                 do {
                     try context.save()
@@ -25,10 +24,10 @@ extension CoreDataManager {
             }
         }
     }
-
-    func fetchEntityByIdAsync<T: NSManagedObject>(id: String?) async throws -> T {
+    
+    func fetchEntityByIdAsync<T: NSManagedObject>(id: String?, context: NSManagedObjectContext) async throws -> T {
         try await withCheckedThrowingContinuation { continuation in
-            persistentContainer.performBackgroundTask { context in
+            context.perform {
                 guard let _id: NSManagedObjectID = IDConverter.toNSManagedObjectID(from: id, in: context) else {
                     return continuation.resume(throwing: DataError.convertIDFailed)
                 }
@@ -40,15 +39,15 @@ extension CoreDataManager {
             }
         }
     }
-
+    
     func fetchEntitiesAsync<T: NSManagedObject>(
         entityType type: T.Type,
+        context: NSManagedObjectContext,
         predicate: NSPredicate? = nil,
         sortDescriptors: [NSSortDescriptor]? = nil
     ) async throws -> [T] {
         try await withCheckedThrowingContinuation { continuation in
-            persistentContainer.performBackgroundTask { context in
-                context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+            context.perform {
                 let entityName: String = String(describing: type)
                 let fetchRequest: NSFetchRequest<T> = NSFetchRequest<T>(entityName: entityName)
                 fetchRequest.predicate = predicate
@@ -63,11 +62,10 @@ extension CoreDataManager {
             }
         }
     }
-
-    func deleteEntityByIdAsync<T: NSManagedObject>(id: NSManagedObjectID, type: T.Type) async throws {
+    
+    func deleteEntityByIdAsync<T: NSManagedObject>(id: NSManagedObjectID, type: T.Type, context: NSManagedObjectContext) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            persistentContainer.performBackgroundTask { context in
-                context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+            context.perform {
                 guard let entity = context.object(with: id) as? T else {
                     return continuation.resume(throwing: DataError.deleteEnitityFailed)
                 }
@@ -82,7 +80,7 @@ extension CoreDataManager {
             }
         }
     }
-
+    
     func performBackgroundTaskAsync<T>(operation: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
         try await withCheckedThrowingContinuation { continuation in
             persistentContainer.performBackgroundTask { context in

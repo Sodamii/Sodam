@@ -19,7 +19,7 @@ class WriteView: UIView {
     private let dateLabel: UILabel = {
         let label: UILabel = UILabel()
         label.text = Date().formatForHappiness
-        label.font = .mapoGoldenPier(20)
+        label.font = .appFont(size: .subtitle)
         label.textColor = .black
         label.textAlignment = .center
         return label
@@ -37,7 +37,7 @@ class WriteView: UIView {
     private let placeholderLabel: UILabel = {
         let label = UILabel()
         label.text = "행복을 작성해주세요"
-        label.font = .sejongGeulggot(16)
+        label.font = .appFont(size: .body2)
         label.textColor = .lightGray
         return label
     }()
@@ -253,7 +253,7 @@ extension WriteView {
 
     // 텍스트뷰 줄 간격 설정 메서드 추가
     private func updateTextViewAttributes() {
-        let font = UIFont.sejongGeulggot(16)
+        let font = UIFont.appFont(size: .body2)
         let lineHeight = font.lineHeight // 폰트는 기본 줄 높이
         let swiftUILineSpacing: CGFloat = 10 // SwiftUI에서 사용한 lineSpacing 값
 

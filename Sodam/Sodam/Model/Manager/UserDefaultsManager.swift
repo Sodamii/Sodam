@@ -24,6 +24,7 @@ final class UserDefaultsManager {
         static let notificationInitialSetupComplete = "notificationInitialSetupComplete" // 앱 알림 초기 설정 여부 확인
         static let isDiaryWritten = "isDiaryWritten"  // 기록 작성 여부 확인
         static let diaryWrittenDateKey = "diaryWrittenDateKey"  // 기록 작성 시간
+        static let fontName = "fontName"    // 커스텀 폰트 이름
     }
 
     // MARK: - UserDefaults에 저장
@@ -71,6 +72,11 @@ final class UserDefaultsManager {
     // 알림 초기 설정 완료 여부를 확인 (알림 설정이 처음 완료되었는지 여부)
     func isNotificationSetupComplete() -> Bool {
         return userDefaults.bool(forKey: Keys.notificationInitialSetupComplete)
+    }
+    
+    // 폰트 설정 저장
+    func saveFontName(_ fontName: String) {
+        userDefaults.set(fontName, forKey: Keys.fontName)
     }
 
     // MARK: - UserDefaults에 저장된 값 얻어오기
@@ -130,5 +136,10 @@ final class UserDefaultsManager {
         Timer.scheduledTimer(withTimeInterval: nextMidnight.timeIntervalSinceNow, repeats: false) { _ in
             self.saveDiaryWrittenStatus(false)
         }
+    }
+    
+    // 저장된 설정 폰트를 가져옴 - 없을 시 기본 폰트(마포금빛나루) 반환
+    func getFontName() -> String {
+        return userDefaults.string(forKey: Keys.fontName) ?? CustomFont.mapoGoldenPier.name
     }
 }

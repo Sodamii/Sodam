@@ -58,7 +58,7 @@ final class AlertManager {
 
             let rightLabel = UILabel()
             rightLabel.text = "담이"
-            rightLabel.font = .mapoGoldenPier(14)
+            rightLabel.font = .appFont(size: .caption)
             rightLabel.textColor = .gray
             rightLabel.sizeToFit()
 

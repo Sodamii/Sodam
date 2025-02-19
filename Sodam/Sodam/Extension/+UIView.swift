@@ -22,7 +22,7 @@ extension UIView {
         label.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         label.textColor = UIColor.white
         label.textAlignment = .center
-        label.font = .mapoGoldenPier(16)
+        label.font = .appFont(size: .body2)
         label.text = message // 표시 할 메세지 설정
         label.alpha = 0.0 // 초기 투명도 (완전 투명)
         label.layer.cornerRadius = 10

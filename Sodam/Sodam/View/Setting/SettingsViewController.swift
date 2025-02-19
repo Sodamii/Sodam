@@ -10,6 +10,8 @@ import UIKit
 final class SettingsViewController: UIViewController {
     private let settingViewModel: SettingViewModel
     private let settingView = SettingView()
+    // 필요시 사용을 위해 lazy 사용
+    private lazy var alertManager: AlertManager = AlertManager(viewController: self)
 
     // MARK: - Initializer
 
@@ -223,38 +225,33 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     // 알림 스위치의 상태가 변경되었을 때 호출되는 액션
     @objc func didToggleSwitch(_ sender: UISwitch) {
         let toggleState = sender.isOn
+        
         settingViewModel.checkNotificationStatus { [weak self] status in
             guard let self = self else { return }
+            
             DispatchQueue.main.async {
-                // 시스템 설정 확인 후 허용시,
                 if status {
-                    if toggleState {
-                        // 알림이 허용되고 스위치가 ON이면 사용자 토글 상태 저장
-                        self.settingViewModel.isToggleOn = toggleState
-                        self.settingViewModel.saveAppToggleState(toggleState)
-                        
-                        // 알림 예약을 다시 설정 (스위치가 켜졌을 때만)
-                        if let notificationTime = self.settingViewModel.getNotificationTime() {
-                            self.settingViewModel.setUserNotification(notificationTime)
-                        }
-                        
-                    } else {
-                        // 알림이 허용되고 스위치가 OFF이면 알림 삭제
-                        self.settingViewModel.isToggleOn = toggleState
-                        self.settingViewModel.saveAppToggleState(toggleState)
-                        
-                        // 알림을 취소
-                        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-                    }
-
-                // 시스템 설정 확인 후 거부시, 설정으로 이동 알럿
+                    self.updateNotificationState(isEnabled: toggleState)
                 } else {
                     sender.setOn(false, animated: true)
                     self.settingViewModel.saveAppToggleState(false)
-                    self.settingViewModel.showNotificationPermissionAlert(viewController: self)
+                    self.alertManager.showNotificationPermissionAlert()
                 }
                 self.updateToggleState()
             }
+        }
+    }
+    
+    private func updateNotificationState(isEnabled: Bool) {
+        settingViewModel.isToggleOn = isEnabled
+        settingViewModel.saveAppToggleState(isEnabled)
+        
+        if isEnabled {
+            if let notificationTime = settingViewModel.getNotificationTime() {
+                settingViewModel.setUserNotification(notificationTime)
+            }
+        } else {
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         }
     }
     

@@ -36,5 +36,7 @@ extension HangdamRepository {
     func nameHangdamAsync(id: String?, name: String) async throws {
         let hangdam: HangdamEntity = try await coreDataManager.fetchEntityByIdAsync(id: id, context: coredataContext)
         hangdam.name = name
+        
+        try coredataContext.save()
     }
 }

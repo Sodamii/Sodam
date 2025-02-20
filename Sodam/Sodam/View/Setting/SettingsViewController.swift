@@ -64,11 +64,6 @@ private extension SettingsViewController {
         settingView.tableView.register(SettingTableViewCell.self, forCellReuseIdentifier: SettingTableViewCell.reuseIdentifier)
     }
 
-    // BadgeNumber Init
-    func initBadgeNumber() {
-        UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
-    }
-
     // NotificationCenter Observer Set
     func setupObservers() {
         NotificationCenter.default.addObserver(self,

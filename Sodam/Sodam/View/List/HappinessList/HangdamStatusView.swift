@@ -25,15 +25,15 @@ struct HangdamStatusView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 Text(content.name)
-                    .font(.appFont(size: .title2))
+                    .appFont(size: .title2)
                     .minimumScaleFactor(0.7)
                     .lineLimit(1)
 
                 Text(content.levelDescription)
-                    .font(.appFont(size: .body1))
+                    .appFont(size: .body1)
 
                 Text(content.dateDescription)
-                    .font(.appFont(size: .body2))
+                    .appFont(size: .body2)
                     .minimumScaleFactor(0.7)
                     .lineLimit(1)
             }

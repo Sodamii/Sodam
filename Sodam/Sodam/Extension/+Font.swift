@@ -13,9 +13,4 @@ extension Font {
         let fontName = font.name
         return .custom(fontName, size: size.rawValue)
     }
-    
-    // 앱 설정 폰트 적용할 때 사용
-    static func appFont(size: CustomFontSize) -> Font {
-        return .custom(CustomFontManager.fontName, size: size.rawValue)
-    }
 }

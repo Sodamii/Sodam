@@ -18,6 +18,6 @@ extension UIFont {
     
     // 앱 설정 폰트 적용할 때 사용
     static func appFont(size: CustomFontSize) -> UIFont {
-        return UIFont(name: AppFont.fontName, size: size.rawValue) ?? .systemFont(ofSize: size.rawValue)
+        return UIFont(name: CustomFontManager.fontName, size: size.rawValue) ?? .systemFont(ofSize: size.rawValue)
     }
 }

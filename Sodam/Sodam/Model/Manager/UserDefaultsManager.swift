@@ -52,6 +52,10 @@ final class UserDefaultsManager {
     func saveAppToggleState(_ isOn: Bool) {
         userDefaults.set(isOn, forKey: Keys.appSettingToggleState)
     }
+    
+    func saveNotificationAuthorizationStatus(_ status: Bool) {
+        userDefaults.set(status, forKey: Keys.notificationAuthorizationStatus)
+    }
 
     // MARK: - 작성 뷰 Get
 

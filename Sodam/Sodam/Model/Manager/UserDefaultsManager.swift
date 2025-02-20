@@ -27,6 +27,7 @@ final class UserDefaultsManager {
         static let notificationAuthorizationStatus = "notificationAuthorizationStatus"  // 알림 권한 상태 (허용/거부)를 UserDefaults에 저장
         static let notificationInitialSetupComplete = "notificationInitialSetupComplete" // 앱 알림 초기 설정 여부 확인
         static let lastWrittenDate = "lastWrittenDate"  // 기록 작성 여부 확인
+        static let hasLaunchedBefor = "hasLaunchedBefore" // 앱 설치 후 첫 실행인지 확인(온보딩 띄우기용)
     }
 
     // MARK: - 작성 뷰 Save
@@ -57,6 +58,10 @@ final class UserDefaultsManager {
         userDefaults.set(status, forKey: Keys.notificationAuthorizationStatus)
     }
 
+    // 첫 실행 여부 저장
+    func saveFirstLaunchCompleted(_ isFirstLaunch: Bool) {
+        UserDefaults.standard.set(isFirstLaunch, forKey: Keys.hasLaunchedBefor)
+    }
     // MARK: - 작성 뷰 Get
 
     // 작성된 내용을 가져옴
@@ -114,5 +119,10 @@ final class UserDefaultsManager {
     // 저장된 알림 시간을 가져옴
     func getNotificationTime() -> Date? {
         userDefaults.object(forKey: Keys.notificationTime) as? Date
+    }
+    
+    // 첫 실행 여부 반환
+    func getHasLaunchedBefor() -> Bool {
+        return UserDefaults.standard.bool(forKey: Keys.hasLaunchedBefor)
     }
 }

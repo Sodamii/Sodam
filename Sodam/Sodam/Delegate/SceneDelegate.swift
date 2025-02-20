@@ -52,4 +52,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             overlayView.removeFromSuperview() // 오버레이 제거
         })
     }
+    
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        UIApplication.shared.applicationIconBadgeNumber = 0
+    }
+    
+    // 앱이 백그라운드로 전환될 때 일기 작성 여부 확인
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        LocalNotificationManager.shared.checkDiaryAndCancelNotification()
+    }
 }

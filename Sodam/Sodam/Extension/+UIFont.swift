@@ -10,7 +10,7 @@ import UIKit
 extension UIFont {
     // 개별적으로 커스텀 폰트를 적용하고 싶을 때 사용
     static func customFont(font: CustomFont, size: CustomFontSize) -> UIFont {
-        guard let customFont = UIFont(name: font.name, size: size.rawValue) else {
+        guard let customFont = UIFont(name: font.sourceName, size: size.rawValue) else {
             return .systemFont(ofSize: size.rawValue)
         }
         return customFont

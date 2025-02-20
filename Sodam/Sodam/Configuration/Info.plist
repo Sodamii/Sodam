@@ -13,12 +13,16 @@
 		<string>MaruBuriot-SemiBold.otf</string>
 		<string>경기천년바탕OTF_Bold.otf</string>
 		<string>경기천년바탕OTF_Regular.otf</string>
-		<string>GowunBatang-Bold.ttf</string>
-		<string>GowunBatang-Regular.ttf</string>
+		<string>GowunDodum-Regular.ttf</string>
 		<string>NanumSquareRoundB.ttf</string>
 		<string>NanumSquareRoundEB.ttf</string>
 		<string>NanumSquareRoundL.ttf</string>
 		<string>NanumSquareRoundR.ttf</string>
+		<string>GabiaGosran.ttf</string>
+		<string>GabiaHeuldot.ttf</string>
+		<string>이서윤체.ttf</string>
+		<string>Maplestory-Light.ttf</string>
+		<string>Maplestory-Bold.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

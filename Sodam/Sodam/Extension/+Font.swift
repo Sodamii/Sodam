@@ -10,7 +10,7 @@ import SwiftUI
 extension Font {
     // 개별적으로 커스텀 폰트를 적용하고 싶을 때 사용
     static func customFont(font: CustomFont, size: CustomFontSize) -> Font {
-        let fontName = font.name
+        let fontName = font.sourceName
         return .custom(fontName, size: size.rawValue)
     }
 }

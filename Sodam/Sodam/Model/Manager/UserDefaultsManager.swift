@@ -140,6 +140,6 @@ final class UserDefaultsManager {
     
     // 저장된 설정 폰트를 가져옴 - 없을 시 기본 폰트(마포금빛나루) 반환
     func getFontName() -> String {
-        return userDefaults.string(forKey: Keys.fontName) ?? CustomFont.mapoGoldenPier.name
+        return userDefaults.string(forKey: Keys.fontName) ?? CustomFont.mapoGoldenPier.sourceName
     }
 }

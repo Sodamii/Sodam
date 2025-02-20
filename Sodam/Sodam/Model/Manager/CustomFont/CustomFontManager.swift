@@ -9,7 +9,7 @@ import UIKit
 
 enum CustomFontManager {
     /// 커스텀 폰트를 적용할 때 UIFont(name: )의 파라미터로 폰트의 고유 이름을 String 값으로 넘겨줘야 함. 기본값은 마포금빛나루
-    static var fontName: String = CustomFont.mapoGoldenPier.name
+    static var fontName: String = CustomFont.mapoGoldenPier.sourceName
     
     /// AppDelegate에서 실행 될 메소드. UserDefaults에 저장되어 있는 설정 폰트의 이름을 가져와 static 변수에 할당한다.
     static func getFont() {

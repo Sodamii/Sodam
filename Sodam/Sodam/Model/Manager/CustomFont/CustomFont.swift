@@ -8,21 +8,46 @@
 import UIKit
 
 enum CustomFont {
-    case mapoGoldenPier                                 // 마포금빛나루
-    case sejongGeulggot                                 // 세종글꽃체
-    case maruBuriot(weight: MaruBuriotWeight)            // 마루 부리
-    case gyeonggiBatang(weight: GyeonggiBatangWeight)     // 경기천년바탕
-    case gowunBatang(weight: GowunBatangWeight)           // 고운바탕
-    case nanumSquareRound(weight: NanumSquareRoundWeight)  // 나눔스퀘어라운드
+    case mapoGoldenPier
+    case sejongGeulggot
+    case maruBuriot(weight: MaruBuriotWeight)
+    case maplestory(weight: MaplestoryWeight)
+    case gyeonggiBatang(weight: GyeonggiBatangWeight)
+    case nanumSquareRound(weight: NanumSquareRoundWeight)
+    case leeSeoyun
+    case gowunDodum
+    case gabiaGosran
+    case gabiaHeuldot
     
-    var name: String {
+    /// CustomFontManager.printFontNames()로 확인할 수 있는 폰트 고유 이름. UIFont(name: ) 파라미터에 이 값을 넣어줘야 한다.
+    var sourceName: String {
         switch self {
         case .mapoGoldenPier: "MapoGoldenPier"
         case .sejongGeulggot: "SejongGeulggot"
         case .maruBuriot(let weight): "MaruBuriot\(weight.rawValue)"
+        case .maplestory(let weight): "Maplestory\(weight.rawValue)"
         case .gyeonggiBatang(let weight): "GyeonggiBatang\(weight.rawValue)"
-        case .gowunBatang(let weight): "GowunBatang\(weight.rawValue)"
         case .nanumSquareRound(let weight): "NanumSquareRound\(weight.rawValue)"
+        case .leeSeoyun: "LeeSeoyun"
+        case .gowunDodum: "GowunDodum-Regular"
+        case .gabiaGosran: "GabiaGosran-Regular"
+        case .gabiaHeuldot: "GabiaHeuldot-Regular"
+        }
+    }
+    
+    /// 폰트 공식 홈페이지에 써있는 명칭 (띄어쓰기까지 지킴)
+    var name: String {
+        switch self {
+        case .mapoGoldenPier: "마포금빛나루"
+        case .sejongGeulggot: "세종글꽃체"
+        case .maruBuriot: "마루 부리"
+        case .maplestory: "넥슨 메이플스토리"
+        case .gyeonggiBatang: "경기청년바탕"
+        case .nanumSquareRound: "나눔스퀘어라운드"
+        case .leeSeoyun: "이서윤체"
+        case .gowunDodum: "고운돋움"
+        case .gabiaGosran: "가비아 고스란체"
+        case .gabiaHeuldot: "가비아 흘돋체"
         }
     }
 }
@@ -34,17 +59,17 @@ extension CustomFont {
         case semiBold = "-SemiBold"
         case bold = "-Bold"
     }
-
+    
+    enum MaplestoryWeight: String {
+        case light = "Light"
+        case bold = "Bold"
+    }
+    
     enum GyeonggiBatangWeight: String {
         case regular = "ROTF"
         case bold = "BOTF"
     }
-
-    enum GowunBatangWeight: String {
-        case regular = "-Regular"
-        case bold = "-Bold"
-    }
-
+    
     enum NanumSquareRoundWeight: String {
         case light = "L"
         case regular = "R"

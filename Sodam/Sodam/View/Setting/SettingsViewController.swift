@@ -32,22 +32,20 @@ final class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupObservers()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupObservers()
         setupCheckNotification()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-        removeObservers()
         self.settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
-
-    // MARK: - Font Change
-    @objc private func updateFont() {
-        settingView.tableView.reloadData()
+    
+    deinit {
+        removeObservers()
     }
 }
 
@@ -75,6 +73,7 @@ private extension SettingsViewController {
                                                selector: #selector(checkNotificationStatus),
                                                name: UIApplication.willEnterForegroundNotification,
                                                object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateFont), name: Notification.fontChanged, object: nil)
     }
 
     // NotificationCenter Remove
@@ -82,6 +81,7 @@ private extension SettingsViewController {
         NotificationCenter.default.removeObserver(self,
                                                   name: UIApplication.willEnterForegroundNotification,
                                                   object: nil)
+        NotificationCenter.default.removeObserver(self)
     }
 
     // Check Notification Set
@@ -108,6 +108,11 @@ private extension SettingsViewController {
     func updateToggleState() {
         settingViewModel.isToggleOn = settingViewModel.getToggleState()
         settingView.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+    }
+    
+    // MARK: - Font Change
+    @objc private func updateFont() {
+        settingView.tableView.reloadData()
     }
 }
 

@@ -139,6 +139,12 @@ final class MainView: UIView {
         if let gifImage = UIImage.animatedImage(withGIFNamed: name) {
             circularImageView.image = gifImage
         }
-
+    }
+    
+    // 폰트 변경
+    func updateFont() {
+        nameLabel.font = .appFont(size: .title1)
+        messageLabel.font = .appFont(size: .body1)
+        createbutton.titleLabel?.font = .appFont(size: .subtitle)
     }
 }

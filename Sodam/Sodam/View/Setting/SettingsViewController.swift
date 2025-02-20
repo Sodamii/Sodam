@@ -42,6 +42,7 @@ final class SettingsViewController: UIViewController {
                                                selector: #selector(checkNotificationAuthorizationStatus),
                                                name: UIApplication.willEnterForegroundNotification,
                                                object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateFont), name: Notification.fontChanged, object: nil)
     }
 
     deinit {
@@ -50,6 +51,7 @@ final class SettingsViewController: UIViewController {
             name: UIApplication.willEnterForegroundNotification,
             object: nil
         )
+        NotificationCenter.default.removeObserver(self)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -72,6 +74,10 @@ final class SettingsViewController: UIViewController {
         }
     }
 
+    // MARK: - Font Change
+    @objc private func updateFont() {
+        settingView.tableView.reloadData()
+    }
 }
 
 // MARK: - Private Method
@@ -185,6 +191,10 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                                version: settingViewModel.version ?? "")
             }
         }
+        
+        // 폰트 적용
+        cell.updateFont()
+        
         return cell
     }
 

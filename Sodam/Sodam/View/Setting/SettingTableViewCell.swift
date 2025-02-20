@@ -92,6 +92,10 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
             timePicker.addTarget(nil, action: action, for: .valueChanged)
         }
     }
+    
+    func updateFont() {
+        titleLabel.font = .appFont(size: .body2)
+    }
 }
 
 // MARK: - Private Method

@@ -1,5 +1,5 @@
 //
-//  AppFont.swift
+//  CustomFontManager.swift
 //  Sodam
 //
 //  Created by EMILY on 18/02/2025.
@@ -7,7 +7,6 @@
 
 import UIKit
 
-/// AppDelegate에서 AppFont.fontName에 UserDefaults에서 불러온 설정 폰트 이름을 할당해준다.
 enum CustomFontManager {
     static var fontName: String = CustomFont.mapoGoldenPier.name
     
@@ -19,6 +18,7 @@ enum CustomFontManager {
     static func setFont(_ fontName: String) {
         UserDefaultsManager.shared.saveFontName(fontName)
         CustomFontManager.fontName = fontName
+        NotificationCenter.default.post(name: Notification.fontChanged, object: nil)
     }
     
     /// 새로운 폰트 파일을 추가했을 때 CustomFont에 추가하기 위해 필요한 폰트 고유 이름 확인하는 메소드

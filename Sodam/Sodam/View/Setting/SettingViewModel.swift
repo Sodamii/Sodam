@@ -74,7 +74,7 @@ extension SettingViewModel {
     
     // 사용자가 설정한 예약된 알림 설정
     func setUserNotification(_ sender: Date) {
-        localNotificationManager.setUserNotification(time: sender, showToast: false)
+        localNotificationManager.setUserNotification(time: sender)
     }
 }
 

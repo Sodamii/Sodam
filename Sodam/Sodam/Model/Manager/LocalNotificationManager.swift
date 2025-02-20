@@ -139,7 +139,7 @@ final class LocalNotificationManager: NSObject {
 
 extension LocalNotificationManager {
     // datePicker에서 사용자가 알림 시간을 설정할 때 호출
-    func setUserNotification(time: Date, showToast: Bool) {
+    func setUserNotification(time: Date) {
         let identifier = "SelectedTimeNotification"
         // 기존 알림이 있으면 삭제
         notificationCenter.removePendingNotificationRequests(withIdentifiers: [identifier])
@@ -147,7 +147,7 @@ extension LocalNotificationManager {
     }
 
     // 알림 예약
-    private func scheduleNotification(time: Date, identifier: String, showToast: Bool = true) {
+    private func scheduleNotification(time: Date, identifier: String) {
         createNotificationContent { content in
             // 알림을 트리거할 시간 설정
             let trigger = self.createNotificationTrigger(for: time)
@@ -213,7 +213,7 @@ extension LocalNotificationManager {
             if !isNotificationScheduled {
                 DispatchQueue.main.async {
                     let now = Date()
-                    self.setUserNotification(time: now, showToast: false) // Foreground에서는 토스트 메시지 표시 안 함
+                    self.setUserNotification(time: now) // Foreground에서는 토스트 메시지 표시 안 함
                     UserDefaultsManager.shared.saveNotificationTime(now)
                 }
             }

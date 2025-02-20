@@ -115,7 +115,7 @@ class WriteView: UIView {
     private let characterCountLabel: UILabel = {
         let label: UILabel = UILabel()
         label.textColor = .darkGray
-        label.font = .sejongGeulggot(14)
+        label.font = .appFont(size: .caption)
         label.text = "0 / 500"
         return label
     }()

@@ -20,7 +20,6 @@ final class HappinessDetailViewModel: ObservableObject {
         self.isCanDelete = isCanDelete
         self.content = content
         self.detailViewOperator = detailViewOperator
-        print("[DetailViewModel] init")
     }
 
     func deleteHappiness() {

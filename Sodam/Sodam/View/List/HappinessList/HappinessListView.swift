@@ -80,8 +80,7 @@ struct HappinessListView: View {
             .padding([.top, .horizontal])
             .background(Color.viewBackground)
             .onAppear {
-                viewModel.reloadData() // onAppear에서 실행
-                print("[HappinessListView] .onAppear - 데이터 리로드")
+                viewModel.reloadData()
             }
         }
         .tint(.textAccent)

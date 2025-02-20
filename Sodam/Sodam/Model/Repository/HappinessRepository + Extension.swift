@@ -44,7 +44,6 @@ extension HappinessRepository {
         let sortDescriptor: NSSortDescriptor = NSSortDescriptor(key: "date", ascending: false)
 
         let happiness: [HappinessEntity] = try await coreDataManager.fetchEntitiesAsync(
-            entityType: happinessType,
             context: coredataContext,
             predicate: predicate,
             sortDescriptors: [sortDescriptor]

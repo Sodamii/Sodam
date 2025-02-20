@@ -14,7 +14,6 @@ final class HappinessRepository {
     let coreDataManager: CoreDataManager
     let imageManager: ImageManager
     let dtoMapper: HappinessMapper
-    let happinessType: HappinessEntity.Type = HappinessEntity.self
     let coredataContext: NSManagedObjectContext
 
     init(

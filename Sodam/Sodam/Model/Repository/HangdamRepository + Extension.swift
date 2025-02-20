@@ -18,7 +18,6 @@ extension HangdamRepository {
 
     func fetchCurrentHangdmaAsync() async throws -> HangdamDTO {
         let hangdams: [HangdamEntity] = try await coreDataManager.fetchEntitiesAsync(
-            entityType: hangdamType,
             context: coredataContext
         )
 
@@ -27,7 +26,6 @@ extension HangdamRepository {
             return dtoMapper.toDTO(from: currentHangdam)
         } else {
             let newHangdam: HangdamEntity = try await coreDataManager.createEntityAsync(
-                type: hangdamType,
                 context: coredataContext
             )
             return dtoMapper.toDTO(from: newHangdam)
@@ -36,7 +34,6 @@ extension HangdamRepository {
 
     func fetchHangdamsAsync() async throws -> [HangdamDTO] {
         let hangdams: [HangdamEntity] = try await coreDataManager.fetchEntitiesAsync(
-            entityType: hangdamType,
             context: coredataContext
         ).dropLast()
 

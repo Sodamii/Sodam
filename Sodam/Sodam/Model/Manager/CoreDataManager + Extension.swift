@@ -11,7 +11,7 @@ import CoreData
 
 extension CoreDataManager {
 
-    func createEntityAsync<T: NSManagedObject>(type: T.Type, context: NSManagedObjectContext) async throws -> T {
+    func createEntityAsync<T: NSManagedObject>(context: NSManagedObjectContext) async throws -> T {
         try await withCheckedThrowingContinuation { continuation in
             context.perform {
                 let newEntity = T(context: context)
@@ -40,14 +40,13 @@ extension CoreDataManager {
     }
 
     func fetchEntitiesAsync<T: NSManagedObject>(
-        entityType type: T.Type,
         context: NSManagedObjectContext,
         predicate: NSPredicate? = nil,
         sortDescriptors: [NSSortDescriptor]? = nil
     ) async throws -> [T] {
         try await withCheckedThrowingContinuation { continuation in
             context.perform {
-                let entityName: String = String(describing: type)
+                let entityName: String = String(describing: T.self)
                 let fetchRequest: NSFetchRequest<T> = NSFetchRequest<T>(entityName: entityName)
                 fetchRequest.predicate = predicate
                 fetchRequest.sortDescriptors = sortDescriptors

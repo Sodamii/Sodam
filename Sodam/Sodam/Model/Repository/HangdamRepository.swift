@@ -12,7 +12,6 @@ import CoreData
 final class HangdamRepository {
     let coreDataManager: CoreDataManager
     let dtoMapper: HangdamMapper
-    let hangdamType: HangdamEntity.Type = HangdamEntity.self
     let coredataContext: NSManagedObjectContext
     init(
         coreDataManager: CoreDataManager = CoreDataManager.shared,

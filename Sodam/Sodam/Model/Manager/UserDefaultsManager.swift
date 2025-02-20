@@ -24,7 +24,6 @@ final class UserDefaultsManager {
 
         static let notificationTime = "time"  // 앱 알림 시간
         static let appSettingToggleState = "appSettingToggleState"  // 앱 설정 토글 상태
-        static let notificationAuthorizationStatus = "notificationAuthorizationStatus"  // 알림 권한 상태 (허용/거부)를 UserDefaults에 저장
         static let notificationInitialSetupComplete = "notificationInitialSetupComplete" // 앱 알림 초기 설정 여부 확인
         static let lastWrittenDate = "lastWrittenDate"  // 기록 작성 여부 확인
         static let hasLaunchedBefor = "hasLaunchedBefore" // 앱 설치 후 첫 실행인지 확인(온보딩 띄우기용)
@@ -54,10 +53,6 @@ final class UserDefaultsManager {
     // 앱 설정 알림 토글 상태 (ON/OFF)를 UserDefaults에 저장
     func saveAppToggleState(_ isOn: Bool) {
         userDefaults.set(isOn, forKey: Keys.appSettingToggleState)
-    }
-    
-    func saveNotificationAuthorizationStatus(_ status: Bool) {
-        userDefaults.set(status, forKey: Keys.notificationAuthorizationStatus)
     }
 
     // 첫 실행 여부 저장
@@ -117,11 +112,6 @@ final class UserDefaultsManager {
     // 앱 설정 알림 토글 상태 (ON/OFF)를 가져옴
     func getAppToggleState() -> Bool {
         userDefaults.bool(forKey: Keys.appSettingToggleState)
-    }
-
-    // 저장된 알림 권한 상태를 가져옴
-    func getNotificaionAuthorizationStatus() -> Bool {
-        return userDefaults.bool(forKey: Keys.notificationAuthorizationStatus)
     }
 
     // 저장된 알림 시간을 가져옴

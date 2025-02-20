@@ -94,7 +94,7 @@ final class ImageManager {
 // 내부 호출 함수 모음
 extension ImageManager {
     /// 이미지 리사이징하는 함수
-    private func resizeImage(_ image: UIImage, resizeFloat: CGFloat) -> UIImage {
+    func resizeImage(_ image: UIImage, resizeFloat: CGFloat) -> UIImage {
         /// 이미지 고유 비율
         let aspectRatio = image.size.width / image.size.height
 
@@ -118,7 +118,7 @@ extension ImageManager {
     }
 
     /// 이미지를 FileManager를 통해 기기에 저장하는 함수
-    private func saveImageAsFile(image: UIImage, imagePath: String) {
+    func saveImageAsFile(image: UIImage, imagePath: String) {
         /// 이미지 퀄리티 원본의 80%, 확장자 jpeg인 Data로 변환
         guard let data = image.jpegData(compressionQuality: 0.8),
               let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first

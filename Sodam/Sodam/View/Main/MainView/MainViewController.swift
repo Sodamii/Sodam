@@ -50,7 +50,7 @@ final class MainViewController: UIViewController {
     override func viewWillAppear (_ animated: Bool) {
         viewModel.reloadHangdam() // ViewModel에서 행담이 데이터를 갱신
         updateButtonState()       // 화면이 다시 나타날 때 버튼 상태 갱신
-        LocalNotificationManager.shared.checkInitialSetup()  // 앱 첫 진입시 알림 권한 팝업 설정
+        viewModel.checkNotificationAuthorization() // MainView 진입 시 알림 권한 체크 설정
     }
 
     // MARK: - bind view model for update view

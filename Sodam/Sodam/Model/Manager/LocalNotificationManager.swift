@@ -93,6 +93,11 @@ final class LocalNotificationManager: NSObject {
             UserDefaultsManager.shared.markNotificationSetupAsComplete()
             UserDefaultsManager.shared.saveNotificationAuthorizationStatus(isGranted)
             
+            // 알림 권한 허용 메시지 표시
+            DispatchQueue.main.async {
+                ToastManager.shared.showToastMessage(message: "알림 권한이 허용되었습니다")
+            }
+            
             // 처음 시스템 허용한 경우 오후 9시 기본 알림 시간 설정
             setDefaultNotification()
             
@@ -154,13 +159,6 @@ extension LocalNotificationManager {
                     // 알림 등록 실패 시 에러 메시지 표시
                     DispatchQueue.main.async {
                         ToastManager.shared.showToastMessage(message: "알림 등록 실패: \(error.localizedDescription)")
-                    }
-                } else if showToast {
-                    // 알림이 성공적으로 등록된 후 후속 처리
-                    DispatchQueue.main.async {
-                        // String Interpolation을 사용하여 옵셔널 값을 안전하게 처리
-                        let formattedTime = self?.timeFormatted(time) ?? "알 수 없는 시간"
-                        ToastManager.shared.showToastMessage(message: "알림 시간이 \(formattedTime)로 설정되었습니다")
                     }
                 }
             }

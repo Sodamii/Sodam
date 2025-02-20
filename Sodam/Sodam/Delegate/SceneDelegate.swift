@@ -15,10 +15,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
 
+        let isFirstLaunch = !UserDefaultsManager.shared.getHasLaunchedBefor()
+        
         // 메인 ViewController 설정
-        if isFirstLaunch() {
+        if isFirstLaunch {
             // 첫 실행 시 온보딩 화면으로 시작
-            window.rootViewController = OnBoardingViewController()
+            let onboardingViewController = OnBoardingViewController()
+            onboardingViewController.modalPresentationStyle = .fullScreen
+            onboardingViewController.onComplete = { [weak self] in
+                print("완료 콜백 호출됨")
+                self?.navigateToRootViewController()
+            }
+            window.rootViewController = onboardingViewController
         } else {
             // 첫 실행 아닐 땐 기존대로 커스텀탭바 컨트롤러로 시작
             window.rootViewController = CustomTabBarController()
@@ -55,14 +63,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         })
     }
     
-    // 첫 실행인지 확인하는 메서드
-    private func isFirstLaunch() -> Bool {
-        let isFirstLaunch = !UserDefaultsManager.shared.getHasLaunchedBefor()
-        if isFirstLaunch {
-            // 첫 실행이면 UserDefaults에 true 저장
-            UserDefaultsManager.shared.saveFirstLaunchCompleted(true)
-        }
-        // 첫 실행 여부 반환
-        return isFirstLaunch
+    // MARK: - 온보딩 화면 종료 후 메인 화면 이동
+    private func navigateToRootViewController() {
+        let mainViewController = CustomTabBarController()
+        let window = UIApplication.shared.windows.first
+        UIView.transition(with: window!, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            window?.rootViewController = mainViewController
+        }, completion: { _ in
+            window?.makeKeyAndVisible()
+        })
     }
 }

@@ -14,6 +14,9 @@ final class OnBoardingViewController: UIViewController {
     // 현재 페이지
     private var currentPage: Int = 0
     
+    // 온보딩 완료 콜백
+    var onComplete: (() -> Void)?
+    
     // 페이지에 들어갈 이미지와 문구
     private let infoData: [(image: UIImage?, text: String)] = [
         (UIImage(named: "page1"), "하루에 한번씩만 행복을 작성해요"),
@@ -54,7 +57,7 @@ final class OnBoardingViewController: UIViewController {
     @objc private func nextButtonTapped() {
         if currentPage == infoData.count - 1 {
             UserDefaultsManager.shared.saveFirstLaunchCompleted(true)
-            navigateToRootViewController()
+            onComplete?()
         } else {
             changePageInDirection(.left)
         }
@@ -63,7 +66,7 @@ final class OnBoardingViewController: UIViewController {
     /// 건너뛰기 버튼 탭할 때 호출되는 메서드
     @objc private func skipButtonTapped() {
         UserDefaultsManager.shared.saveFirstLaunchCompleted(true)
-        navigateToRootViewController()
+        onComplete?()
     }
     
     /// 스와이프 제스처 할 때 호출되는 메서드
@@ -101,7 +104,7 @@ final class OnBoardingViewController: UIViewController {
         
         UIView.transition(
             with: onBoardingView,
-            duration: 0.3,
+            duration: 0.5,
             options: .transitionCrossDissolve,
             animations: { [weak self] in
                 guard let self = self else { return }
@@ -114,16 +117,6 @@ final class OnBoardingViewController: UIViewController {
                     currentPage: self.currentPage,
                     totalPage: totalPage
                 )
-            },
-            completion: nil)
+            }, completion: nil)
     }
-    
-    // MARK: - 온보딩 화면 종료 후 메인 화면 이동
-    private func navigateToRootViewController() {
-        let mainViewController = CustomTabBarController()
-        let window = UIApplication.shared.windows.first
-        window?.rootViewController = mainViewController
-        window?.makeKeyAndVisible()
-    }
-                                    
 }

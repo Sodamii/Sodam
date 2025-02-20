@@ -20,11 +20,10 @@ final class OnBoardingViewController: UIViewController {
     // 페이지에 들어갈 이미지와 문구
     private let infoData: [(image: UIImage?, text: String)] = [
         (UIImage(named: "page1"), "하루에 한번씩만 행복을 작성해요"),
-        (UIImage(named: "page2"), "소소한 행복을 사진과 함께 기록할 수 있어요\n☝🏻 지나간 기억은 바꿀 수 없답니다"),
+        (UIImage(named: "page2"), "소소한 행복을 사진과 함께 기록할 수 있어요\n지나간 기억은 바꿀 수 없답니다"),
         (UIImage(named: "page3"), "기록한 행복 개수에 따라 성장하는\n귀여운 행담이를 만나보세요"),
         (UIImage(named: "page4"), "내가 기록한 행복을 돌아볼 수 있어요"),
-        (UIImage(named: "page5"), "성장을 마친 행담이는 보관함에 들어가요\n보관된 행담이가 가진 기억도 다시 볼 수 있어요"),
-        (UIImage(named: "page6"), "원하는 시간에 알림을 받아보세요\n마음에 드는 폰트를 선택할 수 있어요")
+        (UIImage(named: "page5"), "성장을 마친 행담이는 보관함에 들어가요\n행담이를 누르면 기억 리스트를 볼 수 있어요")
     ]
     
     override func loadView() {

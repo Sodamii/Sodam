@@ -30,11 +30,11 @@ final class OnBoardingView: UIView {
     
     private let infoLabel: UILabel = {
         let label: UILabel = UILabel()
-        label.font = .mapoGoldenPier(18)
+        label.font = .mapoGoldenPier(UIScreen.isiPhoneSE ? 18: 20)
         label.textColor = .darkGray
         label.numberOfLines = 2
         label.textAlignment = .center
-        label.minimumScaleFactor = 0.7
+        label.minimumScaleFactor = 0.8
         label.adjustsFontSizeToFitWidth = true
         return label
     }()
@@ -51,14 +51,9 @@ final class OnBoardingView: UIView {
     
     private let skipButton: UIButton = {
         let button: UIButton = UIButton()
-        let title = "건너뛰기"
-        let attributes: [NSAttributedString.Key: Any] = [
-            .underlineStyle: NSUnderlineStyle.single.rawValue,
-            .font: UIFont.mapoGoldenPier(16),
-            .foregroundColor: UIColor.buttonBackground
-        ]
-        let attributedString = NSAttributedString(string: title, attributes: attributes)
-        button.setAttributedTitle(attributedString, for: .normal)
+        button.setTitle("건너뛰기", for: .normal)
+        button.setTitleColor(.buttonBackground, for: .normal)
+        button.titleLabel?.font = .mapoGoldenPier(16)
         return button
     }()
     
@@ -83,12 +78,12 @@ final class OnBoardingView: UIView {
 // MARK: - UI 레이아웃 셋업
 extension OnBoardingView {
     func setupUI() {
-        backgroundColor = .buttonBackground
+        backgroundColor = .imageBackground
         addSubViews([imageView, infoTextView, infoLabel, nextButton, skipButton, pageControl])
         
         imageView.snp.makeConstraints { make in
             make.horizontalEdges.bottom.equalToSuperview()
-            make.top.equalToSuperview().offset(UIScreen.isiPhoneSE ? -20 : 0)
+            make.top.equalToSuperview()
         }
         
         infoTextView.snp.makeConstraints { make in
@@ -98,28 +93,45 @@ extension OnBoardingView {
         
         infoLabel.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(20)
-            make.top.equalTo(infoTextView.snp.top).offset(8)
+            make.top.equalTo(infoTextView.snp.top).offset(12)
             make.height.equalTo(infoTextView).dividedBy(3)
-        }
-        
-        pageControl.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(infoLabel.snp.bottom)
-            make.height.equalTo(12)
         }
         
         nextButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(pageControl.snp.bottom).offset(UIScreen.isiPhoneSE ? 8 : 16)
+            make.top.equalTo(infoLabel.snp.bottom).offset(UIScreen.isiPhoneSE ? 12 : 16)
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(48)
         }
         
-        skipButton.snp.makeConstraints { make in
-            make.horizontalEdges.equalTo(nextButton)
-            make.height.equalTo(20)
+        pageControl.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
             make.bottom.equalTo(safeAreaLayoutGuide).inset(UIScreen.isiPhoneSE ? 8 : 0)
+            make.height.equalTo(12)
         }
+        
+        skipButton.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide).inset(20)
+            make.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(20)
+        }
+    }
+    
+    func makeHighlightText(for text: String) -> NSMutableAttributedString {
+        let highlightTexts = ["지나간 기억은 바꿀 수 없답니다", "행담이를 누르면"]
+        let highlightColor = UIColor.textAccent
+        let attributedText = NSMutableAttributedString(string: text)
+        
+        highlightTexts.forEach { highlightText in
+            let range = (text as NSString).range(of: highlightText)
+            if range.location != NSNotFound {
+                attributedText.addAttributes([
+                    .foregroundColor: highlightColor, // 색깔 표시
+                    .underlineStyle: NSUnderlineStyle.single.rawValue // 밑줄 표시
+                ], range: range)
+            }
+        }
+        return attributedText
     }
 }
 
@@ -149,6 +161,8 @@ extension OnBoardingView {
         skipButton.isHidden = isLastPage
         pageControl.currentPage = currentPage
         pageControl.numberOfPages = totalPage
+        
+        infoLabel.attributedText = makeHighlightText(for: text)
         
         layoutIfNeeded()
     }

@@ -170,7 +170,11 @@ extension LocalNotificationManager {
         DispatchQueue.main.async {
             let content = UNMutableNotificationContent()
             content.title = "Sodam"
-            content.body = "소소한 행복을 적어 행담이를 키워주세요."
+            
+            let hangdam = CoreDataManager.shared.fetchLatestHangdam()
+            let name = hangdam?.name ?? "행담이"
+            
+            content.body = "소소한 행복을 적어 \(name)를 키워주세요."
             content.sound = .default
             
             let currentBadgeNumber = UIApplication.shared.applicationIconBadgeNumber

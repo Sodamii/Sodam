@@ -97,6 +97,9 @@ private extension FontSettingViewController {
                                             action: #selector(handleBackButton))
         barBackButton.tintColor = .buttonBackground
         navigationItem.leftBarButtonItem = barBackButton
+        
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        navigationController?.interactivePopGestureRecognizer?.delegate = nil
     }
     
     // 네비게이션 스택에서 이전 화면으로 이동

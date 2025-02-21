@@ -291,8 +291,11 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     // 사용자가 DatePicker를 통해 알림 시간을 선택했을 때 호출되는 액션
     @objc func userScheduleNotification(_ sender: UIDatePicker) {
         //선택한 시간을 뷰모델에 저장하고, 알림 스위치가 켜진 경우 알림 예약을 업데이트
-        let selectedDate = sender.date
-        settingViewModel.setUserNotification(selectedDate) // 알림 설정 및 시간 저장
+        settingViewModel.saveNotificationTime(sender.date)
+        
+        if settingViewModel.isToggleOn {
+            settingViewModel.setUserNotification(sender.date)
+        }
     }
 }
 

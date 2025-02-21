@@ -37,6 +37,7 @@ final class SettingsViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: true)
         setupCheckNotification()
     }
 
@@ -63,6 +64,7 @@ private extension SettingsViewController {
         settingView.tableView.dataSource = self
         settingView.tableView.delegate = self
         settingView.tableView.separatorInset.right = 15
+        settingView.tableView.sectionFooterHeight = 0
         
         settingView.tableView.register(SettingTableViewCell.self, forCellReuseIdentifier: SettingTableViewCell.reuseIdentifier)
     }
@@ -85,10 +87,10 @@ private extension SettingsViewController {
     }
 
     // Check Notification Set
-        func setupCheckNotification() {
-            UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
-            checkNotificationStatus()  // 뷰가 나타날 때마다 현재 알림 권한 상태를 체크하고 UI 업데이트
-        }
+    func setupCheckNotification() {
+        UIApplication.shared.applicationIconBadgeNumber = 0  // 사용자 설정 화면에 진입할 때 뱃지 초기화
+        checkNotificationStatus()  // 뷰가 나타날 때마다 현재 알림 권한 상태를 체크하고 UI 업데이트
+    }
 
     // NotificationStatus Check
     @objc func checkNotificationStatus() {
@@ -131,6 +133,8 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         switch sectionType {
         case .appSetting:
             return settingViewModel.isToggleOn ? 2 : 1
+        case .fontSetting:
+            return 1
         case .develop:
             return 3
         }
@@ -165,7 +169,8 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 cell.switchButton.isHidden = false
                 cell.configure(title: Setting.SetCell.notification.rawValue,
                                switchAction: #selector(didToggleSwitch(_:)),
-                               timeAction: nil, version: "")
+                               timeAction: nil,
+                               version: "")
                 cell.switchButton.isOn = settingViewModel.isToggleOn
 
             } else if indexPath.row == 1 {
@@ -181,6 +186,18 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                     cell.timePicker.date = savedTime
                 }
             }
+            
+        case .fontSetting:
+            cell.arrowImage.isHidden = false
+            cell.timePicker.isHidden = true
+            cell.switchButton.isHidden = true
+            cell.versionLabel.isHidden = true
+            
+            cell.configure(title: Setting.SetCell.fontSetting.rawValue,
+                           switchAction: nil,
+                           timeAction: nil,
+                           version: "")
+
         case .develop:
             cell.timePicker.isHidden = true
             cell.switchButton.isHidden = true
@@ -226,6 +243,13 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
             } else if indexPath.row == 1 {
                 settingViewModel.openURL("https://forms.gle/GKAfcPZL9cenQxx78")
             }
+            
+        case .fontSetting:
+            let fontSettingViewModel = FontSettingViewModel()
+            let fontSettingVC = FontSettingViewController(fontSettingViewModel: fontSettingViewModel) // 생성자 주입
+            fontSettingVC.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(fontSettingVC, animated: true)
+            
         default:
             break
         }
@@ -267,11 +291,8 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     // 사용자가 DatePicker를 통해 알림 시간을 선택했을 때 호출되는 액션
     @objc func userScheduleNotification(_ sender: UIDatePicker) {
         //선택한 시간을 뷰모델에 저장하고, 알림 스위치가 켜진 경우 알림 예약을 업데이트
-        settingViewModel.saveNotificationTime(sender.date)
-        
-        if settingViewModel.isToggleOn {
-            settingViewModel.setUserNotification(sender.date)
-        }
+        let selectedDate = sender.date
+        settingViewModel.setUserNotification(selectedDate) // 알림 설정 및 시간 저장
     }
 }
 

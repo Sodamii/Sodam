@@ -116,13 +116,13 @@ final class LocalNotificationManager: NSObject {
         // UserDefault에 앱 토글 false로 저장
         UserDefaultsManager.shared.saveAppToggleState(false)
         UserDefaultsManager.shared.markNotificationSetupAsComplete()
-        
+
         // 알림 권한 거부 메시지 표시
         DispatchQueue.main.async {
             ToastManager.shared.showToastMessage(message: "알림 권한이 거부되었습니다")
         }
     }
-    
+
     // 앱 초기 실행 시 기본 알림 설정
     func setDefaultNotification() {
         let identifier = "SelectedTimeNotification"
@@ -194,7 +194,7 @@ extension LocalNotificationManager {
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: time)
     }
-    
+
     // MARK: - 행복 작성 여부 확인 후 알림 취소
     func checkDiaryAndCancelNotification() {
         // 오늘 일기를 썼으면 알림 삭제
@@ -203,7 +203,7 @@ extension LocalNotificationManager {
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["SelectedTimeNotification"])
             return
         }
-        
+
         // 기존 알림이 있는지 확인 후 없을 때만 예약
         notificationCenter.getPendingNotificationRequests { requests in
             let isNotificationScheduled = requests.contains { $0.identifier == "SelectedTimeNotification" }

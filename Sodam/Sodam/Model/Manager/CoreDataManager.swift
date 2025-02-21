@@ -59,6 +59,7 @@ final class CoreDataManager {
     /// 행담이 새로 생성 : 모든 값이 빈 값
     func createHangdam() -> HangdamEntity {
         let entity = HangdamEntity(context: context)
+        entity.startDate = Date()
         saveContext()
         print("[CoreData] 새로운 행담이 생성")
         return entity
@@ -199,9 +200,12 @@ extension CoreDataManager {
             
             // fetch 요청을 실행해서 가장 최근의 HangdamEntitiy를 가져옴
             if let entity = try context.fetch(fetchRequest).first {
-                
-                // 가져온 entitiy를 DTO로 변환하여 반환
-                return HangdamMapper().toDTO(from: entity)
+                var handamDTO = HangdamMapper().toDTO(from: entity)
+                    // nil 체크 후에 기본값 설정
+                if handamDTO.name == nil {
+                    handamDTO.name = "행담이"
+                }
+                return handamDTO
             }
         } catch {
             // fetch 과정에서 오류가 발생하면 디버깅용 콘솔 출력

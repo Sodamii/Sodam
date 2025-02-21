@@ -11,14 +11,18 @@
 		<string>MaruBuriot-Bold.otf</string>
 		<string>MaruBuriot-Regular.otf</string>
 		<string>MaruBuriot-SemiBold.otf</string>
-		<string>NanumSquareNeoOTF-Bd.otf</string>
-		<string>NanumSquareNeoOTF-Lt.otf</string>
-		<string>NanumSquareNeoOTF-Rg.otf</string>
-		<string>J개구쟁이-Bold.otf</string>
-		<string>J개구쟁이-Light.otf</string>
-		<string>J개구쟁이-Medium.otf</string>
 		<string>경기천년바탕OTF_Bold.otf</string>
 		<string>경기천년바탕OTF_Regular.otf</string>
+		<string>GowunDodum-Regular.ttf</string>
+		<string>NanumSquareRoundB.ttf</string>
+		<string>NanumSquareRoundEB.ttf</string>
+		<string>NanumSquareRoundL.ttf</string>
+		<string>NanumSquareRoundR.ttf</string>
+		<string>GabiaGosran.ttf</string>
+		<string>GabiaHeuldot.ttf</string>
+		<string>이서윤체.ttf</string>
+		<string>Maplestory-Light.ttf</string>
+		<string>Maplestory-Bold.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

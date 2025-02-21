@@ -44,6 +44,8 @@ final class MainViewController: UIViewController {
 
         // 작성 완료 알림 감지하여 버튼 상태 갱신
         NotificationCenter.default.addObserver(self, selector: #selector(didWriteToday), name: Notification.didWriteToday, object: nil)
+        // 설정 폰트 변경되었을 때 noti 받고 view에 변경된 폰트 적용
+        NotificationCenter.default.addObserver(self, selector: #selector(updateFont), name: Notification.fontChanged, object: nil)
     }
 
     /// 뷰가 다시 나타날 때 데이터 갱신
@@ -153,6 +155,16 @@ final class MainViewController: UIViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.mainView.circularImageView.isUserInteractionEnabled = true     // 클릭 재활성화
         }
+    }
+    
+    // MARK: - Font Change
+    @objc private func updateFont() {
+        mainView.updateFont()
+    }
+    
+    /// deinit 시 observing 해제
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 

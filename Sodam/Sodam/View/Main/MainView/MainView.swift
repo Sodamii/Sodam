@@ -15,7 +15,7 @@ final class MainView: UIView {
         let label = UILabel()
         label.text = ""
         label.textAlignment = .center
-        label.font = .mapoGoldenPier(27)
+        label.font = .appFont(size: .title1)
         label.textColor = .textAccent
         label.isHidden = true // 초기 상태에는 숨김
         return label
@@ -44,7 +44,7 @@ final class MainView: UIView {
         let button = UIButton(type: .system)
         button.setTitle("행복 작성하기", for: .normal)
         button.setTitleColor(.imageBackground, for: .normal)
-        button.titleLabel?.font = .mapoGoldenPier(20)
+        button.titleLabel?.font = .appFont(size: .subtitle)
         button.backgroundColor = .buttonBackground
         button.layer.cornerRadius = 15
         return button
@@ -112,7 +112,7 @@ final class MainView: UIView {
         let attributes: [NSAttributedString.Key: Any] = [
             .paragraphStyle: paragraphStyle,
             .foregroundColor: UIColor.darkGray,
-            .font: UIFont.mapoGoldenPier(18)
+            .font: UIFont.appFont(size: .body1)
         ]
 
         // NSAttributedString으로 변환
@@ -139,6 +139,12 @@ final class MainView: UIView {
         if let gifImage = UIImage.animatedImage(withGIFNamed: name) {
             circularImageView.image = gifImage
         }
-
+    }
+    
+    // 폰트 변경
+    func updateFont() {
+        nameLabel.font = .appFont(size: .title1)
+        messageLabel.font = .appFont(size: .body1)
+        createbutton.titleLabel?.font = .appFont(size: .subtitle)
     }
 }

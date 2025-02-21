@@ -19,7 +19,7 @@ struct AlertConfiguration {
     var actions: [(title: String, style: AlertActionStyle, handler: (String?) -> Void)] = []
     var backgroundColor: UIColor = .cellBackground
     var cornerRadius: CGFloat = 15.0
-    var alertFont: UIFont = .mapoGoldenPier(16)
+    var alertFont: UIFont = .appFont(size: .body2)
     var titleColor: UIColor = .textAccent
     var messageColor: UIColor = .darkGray
 }

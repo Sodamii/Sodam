@@ -87,11 +87,9 @@ final class LocalNotificationManager: NSObject {
         // 허용인 경우
         if isGranted {
             print("알림이 허용되었습니다.\(isGranted)")
-            // 허용한 경우 UserDefault에 시스템 상태 true, 앱 토글 true로 저장
+            // 허용한 경우 UserDefault에 앱 토글 true로 저장
             UserDefaultsManager.shared.saveAppToggleState(isGranted)
-            
             UserDefaultsManager.shared.markNotificationSetupAsComplete()
-            UserDefaultsManager.shared.saveNotificationAuthorizationStatus(isGranted)
             
             // 알림 권한 허용 메시지 표시
             DispatchQueue.main.async {
@@ -118,7 +116,7 @@ final class LocalNotificationManager: NSObject {
         // UserDefault에 앱 토글 false로 저장
         UserDefaultsManager.shared.saveAppToggleState(false)
         UserDefaultsManager.shared.markNotificationSetupAsComplete()
-        UserDefaultsManager.shared.saveNotificationAuthorizationStatus(false)
+        
         // 알림 권한 거부 메시지 표시
         DispatchQueue.main.async {
             ToastManager.shared.showToastMessage(message: "알림 권한이 거부되었습니다")
@@ -154,7 +152,7 @@ extension LocalNotificationManager {
             let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
 
             // 알림을 UNUserNotificationCenter에 추가
-            self.notificationCenter.add(request) { [weak self] error in
+            self.notificationCenter.add(request) { error in
                 if let error = error {
                     // 알림 등록 실패 시 에러 메시지 표시
                     DispatchQueue.main.async {

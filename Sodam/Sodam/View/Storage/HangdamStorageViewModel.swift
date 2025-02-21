@@ -85,7 +85,6 @@ final class HangdamStorageViewModel: ObservableObject {
                 mapperFactory: mapperFactory
             )
         }
-        print("[Happiness data reload")
     }
 }
 

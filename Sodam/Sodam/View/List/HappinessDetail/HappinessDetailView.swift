@@ -27,7 +27,7 @@ struct HappinessDetailView: View {
                     }
                     
                     Text(viewModel.content.happinessContent)
-                        .font(.sejongGeulggot(16))
+                        .appFont(size: .body2)
                         .lineSpacing(10)
                         .foregroundStyle(Color(UIColor.darkGray))
                         .multilineTextAlignment(.leading)
@@ -49,7 +49,7 @@ struct HappinessDetailView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text(viewModel.content.happinessDate)
-                    .font(.maruburiot(type: .bold, size: 20))
+                    .appFont(size: .subtitle)
                     .foregroundStyle(Color.textAccent)
             }
             if viewModel.isCanDelete {

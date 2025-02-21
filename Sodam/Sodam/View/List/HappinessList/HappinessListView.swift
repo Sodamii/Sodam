@@ -27,7 +27,7 @@ struct HappinessListView: View {
                         .clipShape(.rect(cornerRadius: cornerRadius))
                     Text(viewModel.listContent.title)
                         .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
-                        .font(.mapoGoldenPier(FontSize.title2))
+                        .appFont(size: .title2)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
                         .foregroundStyle(Color.textAccent)
@@ -66,7 +66,7 @@ struct HappinessListView: View {
                             Spacer()
                             Text(viewModel.listContent.emptyComment)
                                 .frame(maxWidth: .infinity, maxHeight: 35, alignment: .center)
-                                .font(.mapoGoldenPier(20))
+                                .appFont(size: .subtitle)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.5)
                                 .foregroundStyle(Color.gray)
@@ -80,17 +80,9 @@ struct HappinessListView: View {
             .padding([.top, .horizontal])
             .background(Color.viewBackground)
             .onAppear {
-                viewModel.reloadData() // onAppear에서 실행
-                print("[HappinessListView] .onAppear - 데이터 리로드")
+                viewModel.reloadData()
             }
         }
         .tint(.textAccent)
     }
-}
-
-enum FontSize {
-    static let title: CGFloat = 27
-    static let title2: CGFloat = 24
-    static let body: CGFloat = 16
-    static let timeStamp: CGFloat = 14
 }

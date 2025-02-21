@@ -75,7 +75,7 @@ final class WriteViewController: UIViewController {
         setupActions()
 
         // UITextView의 delegate 설정
-        writeView.setTextViewDeleaget(delegate: self)
+        writeView.setTextViewDelegate(delegate: self)
         
         // 이미지 추가 여부 확인 후 컬렉션뷰 레이아웃 조정
         writeView.updateCollectionViewConstraint(writeViewModel.imageCount == 0)

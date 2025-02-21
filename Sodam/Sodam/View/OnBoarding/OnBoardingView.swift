@@ -30,7 +30,7 @@ final class OnBoardingView: UIView {
     
     private let infoLabel: UILabel = {
         let label: UILabel = UILabel()
-        label.font = .mapoGoldenPier(UIScreen.isiPhoneSE ? 18: 20)
+        label.font = .appFont(size: UIScreen.isiPhoneSE ? .body1 : .subtitle)
         label.textColor = .darkGray
         label.numberOfLines = 2
         label.textAlignment = .center
@@ -44,7 +44,7 @@ final class OnBoardingView: UIView {
         button.setTitle("다음", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .buttonBackground
-        button.titleLabel?.font = .mapoGoldenPier(18)
+        button.titleLabel?.font = .appFont(size: .body1)
         button.layer.cornerRadius = 16
         return button
     }()
@@ -53,7 +53,7 @@ final class OnBoardingView: UIView {
         let button: UIButton = UIButton()
         button.setTitle("건너뛰기", for: .normal)
         button.setTitleColor(.buttonBackground, for: .normal)
-        button.titleLabel?.font = .mapoGoldenPier(16)
+        button.titleLabel?.font = .appFont(size: .body2)
         return button
     }()
     

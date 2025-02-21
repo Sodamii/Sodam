@@ -40,10 +40,10 @@ private struct HangdamGrid: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 Text(store.name)
-                    .font(.maruburiot(type: .bold, size: 16))
+                    .appFont(size: .body2)
                     .foregroundStyle(Color(uiColor: .darkGray))
                 Text(store.dateString)
-                    .font(.maruburiot(type: .regular, size: 13))
+                    .appFont(size: .caption)
                     .foregroundStyle(Color(uiColor: .gray))
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)

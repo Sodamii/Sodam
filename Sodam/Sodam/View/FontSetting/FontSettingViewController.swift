@@ -53,18 +53,28 @@ private extension FontSettingViewController {
         let titleLabel = UILabel()
         titleLabel.text = "폰트 설정"
         titleLabel.font = .appFont(size: .subtitle)
-        titleLabel.textColor = UIColor.darkGray
+        titleLabel.textColor = .textAccent
         navigationItem.titleView = titleLabel
     }
 
     // NavigationBar Left Item
     func setupNavigationBarItem() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()  // 기본 배경 설정
+        appearance.backgroundColor = .clear  // 배경 투명하게
+        appearance.shadowColor = nil  // 그림자 제거
+        
+        // 기본 네비게이션 바 설정
+        navigationController?.navigationBar.standardAppearance = appearance
+        // 스크롤할 때 적용될 appearance (투명 처리)
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
         // 네비게이션 좌측 아이템
         let barBackButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"),
                                             style: .plain,
                                             target: self,
                                             action: #selector(handleBackButton))
-        barBackButton.tintColor = .buttonBackground
+        barBackButton.tintColor = .textAccent
         navigationItem.leftBarButtonItem = barBackButton
         
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true

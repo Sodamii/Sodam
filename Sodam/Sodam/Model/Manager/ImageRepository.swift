@@ -38,12 +38,18 @@ actor ImageRepository {
             try await self.saveImageAsFile(resizedImage, to: path)
         }.value
     }
-    
+    /// 이미지 가져오는 메서드
+    ///
+    /// path 검사 및 file매니저로부터 이미지 로드
     func getImage(from path: String?) async throws -> UIImage {
         guard let path: String = path else { throw FileError.invalidPath}
         return try loadImageFile(from: path)
     }
     
+    /// 썸네일을 캐셔에서 반환하고 없으면 새로 생성 및 반환
+    ///
+    /// 캐셔에 구현된 캐시 처리 로직에 클로저를 전달하여 처리
+    /// `path`에 해당하는 캐시가 없을 때 실행되는 메서드로 `getImage()` 사용 후 리사이징
     func getThumbnailImage(from path: String?) async throws -> UIImage {
         try await cacher.getValueByKey(path) { [weak self] () throws -> UIImage in
             guard let self = self else { throw FileError.selfIsNil}
@@ -61,6 +67,8 @@ actor ImageRepository {
 // private method 분리
 extension ImageRepository {
     /// image를 목표 사이즈로 렌더링 하여 반환
+    ///
+    /// 기존에 `getThumbnailImage()`에서 처리하던 crop을 같이 처리할 수있게 변경
     private func resizeImage(
         _ image: UIImage,
         to size: CGFloat,
@@ -79,7 +87,7 @@ extension ImageRepository {
         //새로운 사이즈로 이미지 렌더링
         if shouldCropToSquare {
             // 정사각형 이미지로 만들기 위해, 실제 렌더러 사이즈는 (size, size)
-            // newSize에 맞게 이미지를 리사이즈한 후 정중앙에서 crop 처리
+            // 기존엔 newSize가 적용된 이미지의 size를 사용했기에 동일하게 이미지 사이즈는 newSize로 처리
             let scale = size / min(newSize.width, newSize.height)
             let scaledWidth = newSize.width * scale
             let scaledHeight = newSize.height * scale

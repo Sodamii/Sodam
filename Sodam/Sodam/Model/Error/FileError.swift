@@ -12,6 +12,8 @@ enum FileError: Error {
     case imageFetchFailed
     case imageSearchFailed
     case imageDeleteFailed
+    case invalidPath
+    case selfIsNil
 
     // 디버깅용 print 구문
     var localizedDescription: String {
@@ -20,6 +22,8 @@ enum FileError: Error {
         case .imageFetchFailed: "[FileManager Error] image 불러오기 실패"
         case .imageSearchFailed: "[FileManager Error] image 검색 실패"
         case .imageDeleteFailed: "[FileManager Error] image 삭제 실패"
+        case .invalidPath: "[FileManager Error] path 없음"
+        case .selfIsNil: "[FileManager Error] 클로저를 실행할 self 객체 없음"
         }
     }
 
@@ -27,9 +31,10 @@ enum FileError: Error {
     var alertDescription: String {
         switch self {
         case .imageSaveFailed: "이미지 업로드에 문제가 생겼어요🥲"
-        case .imageFetchFailed: "이미지를 불러오는 데 문제가 생겼어요🥲"
+        case .imageFetchFailed, .invalidPath: "이미지를 불러오는 데 문제가 생겼어요🥲"
         case .imageSearchFailed: "삭제할 이미지 검색에 실패했어요🥲"
         case .imageDeleteFailed: "기억 속 이미지 삭제가 제대로 이루어지지 않았어요🥲"
+        default: "알 수 없는 오류가 발생했어요🥲"
         }
     }
 }

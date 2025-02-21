@@ -10,24 +10,24 @@ import UIKit
 actor GenericCacher<Value: AnyObject> {
     private let cache: NSCache<NSString, Value> = NSCache<NSString, Value>()
 
-    private var inflightRequests: [NSString: Task<Value?, Error>] = [:]
+    private var inflightRequests: [NSString: Task<Value, Error>] = [:]
 
     init(countLimit: Int = 30) {
         self.cache.countLimit = countLimit
     }
 
-    func getValueByKey(_ key: String?, operation: @escaping () async throws -> Value?) async throws ->  Value? {
+    func getValueByKey(_ key: String?, operation: @escaping () async throws -> Value) async throws ->  Value {
         let key: NSString = try wrapStringToKey(key)
         
         if let cachedValue: Value = cache.object(forKey: key) {
             return cachedValue
         }
 
-        if let existingTask: Task<Value?, Error> = inflightRequests[key] {
+        if let existingTask: Task<Value, Error> = inflightRequests[key] {
             return try await existingTask.value
         }
 
-        let newTask: Task<Value?, Error> = Task<Value?, Error> {
+        let newTask: Task<Value, Error> = Task<Value, Error> {
             let value: Value? = try await operation()
             guard let value: Value = value else {
                 throw CacheError.invalidValue

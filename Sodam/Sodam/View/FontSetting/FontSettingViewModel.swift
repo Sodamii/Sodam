@@ -28,7 +28,6 @@ final class FontSettingViewModel {
         if selectedIndexPath != indexPath {
             selectedIndexPath = indexPath
             updateFontSelectionUI?(selectedIndexPath)
-            NotificationCenter.default.post(name: Notification.fontChanged, object: nil)
         }
     }
 }

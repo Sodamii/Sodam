@@ -28,9 +28,9 @@ final class FontSettingViewController: UIViewController, UINavigationBarDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupObservers()
         setupUI()
-        setupNavigationBar()
+        setupNavigationBarTitle()
+        setupNavigationBarItem()
         setupBindings()
     }
     
@@ -38,58 +38,27 @@ final class FontSettingViewController: UIViewController, UINavigationBarDelegate
         super.viewWillAppear(true)
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
 }
 
 // MARK: - Private Methods
 
 private extension FontSettingViewController {
-    // NotificationCenter Observer Set
-    func setupObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(updateUIForFontChange), name: Notification.fontChanged, object: nil)
-    }
-    
-    @objc private func updateUIForFontChange() {
-        DispatchQueue.main.async {
-            // 네비게이션 바 타이틀 폰트 설정
-            self.updateNavigationBarTitle()
-        }
-    }
-    
-    // 네비게이션 바 타이틀 폰트 설정
-    func updateNavigationBarTitle() {
-        setNavigationBarAppearance(font: UIFont.appFont(size: .subtitle), backgroundColor: .clear)
-    }
-    
-    // 네비게이션 바 appearance 설정
-    func setNavigationBarAppearance(font: UIFont, backgroundColor: UIColor) {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.shadowColor = nil
-        appearance.shadowImage = UIImage()
-        appearance.backgroundColor = backgroundColor
-        appearance.titleTextAttributes = [
-            NSAttributedString.Key.font: font,
-            NSAttributedString.Key.foregroundColor: UIColor.darkGray
-        ]
-        
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-    }
-    
     // UI Set
     func setupUI() {
         view.backgroundColor = .viewBackground
         setupTableView()
     }
     
-    func setupNavigationBar() {
-        navigationItem.title = "폰트 설정"
-        setNavigationBarAppearance(font: UIFont.appFont(size: .subtitle), backgroundColor: .clear)
-        
+    func setupNavigationBarTitle() {
+        let titleLabel = UILabel()
+        titleLabel.text = "폰트 설정"
+        titleLabel.font = .appFont(size: .subtitle)
+        titleLabel.textColor = UIColor.darkGray
+        navigationItem.titleView = titleLabel
+    }
+
+    // NavigationBar Left Item
+    func setupNavigationBarItem() {
         // 네비게이션 좌측 아이템
         let barBackButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"),
                                             style: .plain,
@@ -127,7 +96,7 @@ private extension FontSettingViewController {
             
             DispatchQueue.main.async {
                 self.settingView.tableView.reloadData()
-                self.updateNavigationBarTitle() // 네비게이션 바 타이틀 업데이트
+                self.setupNavigationBarTitle() // 네비게이션 바 타이틀 업데이트
             }
         }
     }
@@ -157,4 +126,3 @@ extension FontSettingViewController: UITableViewDataSource, UITableViewDelegate 
         return cell
     }
 }
-

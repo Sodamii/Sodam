@@ -13,7 +13,7 @@ extension ImageManager {
             Task.detached(priority: .userInitiated) {
                 guard let self = self else { return continuation.resume(throwing: DataError.selfIsNil)}
                 let resizedImage = self.resizeImage(image, resizeFloat: size)
-                self.saveImageAsFile(image: resizedImage, imagePath: imagePath)
+//                self.saveImageAsFile(image: resizedImage, imagePath: imagePath)
                 continuation.resume(returning: ())
             }
         }

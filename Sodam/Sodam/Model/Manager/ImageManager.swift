@@ -118,7 +118,7 @@ extension ImageManager {
     }
 
     /// 이미지를 FileManager를 통해 기기에 저장하는 함수
-    func saveImageAsFile(image: UIImage, imagePath: String) {
+    private func saveImageAsFile(image: UIImage, imagePath: String) {
         /// 이미지 퀄리티 원본의 80%, 확장자 jpeg인 Data로 변환
         guard let data = image.jpegData(compressionQuality: 0.8),
               let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first

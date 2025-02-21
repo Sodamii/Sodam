@@ -195,6 +195,7 @@ extension LocalNotificationManager {
         return formatter.string(from: time)
     }
 
+    /**
     // MARK: - 행복 작성 여부 확인 후 알림 취소
     func checkDiaryAndCancelNotification() {
         // 오늘 일기를 썼으면 알림 삭제
@@ -216,7 +217,7 @@ extension LocalNotificationManager {
                 }
             }
         }
-    }
+    }*/
 }
 
 // MARK: - UNUserNotificationCenterDelegate
@@ -224,6 +225,7 @@ extension LocalNotificationManager {
 extension LocalNotificationManager: UNUserNotificationCenterDelegate {
     // Foreground 상태에서 알림을 수신할 때 호출
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        /**
         checkDiaryAndCancelNotification() // Foreground 상태에서 일기 작성 여부 확인
         // 오늘 일기를 썼으면
         if UserDefaultsManager.shared.hasAlreadyWrittenToday() {
@@ -234,11 +236,14 @@ extension LocalNotificationManager: UNUserNotificationCenterDelegate {
             UIApplication.shared.applicationIconBadgeNumber += 1  // 배지 번호를 증가시켜 앱 아이콘에 표시
             completionHandler([.banner, .badge, .sound, .list]) // 알림 표시
         }
+         */
+        UIApplication.shared.applicationIconBadgeNumber += 1  // 배지 번호를 증가시켜 앱 아이콘에 표시
+        completionHandler([.banner, .badge, .sound, .list]) // 알림 표시
     }
 
     // 알림에 대해 사용자가 반응하면 실행됨 (Background,Foreground 모두 실행)
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        checkDiaryAndCancelNotification() // Background/종료 상태에서 일기 작성 여부 확인
+        //checkDiaryAndCancelNotification() // Background/종료 상태에서 일기 작성 여부 확인
         completionHandler() // 응답 처리 완료
     }
 }

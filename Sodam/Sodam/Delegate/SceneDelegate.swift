@@ -67,10 +67,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         UIApplication.shared.applicationIconBadgeNumber = 0
     }
     
+    /**
     // 앱이 백그라운드로 전환될 때 일기 작성 여부 확인
     func sceneDidEnterBackground(_ scene: UIScene) {
         LocalNotificationManager.shared.checkDiaryAndCancelNotification()
     }
+    */
     
     // MARK: - 온보딩 화면 종료 후 메인 화면 이동
     private func navigateToRootViewController() {

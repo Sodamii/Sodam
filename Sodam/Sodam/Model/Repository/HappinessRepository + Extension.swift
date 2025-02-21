@@ -9,6 +9,8 @@ import CoreData
 
 extension HappinessRepository {
     func addHappinessAsync(happiness: HappinessDTO) async throws {
+        let coredataContext: NSManagedObjectContext = coreDataManager.persistentContainer.newBackgroundContext()
+        coredataContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         guard let id: NSManagedObjectID = IDConverter.toNSManagedObjectID(
             from: happiness.hangdamID,
             in: coredataContext
@@ -36,6 +38,8 @@ extension HappinessRepository {
     }
 
     func fetchHappinessAsync(of hangdamId: String?) async throws -> [HappinessDTO] {
+        let coredataContext: NSManagedObjectContext = coreDataManager.persistentContainer.newBackgroundContext()
+        coredataContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         let hangdamEntity: HangdamEntity = try await coreDataManager.fetchEntityByIdAsync(
             id: hangdamId,
             context: coredataContext
@@ -55,6 +59,8 @@ extension HappinessRepository {
     }
 
     func deleteHappinessAsync(with id: String?, path: String?) async throws {
+        let coredataContext: NSManagedObjectContext = coreDataManager.persistentContainer.newBackgroundContext()
+        coredataContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         try await coreDataManager.deleteEntityByIdAsync(
             id: id,
             type: HappinessEntity.self,
@@ -101,6 +107,8 @@ extension HappinessRepository {
     }
 
     func checkHappinessCountAsync(with hangdamId: String?) async throws -> Int? {
+        let coredataContext: NSManagedObjectContext = coreDataManager.persistentContainer.newBackgroundContext()
+        coredataContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         let hangdam: HangdamEntity = try await coreDataManager.fetchEntityByIdAsync(
             id: hangdamId,
             context: coredataContext

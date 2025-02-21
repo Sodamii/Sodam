@@ -14,19 +14,15 @@ final class HappinessRepository {
     let coreDataManager: CoreDataManager
     let imageManager: ImageManager
     let dtoMapper: HappinessMapper
-    let coredataContext: NSManagedObjectContext
 
     init(
         coreDataManager: CoreDataManager = CoreDataManager.shared,
         imageManager: ImageManager = ImageManager(),
-        dtoMapper: HappinessMapper = .init(),
-        context: NSManagedObjectContext? = nil
+        dtoMapper: HappinessMapper = .init()
     ) {
         self.coreDataManager = coreDataManager
         self.imageManager = imageManager
         self.dtoMapper = dtoMapper
-        self.coredataContext = context ?? coreDataManager.persistentContainer.newBackgroundContext()
-        self.coredataContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
     }
 
     /// 행복한 기억 생성

@@ -9,6 +9,8 @@ import CoreData
 
 extension HangdamRepository {
     func fetchHangdamByIdAsync(id: String?) async throws -> HangdamDTO {
+        let coredataContext: NSManagedObjectContext = coreDataManager.persistentContainer.newBackgroundContext()
+        coredataContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         let hangdam: HangdamEntity = try await coreDataManager.fetchEntityByIdAsync(
             id: id,
             context: coredataContext
@@ -17,6 +19,8 @@ extension HangdamRepository {
     }
 
     func fetchCurrentHangdmaAsync() async throws -> HangdamDTO {
+        let coredataContext: NSManagedObjectContext = coreDataManager.persistentContainer.newBackgroundContext()
+        coredataContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         let hangdams: [HangdamEntity] = try await coreDataManager.fetchEntitiesAsync(
             context: coredataContext
         )
@@ -33,6 +37,8 @@ extension HangdamRepository {
     }
 
     func fetchHangdamsAsync() async throws -> [HangdamDTO] {
+        let coredataContext: NSManagedObjectContext = coreDataManager.persistentContainer.newBackgroundContext()
+        coredataContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         let hangdams: [HangdamEntity] = try await coreDataManager.fetchEntitiesAsync(
             context: coredataContext
         ).dropLast()
@@ -43,6 +49,8 @@ extension HangdamRepository {
     }
 
     func nameHangdamAsync(id: String?, name: String) async throws {
+        let coredataContext: NSManagedObjectContext = coreDataManager.persistentContainer.newBackgroundContext()
+        coredataContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         let hangdam: HangdamEntity = try await coreDataManager.fetchEntityByIdAsync(
             id: id,
             context: coredataContext

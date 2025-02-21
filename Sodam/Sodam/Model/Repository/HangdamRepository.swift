@@ -12,16 +12,12 @@ import CoreData
 final class HangdamRepository {
     let coreDataManager: CoreDataManager
     let dtoMapper: HangdamMapper
-    let coredataContext: NSManagedObjectContext
     init(
         coreDataManager: CoreDataManager = CoreDataManager.shared,
-        dtoMapper: HangdamMapper = .init(),
-        coredataContext: NSManagedObjectContext? = nil
+        dtoMapper: HangdamMapper = .init()
     ) {
         self.coreDataManager = coreDataManager
         self.dtoMapper = dtoMapper
-        self.coredataContext = coredataContext ?? coreDataManager.persistentContainer.newBackgroundContext()
-        self.coredataContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
     }
 
     /// 현재 키우는 행담이 불러오기

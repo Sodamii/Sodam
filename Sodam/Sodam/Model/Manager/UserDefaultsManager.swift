@@ -29,7 +29,7 @@ final class UserDefaultsManager {
         static let appSettingToggleState = "appSettingToggleState"                          // 앱 설정 토글 상태
         static let notificationInitialSetupComplete = "notificationInitialSetupComplete"    // 앱 알림 초기 설정 여부 확인
         
-        // MARK: - 공동 사용(작성 뷰, 메인 뷰, 설정 뷰)
+        // MARK: - 공동 사용(메인 뷰, 설정 뷰)
         static let lastWrittenDate = "lastWrittenDate"  // 최근 행복 작성 날짜 - 오늘 작성했는지 여부를 확인하기 위해 사용
         
         // MARK: - Font

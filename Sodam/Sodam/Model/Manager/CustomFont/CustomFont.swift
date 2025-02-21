@@ -51,23 +51,19 @@ enum CustomFont {
         }
     }
     
-    /// 폰트 이름 배열 : 설정 tableView DataSource로 활용
-    static var allFontNames: [String] {
-        let allCases: [CustomFont] = [
-            .mapoGoldenPier,
-            .sejongGeulggot,
-            .maruBuriot(weight: .regular),
-            .maplestory(weight: .light),
-            .gyeonggiBatang(weight: .regular),
-            .nanumSquareRound(weight: .regular),
-            .leeSeoyun,
-            .gowunDodum,
-            .gabiaGosran,
-            .gabiaHeuldot
-        ]
-        
-        return allCases.map { $0.name }
-    }
+    /// 폰트 배열 : 설정 tableView DataSource로 활용
+    static var allcases: [CustomFont] = [
+        .mapoGoldenPier,
+        .sejongGeulggot,
+        .maruBuriot(weight: .regular),
+        .maplestory(weight: .light),
+        .gyeonggiBatang(weight: .regular),
+        .nanumSquareRound(weight: .regular),
+        .leeSeoyun,
+        .gowunDodum,
+        .gabiaGosran,
+        .gabiaHeuldot
+    ]
 }
 
 /// 폰트 별로 각 굵기에 해당하는 폰트 이름이 각자 다르기 때문에 따로 정의해주어 sourceName 계산 프로퍼티에서 조합한다.

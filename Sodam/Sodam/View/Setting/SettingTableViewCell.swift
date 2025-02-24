@@ -38,7 +38,6 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
 
     let switchButton: UISwitch = {
         let switchButton = UISwitch()
-        switchButton.isOn = false
         switchButton.onTintColor = .buttonBackground
         return switchButton
     }()
@@ -85,11 +84,11 @@ final class SettingTableViewCell: UITableViewCell, ReuseIdentifying {
     func configure(title: String, switchAction: Selector?, timeAction: Selector?, version: String) {
         titleLabel.text = title
         versionLabel.text = version
-        if let action = switchAction {
-            switchButton.addTarget(nil, action: action, for: .valueChanged)
+        if let switchAction = switchAction {
+            switchButton.addTarget(nil, action: switchAction, for: .valueChanged)
         }
-        if let action = timeAction {
-            timePicker.addTarget(nil, action: action, for: .valueChanged)
+        if let timeAction = timeAction {
+            timePicker.addTarget(nil, action: timeAction, for: .valueChanged)
         }
     }
     

@@ -14,15 +14,18 @@ final class HappinessRepository {
     let coreDataManager: CoreDataManager
     let imageManager: ImageManager
     let dtoMapper: HappinessMapper
-
+    let imageRepository: ImageRepository
+    
     init(
         coreDataManager: CoreDataManager = CoreDataManager.shared,
         imageManager: ImageManager = ImageManager(),
-        dtoMapper: HappinessMapper = .init()
+        dtoMapper: HappinessMapper = .init(),
+        imageRepository: ImageRepository = ImageRepository()
     ) {
         self.coreDataManager = coreDataManager
         self.imageManager = imageManager
         self.dtoMapper = dtoMapper
+        self.imageRepository = imageRepository
     }
 
     /// 행복한 기억 생성

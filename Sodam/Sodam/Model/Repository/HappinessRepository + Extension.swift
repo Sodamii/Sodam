@@ -5,6 +5,7 @@
 //  Created by 박진홍 on 2/19/25.
 //
 
+import UIKit
 import CoreData
 
 extension HappinessRepository {
@@ -114,5 +115,9 @@ extension HappinessRepository {
             context: coredataContext
         )
         return hangdam.happinesses?.count
+    }
+    
+    func getThumbnailImageAsync(from path: String?) async throws -> UIImage {
+        return try await imageRepository.getThumbnailImage(from: path)
     }
 }

@@ -94,7 +94,7 @@ final class ImageManager {
 // 내부 호출 함수 모음
 extension ImageManager {
     /// 이미지 리사이징하는 함수
-    private func resizeImage(_ image: UIImage, resizeFloat: CGFloat) -> UIImage {
+    func resizeImage(_ image: UIImage, resizeFloat: CGFloat) -> UIImage {
         /// 이미지 고유 비율
         let aspectRatio = image.size.width / image.size.height
 

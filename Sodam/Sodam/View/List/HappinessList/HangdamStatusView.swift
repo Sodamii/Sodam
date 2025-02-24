@@ -8,28 +8,32 @@
 import SwiftUI
 
 struct HangdamStatusView: View {
-    
+
     let size: CGSize
-    @Binding var store: HangdamStatusStore
-    
+
+    @Binding var content: StatusContent
+
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
-            store.image
+            Image
+                .hangdamImage(level: content.level)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: size.width / 3)
                 .background(Color.imageBackground)
                 .clipShape(.circle)
-            
+
             VStack(alignment: .leading, spacing: 10) {
-                Text(store.name)
-                    .font(.maruburiot(type: .bold, size: store.hasName ? 25.0 : 18.0))
-                
-                Text(store.description)
-                    .font(.maruburiot(type: .semiBold, size: 17))
-                
-                Text(store.dateDescription)
-                    .font(.maruburiot(type: .regular, size: 16))
+                Text(content.name)
+                    .appFont(size: .title2)
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(1)
+
+                Text(content.levelDescription)
+                    .appFont(size: .body1)
+
+                Text(content.dateDescription)
+                    .appFont(size: .body2)
                     .minimumScaleFactor(0.7)
                     .lineLimit(1)
             }
@@ -42,41 +46,15 @@ struct HangdamStatusView: View {
     }
 }
 
-struct HangdamStatusStore {
-    let image: Image
-    let name: String
-    let description: String
-    let dateDescription: String
-    
-    var hasName: Bool {
-        name != "이름을 지어주세요!"
-    }
-}
-
 #Preview {
-    Group {
-        HangdamStatusView(
-            size: CGSize(width: 402, height: 716),
-            store: .constant(
-                HangdamStatusStore(
-                    image: .hangdamImage(level: 1),
-                    name: "a name",
-                    description: "a description",
-                    dateDescription: "a date description"
-                )
-            )
+    HangdamStatusView(
+        size: CGSize(width: 402, height: 716),
+        content: .constant(StatusContent(
+            level: 1,
+            name: "test",
+            levelDescription: "lv.1 test",
+            dateDescription: "2000.22.22 ~"
         )
-        
-        HangdamStatusView(
-            size: CGSize(width: 402, height: 716),
-            store: .constant(
-                HangdamStatusStore(
-                    image: .hangdamImage(level: 1),
-                    name: "a name",
-                    description: "a description",
-                    dateDescription: ""
-                )
-            )
         )
-    }
+    )
 }

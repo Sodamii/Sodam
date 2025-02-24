@@ -8,17 +8,49 @@
 import Combine
 
 final class HangdamStorageViewModel: ObservableObject {
-    
-    @Published var hangdamGridStores: [HangdamGridStore] = []
-    @Published var happinessListViewModels: [HappinessListViewModel] = []
-    
+
+    @Published var hangdamGridStores: [HangdamGridStore]
+    @Published var happinessListViewModels: [HappinessListViewModel]
+
     private let hangdamRepository: HangdamRepository
-    
+
     init(hangdamRepository: HangdamRepository) {
         self.hangdamRepository = hangdamRepository
-        loadHangdams()
+        let hangdams = hangdamRepository.getSavedHangdams()
+
+        self.hangdamGridStores = hangdams.map { hangdamDTO in
+            guard let name = hangdamDTO.name,
+                  let startDate = hangdamDTO.startDate,
+                  let endDate = hangdamDTO.endDate
+            else { return HangdamGridStore(name: "이름잃은담이", dateString: "") }
+
+            return HangdamGridStore(name: name, dateString: "\(startDate) ~ \(endDate)")
+        }
+
+        self.happinessListViewModels = hangdams.map { hangdamDTO in
+            // TODO: DI컨테이너를 만들어서 의존성 주입에 대한 개선 필요
+            let hangdamRepository: HangdamRepository = HangdamRepository()
+            let happinessRepository: HappinessRepository = HappinessRepository()
+            let detailViewOperator: DetailViewOperator = DetailViewOperator(happinessRepository: happinessRepository)
+            let listViewReloader: ListViewReloader = ListViewReloader(
+                happinessRepository: happinessRepository,
+                hangdamRepository: hangdamRepository,
+                hangdamID: hangdamDTO.id
+            )
+            let cellThumbnailFetcher: CellThumbnailFetcher = CellThumbnailFetcher(
+                happinessRepository: happinessRepository
+            )
+            let mapperFactory: DataMapperFactory = DataMapperFactory()
+
+            return HappinessListViewModel(
+                detailViewOperator: detailViewOperator,
+                listViewReloader: listViewReloader,
+                cellThumbnailFetcher: cellThumbnailFetcher,
+                mapperFactory: mapperFactory
+            )
+        }
     }
-    
+
     func loadHangdams() {
         let hangdams = hangdamRepository.getSavedHangdams()
 
@@ -27,12 +59,31 @@ final class HangdamStorageViewModel: ObservableObject {
                   let startDate = hangdamDTO.startDate,
                   let endDate = hangdamDTO.endDate
             else { return HangdamGridStore(name: "이름잃은담이", dateString: "") }
-            
+
             return HangdamGridStore(name: name, dateString: "\(startDate) ~ \(endDate)")
         }
-        
+
         self.happinessListViewModels = hangdams.map { hangdamDTO in
-            return HappinessListViewModel(hangdam: hangdamDTO)
+            // TODO: DI컨테이너를 만들어서 의존성 주입에 대한 개선 필요
+            let hangdamRepository: HangdamRepository = HangdamRepository()
+            let happinessRepository: HappinessRepository = HappinessRepository()
+            let detailViewOperator: DetailViewOperator = DetailViewOperator(happinessRepository: happinessRepository)
+            let listViewReloader: ListViewReloading = ListViewReloader(
+                happinessRepository: happinessRepository,
+                hangdamRepository: hangdamRepository,
+                hangdamID: hangdamDTO.id
+            )
+            let cellThumbnailFetcher: CellThumbnailFetcher = CellThumbnailFetcher(
+                happinessRepository: happinessRepository
+            )
+            let mapperFactory: DataMapperFactory = DataMapperFactory()
+
+            return HappinessListViewModel(
+                detailViewOperator: detailViewOperator,
+                listViewReloader: listViewReloader,
+                cellThumbnailFetcher: cellThumbnailFetcher,
+                mapperFactory: mapperFactory
+            )
         }
     }
 }

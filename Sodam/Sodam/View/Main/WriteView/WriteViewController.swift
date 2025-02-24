@@ -58,6 +58,9 @@ final class WriteViewController: UIViewController {
         writeViewModel.loadTemporaryPost()
         let currentCount = writeView.getTextViewText().count
         writeView.setCharacterLimitLabel(currentCount)
+        if currentCount > 0 {
+            writeView.updatePlaceholderVisibility()
+        }
     }
 
     override func viewDidLoad() {
@@ -291,7 +294,9 @@ extension WriteViewController: ImagePickerServiceDelegate {
 extension WriteViewController: WriteViewModelDelegate {
     /// 뷰모델에게 작성 내용 전달받는 메서드
     func didUpdatePost(_ text: String, _ isEmpty: Bool) {
-        writeView.setTextViewText(text) // 텍스트뷰 업데이트
+        if writeView.getTextViewText() != text {
+            writeView.setTextViewText(text)
+        }
         writeView.collectionViewReload() // 컬렉션 뷰 리로드
         writeView.updateCollectionViewConstraint(isEmpty) // 이미지 유무에 따라 컬렉션뷰 숨김처리
     }
@@ -301,19 +306,23 @@ extension WriteViewController: WriteViewModelDelegate {
 extension WriteViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let maxCharacterCount = 500 // 글자 수 제한
-        let limitedText = String(textView.text.prefix(maxCharacterCount))
-
+        let currentText: String = textView.text // 현재 작성 글
+        let currentCount = currentText.count // 현재 글자 수
+        let limitedText = String(currentText.prefix(maxCharacterCount)) // 글자 수 제한이 적용된 글
+        
         // 글자 수 제한 초과하면 Alert 띄우기
-        if textView.text.count > maxCharacterCount {
+        if currentCount > maxCharacterCount {
             alertManager.showAlert(alertMessage: .textLimit)
             writeView.setTextViewText(limitedText) // 초과된 부분 삭제
         }
+        
+        // placeholder 숨김 처리
+        writeView.updatePlaceholderVisibility()
         
         // 텍스트가 변경될 때마다 뷰모델에 전달
         writeViewModel.updateText(limitedText)
         
         // 현재 글자 수 전달
-        let currentCount = textView.text.count
         writeView.setCharacterLimitLabel(currentCount)
     }
 }

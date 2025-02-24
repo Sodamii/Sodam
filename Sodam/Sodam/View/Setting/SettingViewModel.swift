@@ -12,7 +12,7 @@ final class SettingViewModel {
     private let localNotificationManager = LocalNotificationManager.shared
 
     var isToggleOn: Bool   // 앱 설정 토글 상태
-    let sectionType: [Setting.SetSection] = [.appSetting, .develop]   // 섹션 타입 설정
+    let sectionType: [Setting.SetSection] = [.appSetting, .fontSetting, .develop]   // 섹션 타입 설정
     
     // 앱 버전을 가져오는 computed property
     var version: String? {

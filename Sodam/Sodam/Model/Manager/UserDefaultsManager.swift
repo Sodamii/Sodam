@@ -24,7 +24,7 @@ final class UserDefaultsManager {
         static let imagePath = "imagePath"  // 작성시 등록 이미지
         
         // MARK: - 설정 뷰
-        
+
         static let notificationTime = "time"                                                // 앱 알림 시간
         static let appSettingToggleState = "appSettingToggleState"                          // 앱 설정 토글 상태
         static let notificationInitialSetupComplete = "notificationInitialSetupComplete"    // 앱 알림 초기 설정 여부 확인

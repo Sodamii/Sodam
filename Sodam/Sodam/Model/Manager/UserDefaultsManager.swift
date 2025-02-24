@@ -34,6 +34,9 @@ final class UserDefaultsManager {
         
         // MARK: - Font
         static let fontName = "fontName"    // 커스텀 폰트 이름
+        
+        // MARK: - Name
+        static let hangdamName = "hangdamName" // 이름
     }
 }
 
@@ -85,8 +88,14 @@ extension UserDefaultsManager {
     }
     
     // 저장된 알림 시간을 가져옴
-    func getNotificationTime() -> Date? {
-        userDefaults.object(forKey: Keys.notificationTime) as? Date
+    func getNotificationTime() -> Date {
+        guard let time = userDefaults.object(forKey: Keys.notificationTime) as? Date else {
+            let calendar = Calendar.current
+            let defaultTime = calendar.date(bySettingHour: 21, minute: 0, second: 0, of: Date())!
+            
+            return defaultTime
+        }
+        return time
     }
     
     // 앱 설정 알림 토글 상태 (ON/OFF)를 가져옴
@@ -138,5 +147,17 @@ extension UserDefaultsManager {
     // 저장된 설정 폰트를 가져옴 - 없을 시 기본 폰트(마포금빛나루) 반환
     func getFontName() -> String {
         return userDefaults.string(forKey: Keys.fontName) ?? CustomFont.mapoGoldenPier.sourceName
+    }
+    
+    // MARK: - Name
+    
+    // 알림 이름 저장
+    func saveHangdamName(name: String) {
+        userDefaults.set(name, forKey: Keys.hangdamName)
+    }
+    
+    // 이름 가져오기
+    func getHangdamName() -> String {
+        return userDefaults.string(forKey: Keys.hangdamName) ?? "행담이"
     }
 }

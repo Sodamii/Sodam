@@ -59,6 +59,8 @@ final class HappinessRepository {
             postNotification(level: 4)
         case 29:    // 행담이 endDate 업데이트, 최종 성장(보관함 이동)
             coreDataManager.updateHangdam(with: hangdamID, updateCase: .endDate(Date.now))
+            UserDefaultsManager.shared.saveHangdamName(name: "행담이")
+            LocalNotificationManager.shared.setUserNotification()
             postNotification(level: 5)
         default:
             return

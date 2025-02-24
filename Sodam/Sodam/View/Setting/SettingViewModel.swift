@@ -63,7 +63,7 @@ extension SettingViewModel {
     // MARK: - Get Methods
     
     // 저장된 알림 시간 가져오기
-    func getNotificationTime() -> Date? {
+    func getNotificationTime() -> Date {
         userDefaultsManager.getNotificationTime()
     }
     
@@ -73,8 +73,8 @@ extension SettingViewModel {
     }
     
     // 사용자가 설정한 예약된 알림 설정
-    func setUserNotification(_ sender: Date) {
-        localNotificationManager.setUserNotification(time: sender)
+    func setUserNotification() {
+        localNotificationManager.setUserNotification()
     }
 }
 

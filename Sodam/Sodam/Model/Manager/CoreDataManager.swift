@@ -186,3 +186,4 @@ extension CoreDataManager {
         return context.object(with: id) as? T
     }
 }
+

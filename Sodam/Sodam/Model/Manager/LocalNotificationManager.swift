@@ -164,7 +164,7 @@ extension LocalNotificationManager {
         DispatchQueue.main.async {
             let content = UNMutableNotificationContent()
             content.title = "Sodam"
-            content.body = "소소한 행복을 적어 \(name)를 키워."
+            content.body = "소소한 행복을 적어 \(name)를 키워주세요."
             content.sound = .default
             
             let currentBadgeNumber = UIApplication.shared.applicationIconBadgeNumber

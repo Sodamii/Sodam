@@ -182,9 +182,8 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                                timeAction: #selector(userScheduleNotification),
                                version: "")
 
-                if let savedTime = settingViewModel.getNotificationTime() {
+                let savedTime = settingViewModel.getNotificationTime()
                     cell.timePicker.date = savedTime
-                }
             }
             
         case .fontSetting:
@@ -280,9 +279,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         settingViewModel.saveAppToggleState(isEnabled)
         
         if isEnabled {
-            if let notificationTime = settingViewModel.getNotificationTime() {
-                settingViewModel.setUserNotification(notificationTime)
-            }
+                settingViewModel.setUserNotification()
         } else {
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         }
@@ -294,7 +291,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         settingViewModel.saveNotificationTime(sender.date)
         
         if settingViewModel.isToggleOn {
-            settingViewModel.setUserNotification(sender.date)
+            settingViewModel.setUserNotification()
         }
     }
 }

@@ -59,7 +59,6 @@ final class CoreDataManager {
     /// 행담이 새로 생성 : 모든 값이 빈 값
     func createHangdam() -> HangdamEntity {
         let entity = HangdamEntity(context: context)
-        entity.startDate = Date()
         saveContext()
         print("[CoreData] 새로운 행담이 생성")
         return entity
@@ -185,33 +184,6 @@ private enum CDKey: String {
 extension CoreDataManager {
     func fetchEntityByID<T: NSManagedObject>(by id: NSManagedObjectID) -> T? {
         return context.object(with: id) as? T
-    }
-    
-    func fetchLatestHangdam() -> HangdamDTO? {
-        // HangdamEntitiy에 대한 fetch 요청 생성
-        let fetchRequest: NSFetchRequest<HangdamEntity> = HangdamEntity.fetchRequest()
-        
-        // startDate 기준으로 최신순 정렬 (내림차순)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "startDate", ascending: false)]
-        
-        // 가장 최신 행담이 1개만 가져오기
-        fetchRequest.fetchLimit = 1
-        do {
-            
-            // fetch 요청을 실행해서 가장 최근의 HangdamEntitiy를 가져옴
-            if let entity = try context.fetch(fetchRequest).first {
-                var handamDTO = HangdamMapper().toDTO(from: entity)
-                    // nil 체크 후에 기본값 설정
-                if handamDTO.name == nil {
-                    handamDTO.name = "행담이"
-                }
-                return handamDTO
-            }
-        } catch {
-            // fetch 과정에서 오류가 발생하면 디버깅용 콘솔 출력
-            print(DataError.fetchRequestFailed.localizedDescription)
-        }
-        return nil
     }
 }
 

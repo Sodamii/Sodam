@@ -97,7 +97,7 @@ final class LocalNotificationManager: NSObject {
             }
             
             // 처음 시스템 허용한 경우 오후 9시 기본 알림 시간 설정
-            setDefaultNotification()
+            setUserNotification()
             
             // 거부인 경우
         } else {
@@ -122,31 +122,27 @@ final class LocalNotificationManager: NSObject {
             ToastManager.shared.showToastMessage(message: "알림 권한이 거부되었습니다")
         }
     }
-
-    // 앱 초기 실행 시 기본 알림 설정
-    func setDefaultNotification() {
-        let identifier = "SelectedTimeNotification"
-        let calendar = Calendar.current
-        let defaultTime = calendar.date(bySettingHour: 21, minute: 0, second: 0, of: Date())! // 오후 9시
-        UserDefaultsManager.shared.saveNotificationTime(defaultTime)
-        scheduleNotification(time: defaultTime, identifier: identifier)  // 알림 예약
-    }
 }
 
     // MARK: - 알림 예약 관련 시간/내용/트리거 설정
 
 extension LocalNotificationManager {
-    // datePicker에서 사용자가 알림 시간을 설정할 때 호출
-    func setUserNotification(time: Date) {
+    // datePicker에서 사용자가 알림 시간을 설정할 때 + 이름이 새로 지어졌을 때 호출
+    func setUserNotification() {
         let identifier = "SelectedTimeNotification"
+        
+        // 유저디폴츠에서 저장되어있는 시간과 행담이 이름을 불러옴
+        let time = UserDefaultsManager.shared.getNotificationTime()
+        let name = UserDefaultsManager.shared.getHangdamName()
+        
         // 기존 알림이 있으면 삭제
         notificationCenter.removePendingNotificationRequests(withIdentifiers: [identifier])
-        scheduleNotification(time: time, identifier: identifier)
+        scheduleNotification(time: time, name: name, identifier: identifier)
     }
 
     // 알림 예약
-    private func scheduleNotification(time: Date, identifier: String) {
-        createNotificationContent { content in
+    private func scheduleNotification(time: Date, name: String, identifier: String) {
+        createNotificationContent(name: name) { content in
             // 알림을 트리거할 시간 설정
             let trigger = self.createNotificationTrigger(for: time)
             let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
@@ -164,15 +160,11 @@ extension LocalNotificationManager {
     }
 
     // 알림 내용 생성
-    private func createNotificationContent(completion: @escaping (UNMutableNotificationContent) -> Void) {
+    private func createNotificationContent(name: String, completion: @escaping (UNMutableNotificationContent) -> Void) {
         DispatchQueue.main.async {
             let content = UNMutableNotificationContent()
             content.title = "Sodam"
-            
-            let hangdam = CoreDataManager.shared.fetchLatestHangdam()
-            let name = hangdam?.name ?? "행담이"
-            
-            content.body = "소소한 행복을 적어 \(name)를 키워주세요."
+            content.body = "소소한 행복을 적어 \(name)를 키워."
             content.sound = .default
             
             let currentBadgeNumber = UIApplication.shared.applicationIconBadgeNumber

@@ -10,6 +10,8 @@ final class StatusContentMapper: DataMapping {
     typealias Output = StatusContent
 
     func map(from input: HangdamDTO) -> StatusContent {
+        let id: String = input.id
+        
         let level: Int = input.level
 
         let name: String = {
@@ -35,6 +37,7 @@ final class StatusContentMapper: DataMapping {
         }()
 
         return StatusContent(
+            id: id,
             level: level,
             name: name,
             levelDescription: levelDescription,

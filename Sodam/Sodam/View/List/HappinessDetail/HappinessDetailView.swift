@@ -10,7 +10,9 @@ import SwiftUI
 struct HappinessDetailView: View {
     
     @ObservedObject var viewModel: HappinessDetailViewModel
-    @State private var isAlertPresented: Bool = false
+    
+    @State private var deleteAlertPresented: Bool = false
+    
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -52,13 +54,22 @@ struct HappinessDetailView: View {
                     .appFont(size: .subtitle)
                     .foregroundStyle(Color.textAccent)
             }
-            if viewModel.isCurrentHangdam {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button( action: {
-                        isAlertPresented = true
-                    }) {
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                if viewModel.isCurrentHangdam {
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "pencil")
+                            .bold()
+                            .foregroundStyle(Color.textAccent)
+                    }
+                } else {
+                    Button {
+                        deleteAlertPresented = true
+                    } label: {
                         Image(systemName: "trash")
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(Color.textAccent)
                     }
                 }
             }

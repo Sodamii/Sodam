@@ -20,7 +20,7 @@ struct HappinessListView: View {
                 VStack(alignment: .center) {
                     HangdamStatusView(
                         size: geometry.size,
-                        content: $viewModel.statusContent,
+                        viewModel: viewModel.statusViewModel,
                         isCurrentHangdam: $viewModel.isCurrentHangdam
                     )
                         .clipShape(.rect(cornerRadius: cornerRadius))

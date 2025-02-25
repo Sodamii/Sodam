@@ -30,6 +30,7 @@ final class CustomTabBarController: UITabBarController {
         let mainViewModel: MainViewModel = MainViewModel(repository: hangdamRepository)
         let storageViewModel: HangdamStorageViewModel = HangdamStorageViewModel(hangdamRepository: hangdamRepository)
 
+        let statusViewOperator: StatusViewOperator = StatusViewOperator(hangdamRepository: hangdamRepository)
         let detailViewOperator: DetailViewOperator = DetailViewOperator(happinessRepository: happinessRepository)
         let listViewReloader: ListViewReloading = CurrentListViewReloader(
             happinessRepository: happinessRepository,
@@ -39,6 +40,7 @@ final class CustomTabBarController: UITabBarController {
         let mapperFactory: DataMapperFactory = DataMapperFactory()
 
         let listViewModel: HappinessListViewModel = HappinessListViewModel(
+            statusViewOperator: statusViewOperator,
             detailViewOperator: detailViewOperator,
             listViewReloader: listViewReloader,
             cellThumbnailFetcher: cellThumbnailFetcher,

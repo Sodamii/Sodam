@@ -11,4 +11,5 @@ extension Notification {
     static let levelUP = Notification.Name("levelUP")
     static let didWriteToday = Notification.Name("DidWriteToday")
     static let fontChanged = Notification.Name("fontChanged")
+    static let hangdamRenamed = Notification.Name("hangdamRenamed")
 }

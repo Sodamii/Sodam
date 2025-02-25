@@ -20,7 +20,7 @@ final class HangdamStatusViewModel: ObservableObject {
     
     func renameHangdam(_ text: String) {
         let newName = "\(text)담이"
-        
         statusViewOperator.renameHangdam(id: statusContent.id, newName: newName)
+        NotificationCenter.default.post(name: Notification.hangdamRenamed, object: nil)
     }
 }

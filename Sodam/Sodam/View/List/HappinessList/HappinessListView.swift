@@ -81,6 +81,9 @@ struct HappinessListView: View {
             .onAppear {
                 viewModel.reloadData()
             }
+            .onReceive(NotificationCenter.default.publisher(for: Notification.hangdamRenamed)) { _ in
+                viewModel.reloadData()
+            }
         }
         .tint(.textAccent)
     }

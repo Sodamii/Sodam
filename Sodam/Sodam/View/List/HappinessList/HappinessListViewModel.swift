@@ -12,7 +12,7 @@ import Combine
 import UIKit
 
 final class HappinessListViewModel: ObservableObject {
-    var statusViewModel: HangdamStatusViewModel
+    @Published var statusViewModel: HangdamStatusViewModel
     @Published var listContent: HappinessListContent
     @Published var listConfigs: [HappinessListConfig]
     @Published var isCurrentHangdam: Bool

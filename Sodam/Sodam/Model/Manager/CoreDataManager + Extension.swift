@@ -86,7 +86,7 @@ extension CoreDataManager {
         }
     }
 
-    func performBackgroundTaskAsync<T>(operation: @escaping (NSManagedObjectContext) async  throws -> T) async throws -> T {
+    func performBackgroundTaskAsync<T>(operation: @escaping (NSManagedObjectContext) async throws -> T) async throws -> T {
         try await withCheckedThrowingContinuation { continuation in
             persistentContainer.performBackgroundTask { context in
                 context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy

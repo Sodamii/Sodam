@@ -80,17 +80,11 @@ struct HappinessListView: View {
             .padding([.top, .horizontal])
             .background(Color.viewBackground)
             .onAppear {
-                viewModel.reloadData() // onAppear에서 실행
-                print("[HappinessListView] .onAppear - 데이터 리로드")
+                Task {
+                    await viewModel.reloadData() // onAppear에서 실행
+                }
             }
         }
         .tint(.textAccent)
     }
-}
-
-enum FontSize {
-    static let title: CGFloat = 27
-    static let title2: CGFloat = 24
-    static let body: CGFloat = 16
-    static let timeStamp: CGFloat = 14
 }

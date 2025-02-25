@@ -11,13 +11,13 @@ import Foundation
 
 final class HappinessDetailViewModel: ObservableObject {
     let id: HappinessID?
-    let isCanDelete: Bool
+    let isCurrentHangdam: Bool
     @Published var content: HappinessDetailContent
     private let detailViewOperator: DetailViewOperator
 
-    init(id: HappinessID?, isCanDelete: Bool, content: HappinessDetailContent, detailViewOperator: DetailViewOperator) {
+    init(id: HappinessID?, isCurrentHangdam: Bool, content: HappinessDetailContent, detailViewOperator: DetailViewOperator) {
         self.id = id
-        self.isCanDelete = isCanDelete
+        self.isCurrentHangdam = isCurrentHangdam
         self.content = content
         self.detailViewOperator = detailViewOperator
     }

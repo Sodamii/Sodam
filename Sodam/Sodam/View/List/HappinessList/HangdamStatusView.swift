@@ -12,6 +12,7 @@ struct HangdamStatusView: View {
     let size: CGSize
 
     @Binding var content: StatusContent
+    @Binding var isCurrentHangdam: Bool
 
     var body: some View {
         HStack(alignment: .center, spacing: 20) {
@@ -55,6 +56,6 @@ struct HangdamStatusView: View {
             levelDescription: "lv.1 test",
             dateDescription: "2000.22.22 ~"
         )
-        )
+        ), isCurrentHangdam: .constant(true)
     )
 }

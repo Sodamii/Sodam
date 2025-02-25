@@ -52,7 +52,7 @@ struct HappinessDetailView: View {
                     .appFont(size: .subtitle)
                     .foregroundStyle(Color.textAccent)
             }
-            if viewModel.isCanDelete {
+            if viewModel.isCurrentHangdam {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button( action: {
                         isAlertPresented = true

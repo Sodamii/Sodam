@@ -15,7 +15,7 @@ final class HappinessListViewModel: ObservableObject {
     @Published var statusContent: StatusContent
     @Published var listContent: HappinessListContent
     @Published var listConfigs: [HappinessListConfig]
-    @Published var isCanDelete: Bool
+    @Published var isCurrentHangdam: Bool
     @Published var isDataError: Bool
     @Published var errorMessage: String?
 
@@ -62,13 +62,13 @@ final class HappinessListViewModel: ObservableObject {
             self.statusContent = statusContentMapper.map(from: initialData.hangdam)
             self.listContent = listContentMapper.map(from: initialData.hangdam)
             self.listConfigs = listConfigMapper.map(from: initialData.happiness)
-            self.isCanDelete = (initialData.hangdam.endDate == nil ? false : true)
+            self.isCurrentHangdam = (initialData.hangdam.endDate == nil ? true : false)
             self.isDataError = false
         case.failure(let error):
             self.statusContent = StatusContent(level: 0, name: "", levelDescription: "", dateDescription: "")
             self.listContent = HappinessListContent(title: "", emptyComment: "")
             self.listConfigs = []
-            self.isCanDelete = false
+            self.isCurrentHangdam = true
             self.isDataError = true
             self.errorMessage = error.localizedDescription
         }
@@ -82,7 +82,7 @@ final class HappinessListViewModel: ObservableObject {
             } else {
                 let detailViewModel = HappinessDetailViewModel(
                     id: id,
-                    isCanDelete: self.isCanDelete,
+                    isCurrentHangdam: self.isCurrentHangdam,
                     content: config.detailContent,
                     detailViewOperator: self.detailViewOperator
                 )
@@ -92,7 +92,7 @@ final class HappinessListViewModel: ObservableObject {
         } else { // 에러 처리 필요할 듯
             return HappinessDetailViewModel(
                 id: nil,
-                isCanDelete: self.isCanDelete,
+                isCurrentHangdam: self.isCurrentHangdam,
                 content: config.detailContent,
                 detailViewOperator: self.detailViewOperator
             )
@@ -104,13 +104,13 @@ final class HappinessListViewModel: ObservableObject {
             self.statusContent = statusContentMapper.map(from: initialData.hangdam)
             self.listContent = listContentMapper.map(from: initialData.hangdam)
             self.listConfigs = listConfigMapper.map(from: initialData.happiness)
-            self.isCanDelete = (initialData.hangdam.endDate == nil ? false : true)
+            self.isCurrentHangdam = (initialData.hangdam.endDate == nil ? true : false)
             self.isDataError = false
         } onFailure: { _ in
             self.statusContent = StatusContent(level: 0, name: "", levelDescription: "", dateDescription: "")
             self.listContent = HappinessListContent(title: "", emptyComment: "")
             self.listConfigs = []
-            self.isCanDelete = false
+            self.isCurrentHangdam = true
             self.isDataError = true
         }
     }

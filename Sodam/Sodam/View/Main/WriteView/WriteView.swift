@@ -134,6 +134,11 @@ class WriteView: UIView {
         super.init(coder: coder)
         setupUI()
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateTextViewAttributes() // 뷰가 레이아웃을 설정한 후 스타일 적용
+    }
 }
 
 // MARK: - UI 레이아웃 메서드
@@ -270,7 +275,7 @@ extension WriteView {
 // MARK: - 텍스트뷰 메서드
 extension WriteView {
     // placeholder 숨김처리 메서드
-    private func updatePlaceholderVisibility() {
+    func updatePlaceholderVisibility() {
         placeholderLabel.isHidden = !textView.text.isEmpty
     }
 
@@ -307,8 +312,6 @@ extension WriteView {
     // 텍스트뷰 내용 변경 메서드
     func setTextViewText(_ text: String) {
         textView.text = text
-        updatePlaceholderVisibility() // 텍스트 변경 시 Placeholder 업데이트
-        updateTextViewAttributes() // 텍스트 변경 시 스타일 적용
     }
     
     // 텍스트뷰 입력 활성화 해제 메서드 (키보드 내리기 위함) - 작성 완료 버튼 액션 함수에서 호출

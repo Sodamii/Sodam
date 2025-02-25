@@ -63,6 +63,7 @@ struct HappinessDetailView: View {
                         Image(systemName: "pencil")
                             .bold()
                             .foregroundStyle(Color.textAccent)
+                            .hidden()   // 행복 수정 기능 구현까지 버튼 숨김
                     }
                 } else {
                     Button {

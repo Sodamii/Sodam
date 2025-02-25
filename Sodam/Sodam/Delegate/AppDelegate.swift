@@ -11,6 +11,9 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        /// UserDefaults에 저장된 설정 폰트 불러와서 app font에 적용
+        CustomFontManager.getFont()
 
         return true
     }

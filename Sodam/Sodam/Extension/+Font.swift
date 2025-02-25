@@ -8,37 +8,9 @@
 import SwiftUI
 
 extension Font {
-    static let mapoGoldenPier: (CGFloat) -> Font = { size in
-        return .custom(CustomFont.mapoGoldenPier.rawValue, size: size)
-    }
-
-    static let sejongGeulggot: (CGFloat) -> Font = { size in
-        return .custom(CustomFont.sejongGeulggot.rawValue, size: size)
-    }
-
-    static func gyeonggiBatang(type: FontType, size: CGFloat) -> Font {
-        let fontName = "\(CustomFont.gyeonggiBatang)\(type.rawValue)" // rOTF, bOTF 중 사용가능
-        print(fontName)
-        return .custom(fontName, size: size)
-    }
-
-    static func maruburiot(type: FontType, size: CGFloat) -> Font {
-        let fontName = "\(CustomFont.maruBuriot.rawValue)-\(type.rawValue)" // bold, semiBold, regular 중 사용가능
-        return .custom(fontName, size: size)
-    }
-
-    static func gowunBatang(type: FontType, size: CGFloat) -> Font {
-        let fontName = "\(CustomFont.gowunBatang.rawValue)-\(type.rawValue)" // bold, regular 중 사용가능
-        return .custom(fontName, size: size)
-    }
-
-    static func nanumNeo(type: FontType, size: CGFloat) -> Font {
-        let fontName = "\(CustomFont.nanumSquareNeo.rawValue)-\(type.rawValue)" // neoBold, neoLight, neoRegular 중 사용가능
-        return .custom(fontName, size: size)
-    }
-
-    static func jGaegu(type: FontType, size: CGFloat) -> Font {
-        let fontName = "\(CustomFont.jGaegujaengyi.rawValue)-\(type.rawValue)" // bold, jGaeguM, jGaeguL 중 사용가능
-        return .custom(fontName, size: size)
+    // 개별적으로 커스텀 폰트를 적용하고 싶을 때 사용
+    static func customFont(font: CustomFont, size: CustomFontSize) -> Font {
+        let fontName = font.sourceName
+        return .custom(fontName, size: size.rawValue)
     }
 }

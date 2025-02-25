@@ -25,7 +25,7 @@ final class ToastManager {
         let label = UILabel()
         label.textColor = UIColor.white
         label.textAlignment = .center
-        label.font = .mapoGoldenPier(16)
+        label.font = .appFont(size: .body2)
         label.text = message // 표시할 메세지 설정
         label.alpha = 0.0 // 초기 투명도 (완전 투명)
         label.layer.cornerRadius = 10

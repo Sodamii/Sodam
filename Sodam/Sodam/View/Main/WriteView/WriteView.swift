@@ -19,7 +19,7 @@ class WriteView: UIView {
     private let dateLabel: UILabel = {
         let label: UILabel = UILabel()
         label.text = Date().formatForHappiness
-        label.font = .mapoGoldenPier(20)
+        label.font = .appFont(size: .subtitle)
         label.textColor = .black
         label.textAlignment = .center
         return label
@@ -37,7 +37,7 @@ class WriteView: UIView {
     private let placeholderLabel: UILabel = {
         let label = UILabel()
         label.text = "행복을 작성해주세요"
-        label.font = .sejongGeulggot(16)
+        label.font = .appFont(size: .body2)
         label.textColor = .lightGray
         return label
     }()
@@ -109,7 +109,19 @@ class WriteView: UIView {
     }()
 
     // 버튼을 담을 컨테이너 뷰
-    private let containerView: UIView = UIView()
+    private let buttonContainerView: UIView = UIView()
+    
+    // 현재 글자 수 표기 레이블
+    private let characterCountLabel: UILabel = {
+        let label: UILabel = UILabel()
+        label.textColor = .darkGray
+        label.font = .appFont(size: .caption)
+        label.text = "0 / 500"
+        return label
+    }()
+    
+    // 텍스트뷰와 글자수 레이블을 담을 컨테이너 뷰
+    private let textContainerView: UIView = UIView()
 
     // MARK: - 초기화
 
@@ -122,6 +134,11 @@ class WriteView: UIView {
         super.init(coder: coder)
         setupUI()
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateTextViewAttributes() // 뷰가 레이아웃을 설정한 후 스타일 적용
+    }
 }
 
 // MARK: - UI 레이아웃 메서드
@@ -130,10 +147,10 @@ extension WriteView {
     private func setupUI() {
         backgroundColor = .viewBackground
 
-        containerView.addSubViews([cameraButton, imageButton, submitButton])
-
-        self.addSubViews([dateLabel, textView, placeholderLabel, collectionView, dismisslButton, containerView, topBar])
-
+        buttonContainerView.addSubViews([cameraButton, imageButton, submitButton])
+        textContainerView.addSubViews([textView, characterCountLabel])
+        self.addSubViews([dateLabel, textContainerView, placeholderLabel, collectionView, dismisslButton, buttonContainerView, topBar])
+        
         // 바 제약 조건 설정
         topBar.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(20)
@@ -154,7 +171,7 @@ extension WriteView {
             make.trailing.equalTo(safeAreaLayoutGuide.snp.trailing).offset(-20)
         }
 
-        containerView.snp.makeConstraints { make in
+        buttonContainerView.snp.makeConstraints { make in
             make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
             make.height.equalTo(safeAreaLayoutGuide.snp.height).multipliedBy(0.05)
             containerBottomConstraint = make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(20).constraint
@@ -163,13 +180,24 @@ extension WriteView {
         collectionView.snp.makeConstraints { make in
             make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
             make.height.equalTo(safeAreaLayoutGuide.snp.width).multipliedBy(0.25)
-            make.bottom.equalTo(containerView.snp.top)
+            make.bottom.equalTo(buttonContainerView.snp.top)
         }
 
-        textView.snp.makeConstraints { make in
+        textContainerView.snp.makeConstraints { make in
             make.top.equalTo(dateLabel.snp.bottom).offset(20)
             make.bottom.equalTo(collectionView.snp.top)
             make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
+        }
+        
+        characterCountLabel.snp.makeConstraints { make in
+            make.height.equalTo(20)
+            make.trailing.equalToSuperview().offset(-8)
+            make.bottom.equalToSuperview().offset(-12)
+        }
+        
+        textView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(characterCountLabel.snp.top)
         }
 
         placeholderLabel.snp.makeConstraints { make in
@@ -177,7 +205,7 @@ extension WriteView {
         }
 
         cameraButton.snp.makeConstraints { make in
-            make.bottom.equalTo(containerView.snp.bottom)
+            make.bottom.equalTo(buttonContainerView.snp.bottom)
             make.width.height.equalTo(36)
             make.leading.equalTo(textView.snp.leading)
         }
@@ -221,19 +249,19 @@ extension WriteView {
                 make.height.equalTo(0)
             }
 
-            textView.snp.remakeConstraints { make in
+            textContainerView.snp.remakeConstraints { make in
                 make.top.equalTo(dateLabel.snp.bottom).offset(20)
                 make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
-                make.bottom.equalTo(containerView.snp.top)
+                make.bottom.equalTo(buttonContainerView.snp.top)
             }
         } else {
             collectionView.snp.remakeConstraints { make in
                 make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
                 make.height.equalTo(safeAreaLayoutGuide.snp.width).multipliedBy(0.25)
-                make.bottom.equalTo(containerView.snp.top)
+                make.bottom.equalTo(buttonContainerView.snp.top)
             }
 
-            textView.snp.remakeConstraints { make in
+            textContainerView.snp.remakeConstraints { make in
                 make.top.equalTo(dateLabel.snp.bottom).offset(20)
                 make.bottom.equalTo(collectionView.snp.top)
                 make.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
@@ -247,13 +275,13 @@ extension WriteView {
 // MARK: - 텍스트뷰 메서드
 extension WriteView {
     // placeholder 숨김처리 메서드
-    private func updatePlaceholderVisibility() {
+    func updatePlaceholderVisibility() {
         placeholderLabel.isHidden = !textView.text.isEmpty
     }
 
     // 텍스트뷰 줄 간격 설정 메서드 추가
     private func updateTextViewAttributes() {
-        let font = UIFont.sejongGeulggot(16)
+        let font = UIFont.appFont(size: .body2)
         let lineHeight = font.lineHeight // 폰트는 기본 줄 높이
         let swiftUILineSpacing: CGFloat = 10 // SwiftUI에서 사용한 lineSpacing 값
 
@@ -272,7 +300,7 @@ extension WriteView {
     }
 
     // 텍스트뷰 delegate 설정 메서드
-    func setTextViewDeleaget(delegate: UITextViewDelegate) {
+    func setTextViewDelegate(delegate: UITextViewDelegate) {
         textView.delegate = delegate
     }
 
@@ -284,13 +312,16 @@ extension WriteView {
     // 텍스트뷰 내용 변경 메서드
     func setTextViewText(_ text: String) {
         textView.text = text
-        updatePlaceholderVisibility() // 텍스트 변경 시 Placeholder 업데이트
-        updateTextViewAttributes() // 텍스트 변경 시 스타일 적용
     }
     
     // 텍스트뷰 입력 활성화 해제 메서드 (키보드 내리기 위함) - 작성 완료 버튼 액션 함수에서 호출
     func dismissKeyboard() {
         textView.resignFirstResponder()
+    }
+    
+    // 현재 글자수 표시 메서드
+    func setCharacterLimitLabel(_ limit: Int) {
+        characterCountLabel.text = "\(limit) / 500"
     }
 }
 

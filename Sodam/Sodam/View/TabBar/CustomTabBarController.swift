@@ -74,7 +74,8 @@ final class CustomTabBarController: UITabBarController {
         // 설정 탭
         let settingViewModel = SettingViewModel()
         let settingsViewController = SettingsViewController(settingViewModel: settingViewModel)
-        settingsViewController.tabBarItem = UITabBarItem(
+        let settingsNavController = UINavigationController(rootViewController: settingsViewController)
+        settingsNavController.tabBarItem = UITabBarItem(
             title: "설정",
             image: UIImage(named: "gear"),
             selectedImage: UIImage(named: "gear.fill"))
@@ -83,7 +84,7 @@ final class CustomTabBarController: UITabBarController {
             mainViewController,
             happinessListViewController,
             storageViewController,
-            settingsViewController
+            settingsNavController
         ]
     }
 

@@ -34,6 +34,8 @@ final class MainViewModel: ObservableObject {
     /// 새로운 이름을 현재 행담이에 저장
     func saveNewName(as name: String) {
         hangdamRepository.nameHangdam(id: hangdam.id, name: name)
+        UserDefaultsManager.shared.saveHangdamName(name: name)
+        LocalNotificationManager.shared.setUserNotification()
         reloadHangdam()
     }
 
@@ -55,20 +57,23 @@ final class MainViewModel: ObservableObject {
         self.hangdam = hangdamRepository.getCurrentHangdam()
     }
 
+    /// LocalNotificationManager 접근하여 알림 권한 체크 설정
+    func checkNotificationAuthorization() {
+        LocalNotificationManager.shared.checkAuthorization { [weak self] _ in
+            guard self != nil else { return }
+        }
+    }
+
     // MARK: - TodayWriteUserDefaults(테스트 하는 동안 주석처리)
 
     /// 오늘 작성했는지 확인하는 메서드
     func hasAlreadyWrittenToday() -> Bool {
-        let lastWrittenDate = UserDefaults.standard.object(forKey: "lastWrittenDate") as? Date ?? Date.distantPast
-        let calendar = Calendar.current
-        return calendar.isDateInToday(lastWrittenDate) // UserDefaults에서 읽어옴
+        UserDefaultsManager.shared.hasAlreadyWrittenToday()
     }
 
     /// 오늘 작성했다고 UserDefaults에 lastWrittenDate라는 키로 저장
     func markAsWrittenToday() {
-        let today = Calendar.current.startOfDay(for: Date())  // 시간을 00:00:00으로 초기화
-        UserDefaults.standard.set(today, forKey: "lastWrittenDate") // UserDefaults에 저장
-        print("오늘 작성 기록 저장됨: \(today)")
+        UserDefaultsManager.shared.markAsWrittenToday()
     }
 
     /// 행담이가 레벨업 할 때 메세지를 업데이트 함

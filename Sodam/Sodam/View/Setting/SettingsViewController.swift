@@ -267,7 +267,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 } else {
                     sender.setOn(false, animated: true)
                     self.settingViewModel.saveAppToggleState(false)
-                    self.alertManager.showNotificationPermissionAlert()
+                    self.alertManager.showPermissionSettingAlert(alertCase: .notificationPermission)
                 }
                 self.updateToggleState()
             }

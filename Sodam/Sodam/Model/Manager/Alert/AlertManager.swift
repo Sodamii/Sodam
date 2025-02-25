@@ -22,11 +22,11 @@ final class AlertManager {
     ///   - title: 알럿의 제목
     ///   - message: 알럿의 메세지
     ///   - actions: 알럿에 추가할 액션들
-    func showAlert(alertMessage: AlertMessage, actions: [UIAlertAction] = []) {
+    func showAlert(alertCase: AlertCase, actions: [UIAlertAction] = []) {
         // 알럿 컨트롤러 (제목, 메세지, 스타일 설정)
         let alertController = UIAlertController(
-            title: alertMessage.title,
-            message: alertMessage.message,
+            title: alertCase.title,
+            message: alertCase.message,
             preferredStyle: .alert
         )
         // 전달된 액션이 없으면 기본 "확인" 버튼을 추가함
@@ -41,14 +41,14 @@ final class AlertManager {
         viewController?.present(alertController, animated: true)
     }
 
-    // MARK: - mainViewController 알럿
+    // MARK: - MainViewController 알럿
 
     /// 이름 입력 알럿 표시
     /// - Parameter completion: 사용자가 입력한 이름을 반환하는 클로저
     func showNameInputAlert(completion: @escaping (String?) -> Void) {
         let alertController = UIAlertController(
-            title: "이름 지어주기",
-            message: "한 번 정한 이름은 바꿀 수 없으니 \n 신중하게 지어주세요!",
+            title: AlertCase.nameHangdam.title,
+            message: AlertCase.nameHangdam.message,
             preferredStyle: .alert
         )
 
@@ -109,24 +109,23 @@ final class AlertManager {
         let okAction = UIAlertAction(title: "확인", style: .default) { _ in
             dismissHandler()
         }
-        showAlert(alertMessage: .writeCompleted, actions: [okAction])
+        showAlert(alertCase: .writeCompleted, actions: [okAction])
     }
+    
+    // MARK: - WriteViewController, SettingViewController 알럿
 
-    /// 설정 이동 알럿 (카메라 / 사진 라이브러리)
-    /// - Parameter type: 카메라 또는 이미지 접근 권한에 대한 설정 이동 여부
-    func showGoToSettingsAlert(for type: ButtonTapType) {
-        let alertMessage: AlertMessage = (type == .camera) ? .cameraPermission : .imagePermission
-
-        let settingsAction = UIAlertAction(title: "설정으로 이동하기", style: .default) { _ in
+    /// 설정으로 이동 알럿 (카메라 / 사진 라이브러리 / 알림 설정)
+    /// 사용 권한이 없는 상태에서 사용자가 기능 사용을 시도할 경우 설정으로 이동을 유도하는 알럿 호출
+    func showPermissionSettingAlert(alertCase: AlertCase) {
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        
+        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { _ in
             guard let settingsURL = URL(string: UIApplication.openSettingsURLString),
-                  UIApplication.shared.canOpenURL(settingsURL) else {
-                return
-            }
+                  UIApplication.shared.canOpenURL(settingsURL) else { return}
             UIApplication.shared.open(settingsURL)
         }
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
-
-        showAlert(alertMessage: alertMessage, actions: [cancelAction, settingsAction])
+        
+        showAlert(alertCase: alertCase, actions: [cancelAction, settingsAction])
     }
 
     // MARK: - 실시간 입력 감지
@@ -154,29 +153,5 @@ final class AlertManager {
     private static func containsForbiddenWord(_ text: String) -> Bool {
         // contains로 금지어들 중에 포함되면 true를 반환 시킴
         return ForbiddenWords.list.contains { text.contains($0) }
-    }
-    
-    // MARK: - SettingViewController Alert
-    // 시스템 설정 거부 상태시 토글 on 할때 시스템 설정으로 이동을 요청 팝업
-    func showNotificationPermissionAlert() {
-        let alertController = UIAlertController(
-            title: "알림 권한 필요",
-            message: "앱의 알림을 받으려면 설정에서 알림을 허용해주세요.",
-            preferredStyle: .alert
-        )
-        
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-
-        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { _ in
-            if let url = URL(string: UIApplication.openSettingsURLString),
-               UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url, options: [:])
-            }
-        }
-        
-        alertController.addAction(cancelAction)
-        alertController.addAction(settingsAction)
-        
-        viewController?.present(alertController, animated: true)
     }
 }

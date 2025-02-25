@@ -65,8 +65,8 @@ struct HappinessDetailView: View {
         }
         
         .alert(
-            "정말 삭제하시겠습니까?",
-            isPresented: $isAlertPresented,
+            AlertCase.deleteHappiness.title,
+            isPresented: $deleteAlertPresented,
             actions: {
                 Button("취소", role: .cancel) { }
                 Button("삭제", role: .destructive) {
@@ -75,7 +75,7 @@ struct HappinessDetailView: View {
                 }
             },
             message: {
-                Text("삭제한 행복은 되돌릴 수 없습니다.")
+                Text(AlertCase.deleteHappiness.message)
             }
         )
     }

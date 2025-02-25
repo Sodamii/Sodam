@@ -25,10 +25,22 @@ struct HangdamStatusView: View {
                 .clipShape(.circle)
 
             VStack(alignment: .leading, spacing: 10) {
-                Text(content.name)
-                    .appFont(size: .title2)
-                    .minimumScaleFactor(0.7)
-                    .lineLimit(1)
+                HStack(alignment: .center) {
+                    Text(content.name)
+                        .appFont(size: .title2)
+                        .minimumScaleFactor(0.7)
+                        .lineLimit(1)
+                    
+                    if isCurrentHangdam {   // 기록 탭에서만 행담이 이름 옆에 수정 버튼
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: "pencil")
+                                .font(.title3)
+                                .bold()
+                        }
+                    }
+                }
 
                 Text(content.levelDescription)
                     .appFont(size: .body1)

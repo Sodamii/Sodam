@@ -16,6 +16,6 @@ struct StatusContent {
     
     // 이름에서 "담이" 뺀 텍스트
     var nameText: String {
-        name.hasSuffix("담이") ? String(name.dropLast(2)) : name
+        name.hasSuffix("담이") ? String(name.dropLast(2)) : ""
     }
 }

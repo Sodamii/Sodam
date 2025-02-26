@@ -31,7 +31,7 @@ final class LocalNotificationManager: NSObject {
         switch status {
         // 권한 설정 한적이 없는 경우
         case .notDetermined:
-            print("권한 설정 한적이 없는 경우")
+            print("[푸시 알림 권한 상태] 설정 한 적 없음")
             requestAuthorization { [weak self] granted in
                 guard let self = self else {
                     return
@@ -42,13 +42,13 @@ final class LocalNotificationManager: NSObject {
             
         // 거부 인 경우
         case .denied:
-            print("거부인 경우")
+            print("[푸시 알림 권한 상태] 거부")
             showNotificationDeniedAlert()
             completion(false)
             
         // 허용 인 경우
         case .authorized:
-            print("허용인 경우")
+            print("[푸시 알림 권한 상태] 허용")
             updateNotificationPermissionStatus(true)
             completion(true)
             
@@ -80,13 +80,12 @@ final class LocalNotificationManager: NSObject {
     func updateNotificationPermissionStatus(_ isGranted: Bool) {
         // 이미 알림 권한이 설정된 경우, false 일때 return
         guard !UserDefaultsManager.shared.isNotificationSetupComplete() else {
-            print("!UserDefaultsManager.shared.isNotificationSetupComplete() \(!UserDefaultsManager.shared.isNotificationSetupComplete())")
             return
         }
 
         // 허용인 경우
         if isGranted {
-            print("알림이 허용되었습니다.\(isGranted)")
+            print("[푸시 알림 권한] 허용됨")
             // 허용한 경우 UserDefault에 앱 토글 true로 저장
             UserDefaultsManager.shared.saveAppToggleState(isGranted)
             UserDefaultsManager.shared.markNotificationSetupAsComplete()
@@ -101,7 +100,7 @@ final class LocalNotificationManager: NSObject {
             
             // 거부인 경우
         } else {
-            print("알림이 거부되었습니다.")
+            print("[푸시 알림 권한] 거부됨")
             showNotificationDeniedAlert()
         }
     }

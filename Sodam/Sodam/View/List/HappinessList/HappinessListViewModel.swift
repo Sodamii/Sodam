@@ -12,13 +12,14 @@ import Combine
 import UIKit
 
 final class HappinessListViewModel: ObservableObject {
-    @Published var statusContent: StatusContent
+    @Published var statusViewModel: HangdamStatusViewModel
     @Published var listContent: HappinessListContent
     @Published var listConfigs: [HappinessListConfig]
-    @Published var isCanDelete: Bool
+    @Published var isCurrentHangdam: Bool
     @Published var isDataError: Bool
     @Published var errorMessage: String?
 
+    let statusViewOperator: StatusViewOperator
     let detailViewOperator: DetailViewOperator
     let listViewReloader: ListViewReloading
     let cellThumbnailFetcher: CellThumbnailFetcher
@@ -30,11 +31,13 @@ final class HappinessListViewModel: ObservableObject {
     private var detailViewModelCache: [HappinessID: HappinessDetailViewModel] = [:] // 만들어진 뷰모델이 있을 때 재사용
 
     init(
+        statusViewOperator: StatusViewOperator,
         detailViewOperator: DetailViewOperator,
         listViewReloader: ListViewReloading,
         cellThumbnailFetcher: CellThumbnailFetcher,
         mapperFactory: DataMapperFactory
     ) {
+        self.statusViewOperator = statusViewOperator
         self.detailViewOperator = detailViewOperator
         self.listViewReloader = listViewReloader
         self.cellThumbnailFetcher = cellThumbnailFetcher
@@ -59,16 +62,16 @@ final class HappinessListViewModel: ObservableObject {
         let result = listViewReloader.reloadData()
         switch result {
         case.success(let initialData):
-            self.statusContent = statusContentMapper.map(from: initialData.hangdam)
+            self.statusViewModel = HangdamStatusViewModel(statusContent: statusContentMapper.map(from: initialData.hangdam), statusViewOperator: statusViewOperator)
             self.listContent = listContentMapper.map(from: initialData.hangdam)
             self.listConfigs = listConfigMapper.map(from: initialData.happiness)
-            self.isCanDelete = (initialData.hangdam.endDate == nil ? false : true)
+            self.isCurrentHangdam = (initialData.hangdam.endDate == nil ? true : false)
             self.isDataError = false
         case.failure(let error):
-            self.statusContent = StatusContent(level: 0, name: "", levelDescription: "", dateDescription: "")
+            self.statusViewModel = HangdamStatusViewModel(statusContent: StatusContent(id: "", level: 0, name: "", levelDescription: "", dateDescription: ""), statusViewOperator: statusViewOperator)
             self.listContent = HappinessListContent(title: "", emptyComment: "")
             self.listConfigs = []
-            self.isCanDelete = false
+            self.isCurrentHangdam = true
             self.isDataError = true
             self.errorMessage = error.localizedDescription
         }
@@ -82,7 +85,7 @@ final class HappinessListViewModel: ObservableObject {
             } else {
                 let detailViewModel = HappinessDetailViewModel(
                     id: id,
-                    isCanDelete: self.isCanDelete,
+                    isCurrentHangdam: self.isCurrentHangdam,
                     content: config.detailContent,
                     detailViewOperator: self.detailViewOperator
                 )
@@ -92,7 +95,7 @@ final class HappinessListViewModel: ObservableObject {
         } else { // 에러 처리 필요할 듯
             return HappinessDetailViewModel(
                 id: nil,
-                isCanDelete: self.isCanDelete,
+                isCurrentHangdam: self.isCurrentHangdam,
                 content: config.detailContent,
                 detailViewOperator: self.detailViewOperator
             )
@@ -101,16 +104,16 @@ final class HappinessListViewModel: ObservableObject {
 
     func reloadData() {
         listViewReloader.reloadData().fold { initialData in
-            self.statusContent = statusContentMapper.map(from: initialData.hangdam)
+            self.statusViewModel = HangdamStatusViewModel(statusContent: statusContentMapper.map(from: initialData.hangdam), statusViewOperator: statusViewOperator)
             self.listContent = listContentMapper.map(from: initialData.hangdam)
             self.listConfigs = listConfigMapper.map(from: initialData.happiness)
-            self.isCanDelete = (initialData.hangdam.endDate == nil ? false : true)
+            self.isCurrentHangdam = (initialData.hangdam.endDate == nil ? true : false)
             self.isDataError = false
         } onFailure: { _ in
-            self.statusContent = StatusContent(level: 0, name: "", levelDescription: "", dateDescription: "")
+            self.statusViewModel = HangdamStatusViewModel(statusContent: StatusContent(id: "", level: 0, name: "", levelDescription: "", dateDescription: ""), statusViewOperator: statusViewOperator)
             self.listContent = HappinessListContent(title: "", emptyComment: "")
             self.listConfigs = []
-            self.isCanDelete = false
+            self.isCurrentHangdam = true
             self.isDataError = true
         }
     }

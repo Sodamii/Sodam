@@ -151,7 +151,7 @@ extension WriteViewController {
     // 카메라 버튼 탭할 때 호출되는 메서드
     @objc private func openCamera() {
         guard writeViewModel.imageCount < 1 else {
-            alertManager.showAlert(alertMessage: .imageLimit)
+            alertManager.showAlert(alertCase: .imageLimit)
             return
         }
 
@@ -160,7 +160,7 @@ extension WriteViewController {
             if isGranted {
                 cameraPickerService.show(self)
             } else {
-                self.alertManager.showGoToSettingsAlert(for: .camera)
+                self.alertManager.showPermissionSettingAlert(alertCase: .cameraPermission)
             }
         }
     }
@@ -169,7 +169,7 @@ extension WriteViewController {
     @objc private func addImage() {
         // 이미지 첨부 상한에 도달하면 알림 보내기(현재는 1개)
         guard writeViewModel.imageCount < 1 else {
-            alertManager.showAlert(alertMessage: .imageLimit)
+            alertManager.showAlert(alertCase: .imageLimit)
             return
         }
 
@@ -179,7 +179,7 @@ extension WriteViewController {
                 photoLibraryPickerService.show(self)
             } else {
                 // 권한이 거부된 경우 설정 화면으로 이동하는 알림 표시
-                self.alertManager.showGoToSettingsAlert(for: .image)
+                self.alertManager.showPermissionSettingAlert(alertCase: .imagePermission)
             }
         }
     }
@@ -187,7 +187,7 @@ extension WriteViewController {
     // 작성완료 버튼 탭할 때 호출되는 메서드
     @objc private func submitText() {
         guard !writeView.getTextViewText().trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            alertManager.showAlert(alertMessage: .emptyText)
+            alertManager.showAlert(alertCase: .emptyText)
             return
         }
 
@@ -312,7 +312,7 @@ extension WriteViewController: UITextViewDelegate {
         
         // 글자 수 제한 초과하면 Alert 띄우기
         if currentCount > maxCharacterCount {
-            alertManager.showAlert(alertMessage: .textLimit)
+            alertManager.showAlert(alertCase: .textLimit)
             writeView.setTextViewText(limitedText) // 초과된 부분 삭제
         }
         

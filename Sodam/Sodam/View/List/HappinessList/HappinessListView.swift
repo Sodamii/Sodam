@@ -9,21 +9,20 @@ import SwiftUI
 import Combine
 
 struct HappinessListView: View {
-    @ObservedObject private var viewModel: HappinessListViewModel
+    @ObservedObject var viewModel: HappinessListViewModel
     @Environment(\.dismiss) private var dismiss
 
-    private let isBackButtonHidden: Bool // 기록 탭으로 진입하면 뒤로가기 숨기기
     private let cornerRadius: CGFloat = 15
 
-    init(viewModel: HappinessListViewModel, isBackButtonHidden: Bool) {
-        self.viewModel = viewModel
-        self.isBackButtonHidden = isBackButtonHidden
-    }
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
                 VStack(alignment: .center) {
-                    HangdamStatusView(size: geometry.size, content: $viewModel.statusContent)
+                    HangdamStatusView(
+                        size: geometry.size,
+                        viewModel: viewModel.statusViewModel,
+                        isCurrentHangdam: $viewModel.isCurrentHangdam
+                    )
                         .clipShape(.rect(cornerRadius: cornerRadius))
                     Text(viewModel.listContent.title)
                         .frame(maxWidth: .infinity, maxHeight: 35, alignment: .leading)
@@ -80,6 +79,9 @@ struct HappinessListView: View {
             .padding([.top, .horizontal])
             .background(Color.viewBackground)
             .onAppear {
+                viewModel.reloadData()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: Notification.hangdamRenamed)) { _ in
                 viewModel.reloadData()
             }
         }

@@ -43,6 +43,7 @@ final class HangdamStorageViewModel: ObservableObject {
             let mapperFactory: DataMapperFactory = DataMapperFactory()
 
             return HappinessListViewModel(
+                statusViewOperator: StatusViewOperator(hangdamRepository: hangdamRepository),
                 detailViewOperator: detailViewOperator,
                 listViewReloader: listViewReloader,
                 cellThumbnailFetcher: cellThumbnailFetcher,
@@ -79,6 +80,7 @@ final class HangdamStorageViewModel: ObservableObject {
             let mapperFactory: DataMapperFactory = DataMapperFactory()
 
             return HappinessListViewModel(
+                statusViewOperator: StatusViewOperator(hangdamRepository: hangdamRepository),
                 detailViewOperator: detailViewOperator,
                 listViewReloader: listViewReloader,
                 cellThumbnailFetcher: cellThumbnailFetcher,

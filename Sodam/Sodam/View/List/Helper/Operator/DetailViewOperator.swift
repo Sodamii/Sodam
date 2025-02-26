@@ -1,5 +1,5 @@
 //
-//  DerailViewOperations.swift
+//  DetailViewOperator.swift
 //  Sodam
 //
 //  Created by 박진홍 on 2/14/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol  HappinessImageFetching {
+protocol HappinessImageFetching {
     func fetchImage(from path: String?) -> UIImage?
 }
 

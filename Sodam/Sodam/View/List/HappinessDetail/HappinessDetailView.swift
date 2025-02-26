@@ -10,7 +10,9 @@ import SwiftUI
 struct HappinessDetailView: View {
     
     @ObservedObject var viewModel: HappinessDetailViewModel
-    @State private var isAlertPresented: Bool = false
+    
+    @State private var deleteAlertPresented: Bool = false
+    
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -52,21 +54,31 @@ struct HappinessDetailView: View {
                     .appFont(size: .subtitle)
                     .foregroundStyle(Color.textAccent)
             }
-            if viewModel.isCanDelete {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button( action: {
-                        isAlertPresented = true
-                    }) {
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                if viewModel.isCurrentHangdam {
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "pencil")
+                            .bold()
+                            .foregroundStyle(Color.textAccent)
+                            .hidden()   // 행복 수정 기능 구현까지 버튼 숨김
+                    }
+                } else {
+                    Button {
+                        deleteAlertPresented = true
+                    } label: {
                         Image(systemName: "trash")
-                            .foregroundStyle(.gray)
+                            .foregroundStyle(Color.textAccent)
                     }
                 }
             }
         }
         
         .alert(
-            "정말 삭제하시겠습니까?",
-            isPresented: $isAlertPresented,
+            AlertCase.deleteHappiness.title,
+            isPresented: $deleteAlertPresented,
             actions: {
                 Button("취소", role: .cancel) { }
                 Button("삭제", role: .destructive) {
@@ -75,7 +87,7 @@ struct HappinessDetailView: View {
                 }
             },
             message: {
-                Text("삭제한 행복은 되돌릴 수 없습니다.")
+                Text(AlertCase.deleteHappiness.message)
             }
         )
     }

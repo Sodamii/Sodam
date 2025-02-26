@@ -183,7 +183,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                                version: "")
 
                 let savedTime = settingViewModel.getNotificationTime()
-                    cell.timePicker.date = savedTime
+                cell.timePicker.date = savedTime
             }
             
         case .fontSetting:
@@ -267,7 +267,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 } else {
                     sender.setOn(false, animated: true)
                     self.settingViewModel.saveAppToggleState(false)
-                    self.alertManager.showNotificationPermissionAlert()
+                    self.alertManager.showPermissionSettingAlert(alertCase: .notificationPermission)
                 }
                 self.updateToggleState()
             }
@@ -279,7 +279,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         settingViewModel.saveAppToggleState(isEnabled)
         
         if isEnabled {
-                settingViewModel.setUserNotification()
+            settingViewModel.setUserNotification()
         } else {
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         }
@@ -287,7 +287,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     
     // 사용자가 DatePicker를 통해 알림 시간을 선택했을 때 호출되는 액션
     @objc func userScheduleNotification(_ sender: UIDatePicker) {
-        //선택한 시간을 뷰모델에 저장하고, 알림 스위치가 켜진 경우 알림 예약을 업데이트
+        // 선택한 시간을 뷰모델에 저장하고, 알림 스위치가 켜진 경우 알림 예약을 업데이트
         settingViewModel.saveNotificationTime(sender.date)
         
         if settingViewModel.isToggleOn {

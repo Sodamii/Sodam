@@ -18,7 +18,7 @@ final class StatusContentMapper: DataMapping {
             if let name = input.name {
                 return name
             } else {
-                return "이름을 지어주세요."
+                return "이름을 지어주세요"
             }
         }()
 

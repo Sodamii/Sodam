@@ -23,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let onboardingViewController = OnBoardingViewController()
             onboardingViewController.modalPresentationStyle = .fullScreen
             onboardingViewController.onComplete = { [weak self] in
-                print("완료 콜백 호출됨")
+                print("[Onboarding] 완료 콜백 호출됨")
                 self?.navigateToRootViewController()
             }
             window.rootViewController = onboardingViewController

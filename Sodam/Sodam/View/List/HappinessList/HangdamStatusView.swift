@@ -48,6 +48,7 @@ struct HangdamStatusView: View {
 
                 Text(viewModel.statusContent.levelDescription)
                     .appFont(size: .body1)
+                    .minimumScaleFactor(0.7)
 
                 Text(viewModel.statusContent.dateDescription)
                     .appFont(size: .body2)

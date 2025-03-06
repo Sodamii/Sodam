@@ -10,13 +10,16 @@ import UIKit
 final class SettingsViewController: UIViewController {
     private let settingViewModel: SettingViewModel
     private let settingView = SettingView()
+    private let biometricAuthManager: BiometricAuthManager
+    
     // 필요시 사용을 위해 lazy 사용
     private lazy var alertManager: AlertManager = AlertManager(viewController: self)
 
     // MARK: - Initializer
 
-    init(settingViewModel: SettingViewModel) {
+    init(settingViewModel: SettingViewModel, biometricAuthManager: BiometricAuthManager) {
         self.settingViewModel = settingViewModel
+        self.biometricAuthManager = biometricAuthManager
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -135,6 +138,8 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
             return settingViewModel.isToggleOn ? 2 : 1
         case .fontSetting:
             return 1
+        case .lockSetting:
+            return 1
         case .develop:
             return 3
         }
@@ -196,6 +201,18 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                            switchAction: nil,
                            timeAction: nil,
                            version: "")
+            
+        case .lockSetting:
+            cell.arrowImage.isHidden = true
+            cell.timePicker.isHidden = true
+            cell.switchButton.isHidden = false
+            cell.versionLabel.isHidden = true
+            
+            cell.configure(title: Setting.SetCell.biometricAuth.rawValue,
+                           switchAction: #selector(didToggleBiometricAuthSwitch(_:)),
+                           timeAction: nil,
+                           version: "")
+            cell.switchButton.isOn = settingViewModel.getBiometricState() // 저장된 토글 상태 반영
 
         case .develop:
             cell.timePicker.isHidden = true
@@ -274,6 +291,60 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
         }
     }
     
+    // 앱잠금 스위치 상태가 변경 되었을 때 호출되는 액션
+    @objc func didToggleBiometricAuthSwitch(_ sender: UISwitch) {
+        // 스위치가 꺼졌을 경우
+        guard sender.isOn == true else {
+            print("[SettingViewController] 앱 잠금 토글 스위치 꺼짐")
+            settingViewModel.saveBiometricState(sender.isOn)
+            return
+        }
+        
+        print("[SettingViewController] 앱 잠금 토글 스위치 켜짐")
+        biometricAuthManager.authenticateUser(reason: "잠금을 해제하려면 인증이 필요합니다.") { [weak self] success, errorCode in
+            guard let self = self else { return }
+            if success {
+                // 생체 인증 허용 & 인증 성공
+                print("[SettingViewController] 생체 인증 권한 허용 및 인증 성공")
+                self.settingViewModel.saveBiometricState(sender.isOn)
+                self.alertManager.showAlert(alertMessage: .biometryAvailable) // 앱 잠금 활성화 alert 띄우기
+            } else {
+                // 생체 인증 거부 or 인증 실패
+                // 알 수 없는 이유로 실패시 alert
+                guard let errorCode = errorCode else {
+                    print("[SettingViewController] 알 수 없는 에러로 앱 잠금 설정 실패")
+                    self.alertManager.showAlert(alertMessage: .unknownBiometryError)
+                    return
+                }
+                
+                // 실패 이유에 따른 분기 처리
+                switch errorCode {
+                case .biometryNotEnrolled, .biometryNotAvailable:
+                    print("[SettingViewConroller] 생체 인증 실패 - 생체 인증이 등록되어 있지 않거나 권한이 거부됨")
+                    self.alertManager.showBiometricPermissionAlert()
+                case .biometryLockout:
+                    print("[SettingViewConroller] 생체 인증 실패 - 여러번 실패하여 생체 인증 기능이 잠김")
+                    self.alertManager.showAlert(alertMessage: .biometryLockout)
+                case .authenticationFailed:
+                    print("[SettingViewConroller] 생체 인증 실패 - 권한은 허용 됐지만 인증에 실패함")
+                    self.alertManager.showAlert(alertMessage: .authenticationFailed)
+                case .userCancel:
+                    print("[SettingViewConroller] 생체 인증 실패 - 사용자가 인증을 취소함")
+                    self.alertManager.showAlert(alertMessage: .userCancel)
+                case .systemCancel:
+                    print("[SettingViewConroller] 생체 인증 실패 - 시스템에 의해 인증이 취소됨")
+                    self.alertManager.showAlert(alertMessage: .systemCancel)
+                default:
+                    print("[SettingViewConroller] 생체 인증 실패 - 기타 오류 발생")
+                    self.alertManager.showAlert(alertMessage: .unknownBiometryError)
+                }
+                
+                sender.setOn(false, animated: true) // 스위치 off
+                self.settingViewModel.saveBiometricState(sender.isOn)
+            }
+        }
+    }
+    
     private func updateNotificationState(isEnabled: Bool) {
         settingViewModel.isToggleOn = isEnabled
         settingViewModel.saveAppToggleState(isEnabled)
@@ -298,5 +369,5 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
 
 @available(iOS 17.0, *)
 #Preview {
-    SettingsViewController(settingViewModel: SettingViewModel())
+    SettingsViewController(settingViewModel: SettingViewModel(), biometricAuthManager: BiometricAuthManager())
 }

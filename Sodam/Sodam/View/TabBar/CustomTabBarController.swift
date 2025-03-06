@@ -29,6 +29,8 @@ final class CustomTabBarController: UITabBarController {
         let happinessRepository: HappinessRepository = HappinessRepository()
         let mainViewModel: MainViewModel = MainViewModel(repository: hangdamRepository)
         let storageViewModel: HangdamStorageViewModel = HangdamStorageViewModel(hangdamRepository: hangdamRepository)
+        
+        let biometricAuthManager: BiometricAuthManager = BiometricAuthManager()
 
         let detailViewOperator: DetailViewOperator = DetailViewOperator(happinessRepository: happinessRepository)
         let listViewReloader: ListViewReloading = CurrentListViewReloader(
@@ -73,7 +75,7 @@ final class CustomTabBarController: UITabBarController {
 
         // 설정 탭
         let settingViewModel = SettingViewModel()
-        let settingsViewController = SettingsViewController(settingViewModel: settingViewModel)
+        let settingsViewController = SettingsViewController(settingViewModel: settingViewModel, biometricAuthManager: biometricAuthManager)
         let settingsNavController = UINavigationController(rootViewController: settingsViewController)
         settingsNavController.tabBarItem = UITabBarItem(
             title: "설정",

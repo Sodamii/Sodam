@@ -11,6 +11,7 @@ import LocalAuthentication
 final class BiometricAuthManager {
 
     private var biometryTypeString: String = "Face ID 또는 Touch ID" // 기본값
+//    private let context = LAContext()
     
     /// 현재 기기가 Face ID인지, Touch ID인지 확인 후 저장
     func setupBiometryType() {
@@ -25,7 +26,7 @@ final class BiometricAuthManager {
             default:
                 biometryTypeString = "Face ID 또는 Touch ID"
             }
-            UserDefaultsManager.shared.saveBiometricsType(biometryTypeString)
+            UserDefaultsManager.shared.saveBiometricType(biometryTypeString)
         }
     }
     
@@ -38,13 +39,15 @@ final class BiometricAuthManager {
     /// 인증 실행 (생체 인증 + 암호 인증)
     func authenticateUser(reason: String, completion: @escaping (Bool, LAError.Code?) -> Void) {
         let context = LAContext()
+        context.localizedFallbackTitle = "" // 암호 인증 비활성화
         
-        context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason) { success, error in
+        context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, error in
             DispatchQueue.main.async {
                 if success {
-                    print("[BiometricAuthManager] 인증 성공")
+                    print("[BiometricAuthManager] 생체 인증 성공")
                     completion(true, nil)
                 } else {
+                    print("[BiometricAuthManager] 생체 인증 실패")
                     if let laError = error as? LAError {
                         switch laError.code {
                         case .biometryNotAvailable:
@@ -57,12 +60,8 @@ final class BiometricAuthManager {
                             print("[BiometricAuthManager] 생체 인증 시도 실패")
                         case .userCancel:
                             print("[BiometricAuthManager] 사용자가 인증 취소")
-                        case .userFallback:
-                            print("[BiometricAuthManager] 사용자가 암호 입력 선택")
                         case .systemCancel:
                             print("[BiometricAuthManager] 다른 앱이 활성화되어 인증이 취소됨")
-                        case .passcodeNotSet:
-                            print("[BiometricAuthManager] 기기에 암호(PIN)가 설정되지 않음")
                         default:
                             print("[BiometricAuthManager] 기타 오류 발생: \(laError.localizedDescription)")
                         }

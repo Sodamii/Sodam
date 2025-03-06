@@ -180,3 +180,26 @@ final class AlertManager {
         viewController?.present(alertController, animated: true)
     }
 }
+
+// MARK: - 생체 인증 Alert
+extension AlertManager {
+    /// 생체 인증 권한 알림
+    func showBiometricPermissionAlert() {
+       let setBiometricPermission = UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        showAlert(alertMessage: .biometryNotEnrolled, actions: [setBiometricPermission, cancelAction])
+    }
+    
+    /// 인증 실패 시 재시도 알림
+    func showRetryBiometricAlert(retryHandler: @escaping () -> Void) {
+        let retryAction = UIAlertAction(title: "다시 시도", style: .default) { _ in
+            retryHandler()
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        showAlert(alertMessage: .authenticationFailed, actions: [retryAction, cancelAction])
+    }
+}

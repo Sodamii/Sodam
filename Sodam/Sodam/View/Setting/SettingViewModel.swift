@@ -61,8 +61,8 @@ extension SettingViewModel {
     }
     
     // 앱 잠금 토글 상태 저장
-    func saveBiometricsState(_ isOn: Bool) {
-        userDefaultsManager.setUseBiometrics(isOn)
+    func saveBiometricState(_ isOn: Bool) {
+        userDefaultsManager.setUseBiometric(isOn)
     }
     
     // MARK: - Get Methods
@@ -83,8 +83,8 @@ extension SettingViewModel {
     }
     
     // 앱 잠금 토글 상태 가져오기
-    func getBiometricsState() -> Bool {
-        userDefaultsManager.getUseBiometrics()
+    func getBiometricState() -> Bool {
+        userDefaultsManager.getUseBiometric()
     }
 }
 

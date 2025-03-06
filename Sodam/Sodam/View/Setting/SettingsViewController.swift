@@ -212,7 +212,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                            switchAction: #selector(didToggleBiometricAuthSwitch(_:)),
                            timeAction: nil,
                            version: "")
-            cell.switchButton.isOn = settingViewModel.getBiometricsState() // 저장된 토글 상태 반영
+            cell.switchButton.isOn = settingViewModel.getBiometricState() // 저장된 토글 상태 반영
 
         case .develop:
             cell.timePicker.isHidden = true
@@ -293,54 +293,54 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     
     // 앱잠금 스위치 상태가 변경 되었을 때 호출되는 액션
     @objc func didToggleBiometricAuthSwitch(_ sender: UISwitch) {
-        //        settingViewModel.saveBiometricsState(sender.isOn)
         // 스위치가 꺼졌을 경우
         guard sender.isOn == true else {
             print("[SettingViewController] 앱 잠금 토글 스위치 꺼짐]")
-            settingViewModel.saveBiometricsState(sender.isOn)
+            settingViewModel.saveBiometricState(sender.isOn)
             return
         }
         
-        print("[SettingViewController] 앱 잠금 토글 스위치 켜짐]")
+        print("[SettingViewController] 앱 잠금 토글 스위치 켜짐")
         biometricAuthManager.authenticateUser(reason: "잠금을 해제하려면 인증이 필요합니다.") { success, errorCode in
             if success {
+                // 생체 인증 허용 & 인증 성공
                 print("[SettingViewController] 생체 인증 권한 허용 및 인증 성공")
-                self.settingViewModel.saveBiometricsState(sender.isOn)
-                alertManager.showAlert(alertMessage: <#T##AlertMessage#>) // 앱 잠금 활성화 alert 띄우기
+                self.settingViewModel.saveBiometricState(sender.isOn)
+                self.alertManager.showAlert(alertMessage: .biometryAvailable) // 앱 잠금 활성화 alert 띄우기
             } else {
+                // 생체 인증 거부 or 인증 실패
+                
+                // 알 수 없는 이유로 실패시 alert
                 guard let errorCode = errorCode else {
                     print("[SettingViewController] 알 수 없는 에러로 앱 잠금 설정 실패")
+                    self.alertManager.showAlert(alertMessage: .unknownBiometryError)
                     return
                 }
                 
+                // 실패 이유에 따른 분기 처리
                 switch errorCode {
-                case .biometryNotAvailable:
-                    alertManager.showAlert(title: "생체 인증 불가", message: "기기가 생체 인증을 지원하지 않습니다.")
-                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>)
-                case .biometryNotEnrolled:
-                    alertManager.showAlert(title: "생체 인증 미등록", message: "설정에서 Face ID 또는 Touch ID를 등록하세요.")
-                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>)
+                case .biometryNotEnrolled, .biometryNotAvailable:
+                    print("[SettingViewConroller] 생체 인증 실패 - 생체 인증이 등록되어 있지 않거나 권한이 거부됨")
+                    self.alertManager.showBiometricPermissionAlert()
                 case .biometryLockout:
-                    alertManager.showAlert(title: "잠김", message: "여러 번 실패하여 생체 인증이 잠겼습니다. 암호를 입력하세요.")
-                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>)
+                    print("[SettingViewConroller] 생체 인증 실패 - 여러번 실패하여 생체 인증 기능이 잠김")
+                    self.alertManager.showAlert(alertMessage: .biometryLockout)
                 case .authenticationFailed:
-                    alertManager.showAlert(title: "인증 실패", message: "다시 시도하세요.")
-                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>)
+                    print("[SettingViewConroller] 생체 인증 실패 - 권한은 허용 됐지만 인증에 실패함")
+                    self.alertManager.showAlert(alertMessage: .authenticationFailed)
                 case .userCancel:
-                    print("사용자가 인증을 취소함")
-                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>) // 취소 되었다는 alert
-                case .userFallback:
-                    print("사용자가 암호 입력을 선택함")
+                    print("[SettingViewConroller] 생체 인증 실패 - 사용자가 인증을 취소함")
+                    self.alertManager.showAlert(alertMessage: .userCancel)
                 case .systemCancel:
-                    print("시스템에 의해 인증이 취소됨")
-                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>) // 재시도 alert
-                case .passcodeNotSet:
-                    alertManager.showAlert(title: "암호 미설정", message: "설정에서 기기 암호를 설정해야 생체 인증을 사용할 수 있습니다.")
-                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>)
+                    print("[SettingViewConroller] 생체 인증 실패 - 시스템에 의해 인증이 취소됨")
+                    self.alertManager.showAlert(alertMessage: .systemCancel)
                 default:
-                    print("기타 오류 발생")
-                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>) // 재시도 alert
+                    print("[SettingViewConroller] 생체 인증 실패 - 기타 오류 발생")
+                    self.alertManager.showAlert(alertMessage: .unknownBiometryError)
                 }
+                
+                sender.setOn(false, animated: true) // 스위치 off
+                self.settingViewModel.saveBiometricState(sender.isOn)
             }
         }
     }

@@ -17,7 +17,17 @@ enum AlertMessage {
     case cameraPermission
     case imagePermission
     case textLimit
-
+    case biometryAvailable
+    case biometryNotAvailable
+    case biometryNotEnrolled
+    case authenticationFailed
+    case biometryLockout
+    case userCancel
+    case userFallback
+    case systemCancel
+    case passcodeNotSet
+    case unknownBiometryError
+    
     var title: String {
         switch self {
         case .emptyText:
@@ -34,6 +44,26 @@ enum AlertMessage {
             return "현재 사진 라이브러리 접근에 대한 권한이 없습니다."
         case .textLimit:
             return "글자 수 제한 초과"
+        case .biometryAvailable:
+            return "생체 인증 성공"
+        case .biometryNotAvailable:
+            return "생체 인증을 사용할 수 없음"
+        case .biometryNotEnrolled:
+            return "생체 인증이 설정되지 않음"
+        case .authenticationFailed:
+            return "생체 인증 실패"
+        case .biometryLockout:
+            return "생체 인증이 잠김"
+        case .userCancel:
+            return "인증이 취소되었습니다"
+        case .userFallback:
+            return "암호 입력 선택됨"
+        case .systemCancel:
+            return "시스템에 의해 인증이 취소됨"
+        case .passcodeNotSet:
+            return "기기에 암호가 설정되지 않음"
+        case .unknownBiometryError:
+            return "알 수 없는 오류"
         }
     }
 
@@ -51,6 +81,26 @@ enum AlertMessage {
             return "설정 > Sodam 탭에서 접근 권한을 활성화 해주세요."
         case .textLimit:
             return "최대 입력 글자는 500자 입니다."
+        case .biometryAvailable:
+            return "앱 잠금이 활성화 되었습니다."
+        case .biometryNotAvailable:
+            return "이 기기에서는 생체 인증을 사용할 수 없습니다."
+        case .biometryNotEnrolled:
+            return "생체 인증을 사용하려면 설정에서 권한을 허용해주세요."
+        case .authenticationFailed:
+            return "인증에 실패했습니다. 다시 시도해주세요."
+        case .biometryLockout:
+            return "생체 인증을 여러 번 실패하여 잠금 상태입니다. 기기 암호를 입력해주세요."
+        case .userCancel:
+            return "인증을 취소했습니다."
+        case .userFallback:
+            return "암호 입력을 선택했습니다. 잠금을 해제하려면 암호를 입력해주세요."
+        case .systemCancel:
+            return "다른 앱 사용 또는 시스템 이벤트로 인해 인증이 취소되었습니다."
+        case .passcodeNotSet:
+            return "생체 인증을 사용하려면 기기 암호를 설정해야 합니다."
+        case .unknownBiometryError:
+            return "알 수 없는 오류로 생체 인증에 실패했습니다."
         }
     }
 }

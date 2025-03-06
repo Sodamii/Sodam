@@ -135,6 +135,8 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
             return settingViewModel.isToggleOn ? 2 : 1
         case .fontSetting:
             return 1
+        case .lockSetting:
+            return 1
         case .develop:
             return 3
         }
@@ -196,6 +198,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                            switchAction: nil,
                            timeAction: nil,
                            version: "")
+            
         case .lockSetting:
             cell.arrowImage.isHidden = true
             cell.timePicker.isHidden = true
@@ -206,7 +209,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                            switchAction: #selector(didToggleBiometricAuthSwitch(_:)),
                            timeAction: nil,
                            version: "")
-            cell.switchButton.isOn = settingViewModel.getBiometrics() // 저장된 토글 상태 반영
+            cell.switchButton.isOn = settingViewModel.getBiometricsState() // 저장된 토글 상태 반영
 
         case .develop:
             cell.timePicker.isHidden = true
@@ -287,7 +290,7 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     
     // 앱잠금 스위치 상태가 변경 되었을 때 호출되는 액션
     @objc func didToggleBiometricAuthSwitch(_ sender: UISwitch) {
-        settingViewModel.saveBiometrics(sender.isOn)
+        settingViewModel.saveBiometricsState(sender.isOn)
     }
     
     private func updateNotificationState(isEnabled: Bool) {

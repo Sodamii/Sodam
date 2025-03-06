@@ -37,6 +37,10 @@ final class UserDefaultsManager {
         
         // MARK: - Name
         static let hangdamName = "hangdamName" // 이름
+        
+        // MARK: - 앱 잠금
+        static let useBiometricsKey = "useBiometrics"
+        static let biometricsType = "biometricsType"
     }
 }
 
@@ -159,5 +163,28 @@ extension UserDefaultsManager {
     // 이름 가져오기
     func getHangdamName() -> String {
         return userDefaults.string(forKey: Keys.hangdamName) ?? "행담이"
+    }
+}
+
+// MARK: - 앱 잠금
+extension UserDefaultsManager {
+    /// 앱 잠금 사용 여부 저장
+    func setUseBiometrics(_ isEnabled: Bool) {
+        UserDefaults.standard.set(isEnabled, forKey: Keys.useBiometricsKey)
+    }
+    
+    /// 앱 잠금 사용 여부 반환
+    func getUseBiometrics() -> Bool {
+        return UserDefaults.standard.bool(forKey: Keys.useBiometricsKey)
+    }
+    
+    /// 앱 잠금 방식 저장
+    func saveBiometricsType(_ biomerticsType: String) {
+        UserDefaults.standard.set(biomerticsType, forKey: Keys.biometricsType)
+    }
+    
+    // 앱 잠금 방식 반환
+    func getBiometricsType() -> String? {
+        return userDefaults.string(forKey: Keys.biometricsType)
     }
 }

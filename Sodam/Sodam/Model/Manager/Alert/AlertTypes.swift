@@ -53,7 +53,7 @@ enum AlertMessage {
         case .biometryLockout:
             return "생체 인증이 잠김"
         case .userCancel:
-            return "인증이 취소되었습니다"
+            return "인증이 취소됨"
         case .systemCancel:
             return "시스템에 의해 인증이 취소됨"
         case .unknownBiometryError:
@@ -84,11 +84,11 @@ enum AlertMessage {
         case .authenticationFailed:
             return "인증에 실패했습니다. 다시 시도해주세요."
         case .biometryLockout:
-            return "생체 인증을 여러 번 실패하여 잠금 상태입니다. 기기 암호를 입력해주세요."
+            return "생체 인증을 여러 번 실패하여 생체 인증이 잠겼습니다."
         case .userCancel:
             return "인증을 취소했습니다."
         case .systemCancel:
-            return "다른 앱 사용 또는 시스템 이벤트로 인해 인증이 취소되었습니다."
+            return "다른 앱 사용 또는 시스템에 의해 인증이 취소되었습니다."
         case .unknownBiometryError:
             return "알 수 없는 오류로 생체 인증에 실패했습니다."
         }

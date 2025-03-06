@@ -11,7 +11,6 @@ import LocalAuthentication
 final class BiometricAuthManager {
 
     private var biometryTypeString: String = "Face ID 또는 Touch ID" // 기본값
-//    private let context = LAContext()
     
     /// 현재 기기가 Face ID인지, Touch ID인지 확인 후 저장
     func setupBiometryType() {

@@ -310,7 +310,6 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 self.alertManager.showAlert(alertMessage: .biometryAvailable) // 앱 잠금 활성화 alert 띄우기
             } else {
                 // 생체 인증 거부 or 인증 실패
-                
                 // 알 수 없는 이유로 실패시 alert
                 guard let errorCode = errorCode else {
                     print("[SettingViewController] 알 수 없는 에러로 앱 잠금 설정 실패")

@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// 앱 잠금 활성화 후 앱 실행시 생체 인증을 수행할 뷰컨트롤러
 final class LockViewController: UIViewController {
     
     private let biometricAuthManager: BiometricAuthManager
@@ -37,6 +38,7 @@ final class LockViewController: UIViewController {
         }
     }
 
+    /// 인증 진행 메서드
     private func authenticateUser() {
         print("[LockViewController] \(biometryTypeString) 인증 실행")
         let reason = "앱을 잠금을 해제하려면 \(biometryTypeString) 인증이 필요합니다."
@@ -73,11 +75,12 @@ final class LockViewController: UIViewController {
         }
     }
     
+    /// 인증 실패시 재시도 Alert을 띄우기 위한 메서드
     private func showAuthenticationFailedAlert() {
         print("[LockViewController] \(biometryTypeString)인증 및 암호 인증 실패 Alert 호출")
         alertManager.showRetryBiometricAlert { [weak self] in
             guard let self = self else { return }
-            self.authenticateUser()
+            self.authenticateUser() // 인증 재시도
         }
     }
 }

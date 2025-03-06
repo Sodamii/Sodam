@@ -23,9 +23,7 @@ enum AlertMessage {
     case authenticationFailed
     case biometryLockout
     case userCancel
-    case userFallback
     case systemCancel
-    case passcodeNotSet
     case unknownBiometryError
     
     var title: String {
@@ -56,12 +54,8 @@ enum AlertMessage {
             return "생체 인증이 잠김"
         case .userCancel:
             return "인증이 취소되었습니다"
-        case .userFallback:
-            return "암호 입력 선택됨"
         case .systemCancel:
             return "시스템에 의해 인증이 취소됨"
-        case .passcodeNotSet:
-            return "기기에 암호가 설정되지 않음"
         case .unknownBiometryError:
             return "알 수 없는 오류"
         }
@@ -93,12 +87,8 @@ enum AlertMessage {
             return "생체 인증을 여러 번 실패하여 잠금 상태입니다. 기기 암호를 입력해주세요."
         case .userCancel:
             return "인증을 취소했습니다."
-        case .userFallback:
-            return "암호 입력을 선택했습니다. 잠금을 해제하려면 암호를 입력해주세요."
         case .systemCancel:
             return "다른 앱 사용 또는 시스템 이벤트로 인해 인증이 취소되었습니다."
-        case .passcodeNotSet:
-            return "생체 인증을 사용하려면 기기 암호를 설정해야 합니다."
         case .unknownBiometryError:
             return "알 수 없는 오류로 생체 인증에 실패했습니다."
         }

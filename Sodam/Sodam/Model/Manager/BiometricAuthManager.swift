@@ -36,10 +36,10 @@ final class BiometricAuthManager {
         return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
     }
     
-    /// 인증 실행 (생체 인증 + 암호 인증)
+    /// 인증 실행 (생체 인증만)
     func authenticateUser(reason: String, completion: @escaping (Bool, LAError.Code?) -> Void) {
         let context = LAContext()
-        context.localizedFallbackTitle = "" // 암호 인증 비활성화
+        context.localizedFallbackTitle = "" // 암호 입력 버튼 비활성화
         
         context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, error in
             DispatchQueue.main.async {

@@ -295,13 +295,14 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     @objc func didToggleBiometricAuthSwitch(_ sender: UISwitch) {
         // 스위치가 꺼졌을 경우
         guard sender.isOn == true else {
-            print("[SettingViewController] 앱 잠금 토글 스위치 꺼짐]")
+            print("[SettingViewController] 앱 잠금 토글 스위치 꺼짐")
             settingViewModel.saveBiometricState(sender.isOn)
             return
         }
         
         print("[SettingViewController] 앱 잠금 토글 스위치 켜짐")
-        biometricAuthManager.authenticateUser(reason: "잠금을 해제하려면 인증이 필요합니다.") { success, errorCode in
+        biometricAuthManager.authenticateUser(reason: "잠금을 해제하려면 인증이 필요합니다.") { [weak self] success, errorCode in
+            guard let self = self else { return }
             if success {
                 // 생체 인증 허용 & 인증 성공
                 print("[SettingViewController] 생체 인증 권한 허용 및 인증 성공")

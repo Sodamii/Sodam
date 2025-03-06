@@ -10,13 +10,16 @@ import UIKit
 final class SettingsViewController: UIViewController {
     private let settingViewModel: SettingViewModel
     private let settingView = SettingView()
+    private let biometricAuthManager: BiometricAuthManager
+    
     // 필요시 사용을 위해 lazy 사용
     private lazy var alertManager: AlertManager = AlertManager(viewController: self)
 
     // MARK: - Initializer
 
-    init(settingViewModel: SettingViewModel) {
+    init(settingViewModel: SettingViewModel, biometricAuthManager: BiometricAuthManager) {
         self.settingViewModel = settingViewModel
+        self.biometricAuthManager = biometricAuthManager
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -290,7 +293,56 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
     
     // 앱잠금 스위치 상태가 변경 되었을 때 호출되는 액션
     @objc func didToggleBiometricAuthSwitch(_ sender: UISwitch) {
-        settingViewModel.saveBiometricsState(sender.isOn)
+        //        settingViewModel.saveBiometricsState(sender.isOn)
+        // 스위치가 꺼졌을 경우
+        guard sender.isOn == true else {
+            print("[SettingViewController] 앱 잠금 토글 스위치 꺼짐]")
+            settingViewModel.saveBiometricsState(sender.isOn)
+            return
+        }
+        
+        print("[SettingViewController] 앱 잠금 토글 스위치 켜짐]")
+        biometricAuthManager.authenticateUser(reason: "잠금을 해제하려면 인증이 필요합니다.") { success, errorCode in
+            if success {
+                print("[SettingViewController] 생체 인증 권한 허용 및 인증 성공")
+                self.settingViewModel.saveBiometricsState(sender.isOn)
+                alertManager.showAlert(alertMessage: <#T##AlertMessage#>) // 앱 잠금 활성화 alert 띄우기
+            } else {
+                guard let errorCode = errorCode else {
+                    print("[SettingViewController] 알 수 없는 에러로 앱 잠금 설정 실패")
+                    return
+                }
+                
+                switch errorCode {
+                case .biometryNotAvailable:
+                    alertManager.showAlert(title: "생체 인증 불가", message: "기기가 생체 인증을 지원하지 않습니다.")
+                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>)
+                case .biometryNotEnrolled:
+                    alertManager.showAlert(title: "생체 인증 미등록", message: "설정에서 Face ID 또는 Touch ID를 등록하세요.")
+                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>)
+                case .biometryLockout:
+                    alertManager.showAlert(title: "잠김", message: "여러 번 실패하여 생체 인증이 잠겼습니다. 암호를 입력하세요.")
+                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>)
+                case .authenticationFailed:
+                    alertManager.showAlert(title: "인증 실패", message: "다시 시도하세요.")
+                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>)
+                case .userCancel:
+                    print("사용자가 인증을 취소함")
+                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>) // 취소 되었다는 alert
+                case .userFallback:
+                    print("사용자가 암호 입력을 선택함")
+                case .systemCancel:
+                    print("시스템에 의해 인증이 취소됨")
+                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>) // 재시도 alert
+                case .passcodeNotSet:
+                    alertManager.showAlert(title: "암호 미설정", message: "설정에서 기기 암호를 설정해야 생체 인증을 사용할 수 있습니다.")
+                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>)
+                default:
+                    print("기타 오류 발생")
+                    alertManager.showAlert(alertMessage: <#T##AlertMessage#>) // 재시도 alert
+                }
+            }
+        }
     }
     
     private func updateNotificationState(isEnabled: Bool) {
@@ -317,5 +369,5 @@ extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
 
 @available(iOS 17.0, *)
 #Preview {
-    SettingsViewController(settingViewModel: SettingViewModel())
+    SettingsViewController(settingViewModel: SettingViewModel(), biometricAuthManager: BiometricAuthManager())
 }

@@ -12,7 +12,7 @@ final class SettingViewModel {
     private let localNotificationManager = LocalNotificationManager.shared
 
     var isToggleOn: Bool   // 앱 설정 토글 상태
-    let sectionType: [Setting.SetSection] = [.appSetting, .fontSetting, .develop]   // 섹션 타입 설정
+    let sectionType: [Setting.SetSection] = [.appSetting, .fontSetting, .lockSetting, .develop]   // 섹션 타입 설정
     
     // 앱 버전을 가져오는 computed property
     var version: String? {
@@ -60,6 +60,11 @@ extension SettingViewModel {
         userDefaultsManager.saveAppToggleState(isOn)
     }
     
+    // 앱 잠금 토글 상태 저장
+    func saveBiometrics(_ isOn: Bool) {
+        userDefaultsManager.setUseBiometrics(isOn)
+    }
+    
     // MARK: - Get Methods
     
     // 저장된 알림 시간 가져오기
@@ -75,6 +80,11 @@ extension SettingViewModel {
     // 사용자가 설정한 예약된 알림 설정
     func setUserNotification() {
         localNotificationManager.setUserNotification()
+    }
+    
+    // 앱 잠금 토글 상태 가져오기
+    func getBiometrics() -> Bool {
+        userDefaultsManager.getUseBiometrics()
     }
 }
 
